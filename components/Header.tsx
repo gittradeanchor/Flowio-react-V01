@@ -1,19 +1,38 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            // Show header as soon as user scrolls down 50px
+            if (window.scrollY > 50) {
+                setIsVisible(true);
+            } else {
+                setIsVisible(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const navItems = [
         { label: 'Test Drive', href: '#test-drive' },
         { label: 'Pricing', href: '#offer' },
-        { label: 'Get in Touch', href: 'https://wa.me/61494186989', target: '_blank' },
+        { label: 'Get in Touch', href: '#', onClick: () => document.dispatchEvent(new CustomEvent('openChat')) }, // Triggers the chat widget
         { label: 'Terms', href: '#footer' },
     ];
 
     return (
         <>
-            <header className="fixed top-9 md:top-10 w-full bg-white/98 backdrop-blur-sm border-b border-border z-40 py-2 transition-all">
+            <header 
+                className={`fixed top-0 w-full bg-white/98 backdrop-blur-sm border-b border-border z-40 py-2 transition-transform duration-300 ${
+                    isVisible ? 'translate-y-[40px] md:translate-y-[36px]' : '-translate-y-full'
+                }`}
+            >
                 <div className="container mx-auto px-5 flex justify-between items-center max-w-[1100px]">
                     <a href="#" className="flex items-center gap-2.5 no-underline">
                        <div className="text-2xl font-black text-navy tracking-tighter leading-none">
@@ -62,9 +81,14 @@ export const Header = () => {
                             <a 
                                 key={item.label}
                                 href={item.href}
-                                target={item.target}
+                                onClick={(e) => {
+                                    if (item.onClick) {
+                                        e.preventDefault();
+                                        item.onClick();
+                                    }
+                                    setIsMenuOpen(false);
+                                }}
                                 className="text-xl font-bold text-navy py-2 border-b border-border/50"
-                                onClick={() => setIsMenuOpen(false)}
                             >
                                 {item.label}
                             </a>
