@@ -5,7 +5,7 @@ export const Hero = () => {
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
     return (
-        <section className="pt-28 pb-8 md:pt-40 md:pb-24 bg-gradient-to-b from-bg-off to-white">
+        <section className="pt-24 pb-8 md:pt-40 md:pb-24 bg-gradient-to-b from-bg-off to-white">
             <div className="container mx-auto px-5 max-w-[1100px] flex flex-col items-start md:grid md:grid-cols-[1fr_1.2fr] gap-4 md:gap-12 md:items-center">
                 
                 {/* 
@@ -16,7 +16,7 @@ export const Hero = () => {
                   4. CTA
                 */}
                 <div className="contents md:block order-1 md:order-none w-full">
-                    <h1 className="text-[36px] md:text-[58px] leading-[1.1] font-black text-navy text-left mb-2 md:mb-4 order-1 w-full">
+                    <h1 className="text-[36px] md:text-[58px] leading-[1.1] font-black text-navy text-left mb-1 md:mb-4 order-1 w-full mt-0 md:mt-0">
                         Stop doing<br className="block md:hidden"/> paperwork at<br className="block md:hidden"/> <span className="whitespace-nowrap">9:00 PM.</span>
                     </h1>
                     
@@ -53,7 +53,7 @@ export const Hero = () => {
                 </div>
 
                 {/* Video Column - Mobile Order 3 */}
-                <div className="w-full my-1 md:my-0 order-3 md:order-none">
+                <div className="w-full my-2 md:my-0 order-3 md:order-none">
                     <div className="bg-navy p-2 rounded-xl md:rounded-[18px] shadow-[0_15px_40px_-10px_rgba(15,23,42,0.35)] transform transition-transform md:hover:scale-[1.02]">
                         <div className="relative w-full aspect-video overflow-hidden rounded-lg bg-black">
                             {!isVideoPlaying ? (

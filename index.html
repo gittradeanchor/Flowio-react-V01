@@ -5,78 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeAnchor - Stop Chasing Quotes. Get Paid Instantly.</title>
     <meta name="description" content="The first automated quoting system for Tradies that requires zero learning curve. Works inside Google Sheets.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              mono: ['JetBrains Mono', 'monospace'],
-            },
-            colors: {
-              navy: {
-                DEFAULT: '#0F172A',
-                light: '#1E293B',
-              },
-              orange: {
-                DEFAULT: '#F97316',
-                hover: '#EA580C',
-              },
-              green: '#10B981',
-              border: '#E2E8F0',
-              bg: {
-                DEFAULT: '#FFFFFF',
-                off: '#F8FAFC',
-              },
-              text: {
-                main: '#1E293B',
-                muted: '#64748B',
-              }
-            },
-            boxShadow: {
-              'btn-primary': '0 4px 0 #C2410B, 0 8px 20px -4px rgba(249, 115, 22, 0.5)',
-              'btn-primary-active': '0 2px 0 #C2410B',
-              'btn-navy': '0 4px 0 #020617, 0 4px 12px rgba(15, 23, 42, 0.3)',
-              'btn-white': '0 4px 0 #CBD5E1',
-            }
-          }
-        }
-      }
-    </script>
     <style>
-      /* Custom Animations */
-      @keyframes pulse-custom { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-      .pulsing-dot { animation: pulse-custom 2s infinite; }
-      
-      @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
-      .animate-float { animation: float 6s ease-in-out infinite; }
-      
-      .shine-effect::after {
-        content: '';
-        position: absolute;
-        top: 0; left: -100%;
-        width: 50%; height: 100%;
-        background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
-        transform: skewX(-20deg);
-        transition: 0.5s;
+      html {
+        scroll-behavior: smooth;
       }
-      .shine-effect:hover::after { left: 150%; transition: 0.7s ease-in-out; }
     </style>
 <script type="importmap">
 {
   "imports": {
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+    "vite": "https://aistudiocdn.com/vite@^7.2.6",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
   }
 }
 </script>
 </head>
 <body class="bg-white text-text-main antialiased">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>

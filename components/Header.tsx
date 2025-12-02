@@ -13,7 +13,7 @@ export const Header = () => {
 
     return (
         <>
-            <header className="fixed top-10 w-full bg-white/98 backdrop-blur-sm border-b border-border z-40 py-2 transition-all">
+            <header className="fixed top-9 md:top-10 w-full bg-white/98 backdrop-blur-sm border-b border-border z-40 py-2 transition-all">
                 <div className="container mx-auto px-5 flex justify-between items-center max-w-[1100px]">
                     <a href="#" className="flex items-center gap-2.5 no-underline">
                        <div className="text-2xl font-black text-navy tracking-tighter leading-none">
@@ -33,7 +33,7 @@ export const Header = () => {
                     <div className="flex items-center gap-3 md:hidden">
                         <a 
                             href="#funnel-cta"
-                            className="px-4 py-2 text-xs font-bold bg-navy text-white rounded-lg shadow-sm"
+                            className="px-4 py-2 text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
                         >
                             Book Demo
                         </a>

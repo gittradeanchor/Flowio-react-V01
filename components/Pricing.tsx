@@ -6,14 +6,15 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
     const percentage = ((value - min) / (max - min)) * 100;
     const trackGradient = `linear-gradient(to right, #FB923C 0%, #FB923C ${percentage}%, #E5E7EB ${percentage}%, #E5E7EB 100%)`;
     
+    // Bubble Position Logic
     const bubbleStyle = { left: `calc(${percentage}% + ${(0.5 - percentage / 100) * 24}px)` };
 
     return (
         <div className="mb-0 relative group">
-            {/* Added extra margin bottom to label to make space for the bubble */}
-            <label className="block text-navy font-bold text-sm mb-12">{label}</label>
+            {/* 1. Label Section - Increased bottom margin to make room for bubble */}
+            <label className="block text-navy font-bold text-sm mb-14">{label}</label>
             
-            {/* Floating Bubble Value - Positioned in the space created by mb-12 */}
+            {/* 2. Floating Bubble Value - Positioned in the space created by mb-14 */}
             <div className="absolute bottom-6 transform -translate-x-1/2 z-10 pointer-events-none transition-all duration-75 ease-out" style={bubbleStyle}>
                 <div className="bg-[#FFF4E5] text-navy text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm border border-orange-100 min-w-[60px] text-center relative">
                     {prefix}{value} {unit}
@@ -21,6 +22,7 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                 </div>
             </div>
 
+            {/* 3. Slider Input */}
             <div className="relative h-2 w-full rounded-full">
                 <input
                     type="range" min={min} max={max} value={value}
@@ -111,8 +113,8 @@ export const Pricing = () => {
             <a href="#funnel-cta" className="flex items-center justify-center w-full md:max-w-md mx-auto py-5 bg-navy hover:bg-navy-light text-white rounded-xl shadow-btn-navy hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)] hover:-translate-y-1 transition-all duration-200 font-bold text-lg uppercase tracking-wide mb-4">
                 Book Your Build Now
             </a>
-            <div className="text-xs text-text-muted leading-relaxed">
-                <div className="flex items-center justify-center gap-1.5 mb-1 font-bold text-green">
+            <div className="text-xs text-text-muted leading-relaxed flex flex-col items-center gap-1">
+                <div className="flex items-center justify-center gap-1.5 font-bold text-green">
                     <span className="text-base">🎁</span> 
                     <span>12 Months Tech Management Included FREE</span>
                 </div>
@@ -127,7 +129,7 @@ export const Pricing = () => {
         <section id="offer" className="py-16 md:py-24 bg-bg-off">
             <div className="container mx-auto px-5 max-w-[1100px]">
                 
-                {/* MOBILE LAYOUT */}
+                {/* MOBILE LAYOUT: Pricing -> CTA -> Header -> ROI */}
                 <div className="block md:hidden">
                     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-border mb-12">
                          <div className="p-8 relative">
@@ -148,7 +150,7 @@ export const Pricing = () => {
                 </div>
 
 
-                {/* DESKTOP LAYOUT */}
+                {/* DESKTOP LAYOUT: Header -> Combined Card (ROI | Pricing) -> CTA */}
                 <div className="hidden md:block">
                      <div className="text-center mb-12">
                         <h2 className="text-4xl font-black text-navy mb-4">The Math Doesn't Lie</h2>

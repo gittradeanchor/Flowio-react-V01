@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { JOB_DATA } from '../constants';
 import { JobItem, QuoteTotals } from '../types';
@@ -146,10 +145,8 @@ export const TestDrive = () => {
         };
 
         try {
-             // Accessing the env variable. 
-             // Note: In Vite use import.meta.env.VITE_MAKE_WEBHOOK_URL, in Create React App use process.env.REACT_APP_MAKE_WEBHOOK_URL
-             // Using process.env here as generic placeholder based on request.
-             const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+             // Accessing the env variable for Vite.
+             const webhookUrl = (import.meta as any).env.VITE_MAKE_WEBHOOK_URL;
              
              if (!webhookUrl) {
                  console.error("Webhook URL is missing in environment variables");
@@ -164,7 +161,7 @@ export const TestDrive = () => {
             setSmsSent(true);
         } catch (e) {
             console.error(e);
-            setSmsSent(true); // Fail open for demo purposes if config is missing
+            setSmsSent(true); 
         } finally {
             setSmsSending(false);
         }
