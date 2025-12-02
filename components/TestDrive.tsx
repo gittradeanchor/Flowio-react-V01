@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { JOB_DATA } from '../constants';
 import { JobItem, QuoteTotals } from '../types';
@@ -145,14 +146,25 @@ export const TestDrive = () => {
         };
 
         try {
-             await fetch('https://hook.us2.make.com/iowm5ja7jqtluqu6geuxu39ski3g9u2j', {
+             // Accessing the env variable. 
+             // Note: In Vite use import.meta.env.VITE_MAKE_WEBHOOK_URL, in Create React App use process.env.REACT_APP_MAKE_WEBHOOK_URL
+             // Using process.env here as generic placeholder based on request.
+             const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+             
+             if (!webhookUrl) {
+                 console.error("Webhook URL is missing in environment variables");
+                 throw new Error("Configuration error");
+             }
+
+             await fetch(webhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             }).catch(err => console.error("Webhook error", err));
             setSmsSent(true);
         } catch (e) {
-            setSmsSent(true); 
+            console.error(e);
+            setSmsSent(true); // Fail open for demo purposes if config is missing
         } finally {
             setSmsSending(false);
         }
