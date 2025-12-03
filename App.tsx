@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Hero } from './components/Hero';
+import { TechStack } from './components/TechStack';
 import { Benefits } from './components/Benefits';
 import { TestDrive } from './components/TestDrive';
 import { LogicSection } from './components/LogicSection';
@@ -26,6 +26,7 @@ const App = () => {
             
             <main>
                 <Hero />
+                <TechStack />
                 <Benefits />
                 <TestDrive />
                 <LogicSection />
