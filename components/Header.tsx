@@ -3,21 +3,17 @@ import React, { useState, useEffect } from 'react';
 
 export const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
-            // Show header as soon as user scrolls down 50px
-            if (window.scrollY > 50) {
-                setIsVisible(true);
-            } else {
-                setIsVisible(false);
-            }
+            setIsScrolled(window.scrollY > 20);
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const isVisible = isScrolled;
 
     const navItems = [
         { label: 'Test Drive', href: '#test-drive' },
@@ -29,13 +25,13 @@ export const Header = () => {
     return (
         <>
             <header 
-                className={`fixed top-0 w-full bg-white/98 backdrop-blur-sm border-b border-border z-40 py-2 transition-transform duration-300 ${
+                className={`fixed top-0 w-full bg-white/98 backdrop-blur-sm border-b border-border z-40 py-1.5 transition-transform duration-300 ${
                     isVisible ? 'translate-y-[40px] md:translate-y-[36px]' : '-translate-y-full'
                 }`}
             >
                 <div className="container mx-auto px-5 flex justify-between items-center max-w-[1100px]">
                     <a href="#" className="flex items-center gap-2.5 no-underline">
-                       <div className="text-2xl font-black text-navy tracking-tighter leading-none">
+                       <div className="text-xl md:text-2xl font-black text-navy tracking-tighter leading-none">
                             Trade<span className="text-orange">Anchor</span>
                        </div>
                     </a>
@@ -52,7 +48,7 @@ export const Header = () => {
                     <div className="flex items-center gap-3 md:hidden">
                         <a 
                             href="#funnel-cta"
-                            className="px-4 py-2 text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
+                            className="px-3 py-1.5 text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
                         >
                             Book Demo
                         </a>
