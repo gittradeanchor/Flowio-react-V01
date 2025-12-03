@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-export const ChatWidget = () => {
+export const ChatWidget = ({ isHidden = false }: { isHidden?: boolean }) => {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
@@ -18,12 +18,15 @@ export const ChatWidget = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Only show if scrolled down AND not explicitly hidden (e.g. on focus screens)
+    const show = isVisible && !isHidden;
+
     return (
         <a 
             href="https://wa.me/61494186989" 
             target="_blank" 
             rel="noreferrer"
-            className={`fixed bottom-5 right-5 md:bottom-10 md:right-10 w-[60px] h-[60px] bg-[#25d366] text-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:scale-110 transition-all duration-300 z-50 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}
+            className={`fixed bottom-5 right-5 md:bottom-10 md:right-10 w-[60px] h-[60px] bg-[#25d366] text-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:scale-110 transition-all duration-300 z-50 ${show ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}
             aria-label="Chat on WhatsApp"
         >
             <svg viewBox="0 0 24 24" width="32" height="32" fill="white">
