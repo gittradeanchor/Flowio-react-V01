@@ -34,13 +34,14 @@ export const Hero = () => {
 
                     {/* CTA Group */}
                     <div className="flex flex-col items-center md:items-start gap-0 w-full md:w-auto order-4 md:order-none mt-1 md:mt-0">
-                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto px-8 py-4 min-h-[50px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-3">
-                            Run a Live Demo (30s) ▸
+                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:max-w-[300px] px-8 py-4 min-h-[60px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-3 md:mb-6">
+                            Run a Live Demo (30s) <span className="ml-3 text-3xl leading-[0] pb-1">▸</span>
                         </a>
                         
                         {/* Subtext 1 */}
                         <p className="text-[13px] text-text-muted font-medium mb-1 w-full text-center md:text-left opacity-95">
                             Run the full workflow • No credit card required
+                        </p>
                         
                          {/* Subtext 2 */}
                         <p className="text-[13px] text-text-muted font-medium mb-2 w-full text-center md:text-left opacity-95">
