@@ -44,19 +44,7 @@ export const Hero = () => {
                             (You’ll receive a real quote link by SMS + email...)
                         </p>
                         
-                        {/* Benefits - Hidden on Mobile */}
-                        <div className="text-[13px] text-text-muted hidden md:flex flex-col gap-2 items-start text-left">
-                            <div className="flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 bg-green rounded-full shrink-0 mt-1.5"></span>
-                                <span>Send a PDF quote from your phone in ~60 seconds</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 bg-green rounded-full shrink-0 mt-1.5"></span>
-                                <span>Accept link → job booked + Calendar updated automatically</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 bg-green rounded-full shrink-0 mt-1.5"></span>
-                                <span>Auto SMS follow-ups after 24h (no chasing)</span>
+                        
                             </div>
                         </div>
                     </div>
