@@ -205,7 +205,7 @@ export const Pricing = () => {
             </p>
             
             <div className="text-xs text-text-muted">
-                 <strong className="text-green">Optional support after 12 months: $299/yr (system keeps running either way).
+                 <strong className="text-green">Optional support after 12 months: $299/yr (system keeps running either way).</strong>
             </div>
         </div>
     );
