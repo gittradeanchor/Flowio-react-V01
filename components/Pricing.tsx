@@ -10,8 +10,8 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
 
     return (
         <div className="mb-6">
-            {/* 1. Label */}
-            <label className="block text-navy font-bold text-sm mb-10">{label}</label>
+            {/* 1. Label with increased margin to prevent overlap */}
+            <label className="block text-navy font-bold text-sm mb-14">{label}</label>
             
             {/* 2. Reserved Space for Bubble - absolutely positioned relative to container but pushed down by margin on label */}
             <div className="relative w-full h-8"> 
@@ -122,7 +122,7 @@ export const Pricing = () => {
                     <span>12 Months Tech Management Included FREE</span>
                 </div>
                 <div className="block">
-                    (Save $1,188). Just $99/mo after year 1.
+                    (Save $1,188). Optional $99/mo after year 1.
                 </div>
             </div>
         </div>
