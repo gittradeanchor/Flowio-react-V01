@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-export const Header = () => {
+export const Header = ({ isHidden = false }: { isHidden?: boolean }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -13,7 +13,8 @@ export const Header = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const isVisible = isScrolled;
+    // Only visible if scrolled AND not explicitly hidden
+    const isVisible = isScrolled && !isHidden;
 
     const navItems = [
         { label: 'Test Drive', href: '#test-drive' },
