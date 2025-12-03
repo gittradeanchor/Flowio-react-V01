@@ -22,7 +22,7 @@ export const Header = () => {
     const navItems = [
         { label: 'Test Drive', href: '#test-drive' },
         { label: 'Pricing', href: '#offer' },
-        { label: 'Get in Touch', href: '#', onClick: () => document.dispatchEvent(new CustomEvent('openChat')) }, // Triggers the chat widget
+        { label: 'Get in Touch', href: 'https://wa.me/61494186989', external: true },
         { label: 'Terms', href: '#footer' },
     ];
 
@@ -81,13 +81,9 @@ export const Header = () => {
                             <a 
                                 key={item.label}
                                 href={item.href}
-                                onClick={(e) => {
-                                    if (item.onClick) {
-                                        e.preventDefault();
-                                        item.onClick();
-                                    }
-                                    setIsMenuOpen(false);
-                                }}
+                                target={item.external ? "_blank" : undefined}
+                                rel={item.external ? "noreferrer" : undefined}
+                                onClick={() => setIsMenuOpen(false)}
                                 className="text-xl font-bold text-navy py-2 border-b border-border/50"
                             >
                                 {item.label}
