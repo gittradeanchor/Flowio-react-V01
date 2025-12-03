@@ -5,8 +5,8 @@ export const Hero = () => {
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
     return (
-        <section className="pt-40 pb-10 md:pt-44 md:pb-24 bg-gradient-to-b from-bg-off to-white">
-            <div className="container mx-auto px-5 max-w-[1100px] flex flex-col items-start md:grid md:grid-cols-[1fr_1.2fr] gap-6 md:gap-12 md:items-center">
+        <section className="pt-20 pb-5 md:pt-32 md:pb-24 bg-gradient-to-b from-bg-off to-white">
+            <div className="container mx-auto px-5 max-w-[1100px] flex flex-col items-center md:grid md:grid-cols-[1fr_1.2fr] gap-4 md:gap-12 md:items-center">
                 
                 {/* 
                   MOBILE LAYOUT:
@@ -16,42 +16,41 @@ export const Hero = () => {
                   4. CTA
                 */}
                 <div className="contents md:block order-1 md:order-none w-full">
-                    <h1 className="text-[36px] md:text-[58px] leading-[1.1] font-black text-navy text-left mb-3 md:mb-4 order-1 w-full mt-2 md:mt-0">
+                    <h1 className="text-[40px] md:text-[58px] leading-[1.1] font-black text-navy text-left md:text-left mb-1 md:mb-4 order-1 w-full mt-0">
                         Stop doing<br className="block md:hidden"/> paperwork at<br className="block md:hidden"/> <span className="whitespace-nowrap">9:00 PM.</span>
                     </h1>
                     
-                    <ul className="text-[16px] md:text-[19px] text-text-muted leading-relaxed text-left mb-6 md:mb-8 max-w-[580px] order-2 w-full list-none space-y-2">
-                        <li className="flex items-start gap-2">
-                            <span>Quote → send → client accepts → job booked in Google Calendar.</span>
+                    <ul className="text-[15px] md:text-[19px] text-text-muted leading-relaxed text-left md:text-left mb-2 md:mb-8 max-w-[580px] order-2 w-full list-none space-y-2 flex flex-col items-start md:items-start">
+                        <li className="flex items-start justify-start md:justify-start gap-1">
+                            <span>Send quote ▸ client accepts ▸ job booked.</span>
                         </li>
-                        <li className="flex items-start gap-2">
-                            <span>Auto SMS follow-ups. Runs in Google Sheets. No subscription.</span>
+                        <li className="flex items-start justify-start md:justify-start gap-1">
+                            <span>Runs in Google Sheets. No subscription.</span>
+                            </li>
+                        <li className="flex items-start justify-start md:justify-start gap-1">
+                            <span>Auto SMS follow-ups.</span>
                         </li>
                     </ul>
 
                     {/* CTA Group */}
-                    <div className="flex flex-col items-start gap-0 w-full md:w-auto order-4 md:order-none mt-4 md:mt-0">
-                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto px-8 py-4 min-h-[60px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-3">
-                            Launch Free Live Simulator ▸
+                    <div className="flex flex-col items-center md:items-start gap-0 w-full md:w-auto order-4 md:order-none mt-1 md:mt-0">
+                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto px-8 py-4 min-h-[50px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-3">
+                            Run a Live Demo (30s) ▸
                         </a>
                         
                         {/* Subtext 1 */}
-                        <p className="text-xs text-text-muted font-medium mb-1 w-full text-center md:text-left opacity-90">
-                            (Run the full workflow • No credit card required)
-                        </p>
+                        <p className="text-[13px] text-text-muted font-medium mb-1 w-full text-center md:text-left opacity-95">
+                            Run the full workflow • No credit card required
+                        
                          {/* Subtext 2 */}
-                        <p className="text-xs text-text-muted font-medium mb-5 w-full text-center md:text-left opacity-90">
-                            (You’ll receive a real quote link by SMS + email...)
+                        <p className="text-[13px] text-text-muted font-medium mb-2 w-full text-center md:text-left opacity-95">
+                            You’ll receive a real quote link by SMS + email
                         </p>
-                        
-                        
-                            </div>
-                        </div>
                     </div>
                 </div>
 
                 {/* Video Column - Mobile Order 3 */}
-                <div className="w-full my-4 md:my-0 order-3 md:order-none">
+                <div className="w-full mb-2 mt-1 md:my-0 order-3 md:order-none">
                     <div className="bg-navy p-2 rounded-xl md:rounded-[18px] shadow-[0_15px_40px_-10px_rgba(15,23,42,0.35)] transform transition-transform md:hover:scale-[1.02]">
                         <div className="relative w-full aspect-video overflow-hidden rounded-lg bg-black">
                             {!isVideoPlaying ? (
