@@ -13,9 +13,9 @@ import { ChatWidget } from './components/ChatWidget';
 const App = () => {
     // Scarcity Bar
     const ScarcityBar = () => (
-        <div className="fixed top-0 left-0 w-full bg-[#FFF7ED] text-[#9A3412] text-center py-2 text-[13px] font-bold z-50 border-b border-[#FED7AA] flex justify-center items-center gap-2">
-            <span className="w-2 h-2 bg-orange rounded-full pulsing-dot"></span>
-            <span>Only 2 installs available this week</span>
+        <div className="fixed top-0 left-0 w-full bg-[#FFF7ED] text-[#9A3412] text-center py-2 text-[13px] font-bold z-50 border-b border-[#FED7AA] flex justify-center items-center gap-2 px-2 leading-tight">
+            <span className="w-2 h-2 bg-orange rounded-full pulsing-dot shrink-0"></span>
+            <span>Only 2 installs left this week (DFY setup + testing).</span>
         </div>
     );
 
