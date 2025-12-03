@@ -50,7 +50,7 @@ export const Benefits = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Card 1: Payment Received */}
                     <BentoCard title="⚡ 1-Tap Automation" desc="From quote to paid in one tap. Your process runs on autopilot so you can focus on the tools." span={2}>
-                        <img src="/images/flow-diagram.jpg" alt="Payment Flow" className="w-full h-full object-contain" />
+                        <img src="https://placehold.co/600x300/F1F5F9/1E293B?text=One-Tap+Payment+Flow" alt="Payment Flow" className="w-full h-full object-contain" />
                     </BentoCard>
 
                     {/* Card 2: No Mistakes */}
@@ -60,12 +60,12 @@ export const Benefits = () => {
 
                     {/* Card 3: Look Professional */}
                     <BentoCard title="📲 Mobile Companion" desc="Manage jobs, send quotes, and check payments from anywhere." span={1}>
-                         <img src="/images/app-preview.jpg" alt="Mobile App" className="h-full w-auto object-contain shadow-2xl rounded-lg" />
+                         <img src="https://placehold.co/300x500/F1F5F9/1E293B?text=Mobile+App" alt="Mobile App" className="h-full w-auto object-contain shadow-2xl rounded-lg" />
                     </BentoCard>
 
                     {/* Card 4: Own Your Data */}
                     <BentoCard title="🔒 Own, Don't Rent" desc="Stop paying monthly subscriptions for data you should own. One-time setup, yours forever." span={2}>
-                         <img src="/images/renting-vs-owning.jpg" alt="SaaS vs Owning Diagram" className="w-full h-full object-contain" />
+                         <img src="https://placehold.co/600x300/F1F5F9/1E293B?text=SaaS+Renting+vs+Flowio+Owning" alt="SaaS vs Owning Diagram" className="w-full h-full object-contain" />
                     </BentoCard>
                 </div>
             </div>
