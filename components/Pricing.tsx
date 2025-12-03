@@ -6,28 +6,31 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
     const percentage = ((value - min) / (max - min)) * 100;
     const trackGradient = `linear-gradient(to right, #FB923C 0%, #FB923C ${percentage}%, #E5E7EB ${percentage}%, #E5E7EB 100%)`;
     
-    // Bubble Position Logic
     const bubbleStyle = { left: `calc(${percentage}% + ${(0.5 - percentage / 100) * 24}px)` };
 
     return (
-        <div className="mb-0 relative group">
-            {/* 1. Label Section - Increased bottom margin to make room for bubble */}
-            <label className="block text-navy font-bold text-sm mb-14">{label}</label>
+        <div className="mb-6">
+            {/* 1. Label */}
+            <label className="block text-navy font-bold text-sm mb-10">{label}</label>
             
-            {/* 2. Floating Bubble Value - Positioned in the space created by mb-14 */}
-            <div className="absolute bottom-6 transform -translate-x-1/2 z-10 pointer-events-none transition-all duration-75 ease-out" style={bubbleStyle}>
-                <div className="bg-[#FFF4E5] text-navy text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm border border-orange-100 min-w-[60px] text-center relative">
-                    {prefix}{value} {unit}
-                    <div className="w-2 h-2 bg-[#FFF4E5] border-r border-b border-orange-100 transform rotate-45 absolute left-1/2 -ml-1 -bottom-1 bg-inherit"></div>
+            {/* 2. Reserved Space for Bubble - absolutely positioned relative to container but pushed down by margin on label */}
+            <div className="relative w-full h-8"> 
+                {/* Bubble */}
+                <div 
+                    className="absolute bottom-2 transform -translate-x-1/2 z-10 pointer-events-none transition-all duration-75 ease-out" 
+                    style={bubbleStyle}
+                >
+                    <div className="bg-[#FFF4E5] text-navy text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm border border-orange-100 min-w-[60px] text-center relative">
+                        {prefix}{value} {unit}
+                        <div className="w-2 h-2 bg-[#FFF4E5] border-r border-b border-orange-100 transform rotate-45 absolute left-1/2 -ml-1 -bottom-1 bg-inherit"></div>
+                    </div>
                 </div>
-            </div>
 
-            {/* 3. Slider Input */}
-            <div className="relative h-2 w-full rounded-full">
+                {/* Slider Input */}
                 <input
                     type="range" min={min} max={max} value={value}
                     onChange={(e) => onChange(Number(e.target.value))}
-                    className="absolute w-full h-2 rounded-full appearance-none z-30 focus:outline-none focus:ring-0 cursor-pointer"
+                    className="absolute bottom-0 w-full h-2 rounded-full appearance-none z-30 focus:outline-none focus:ring-0 cursor-pointer"
                     style={{ background: trackGradient }}
                 />
             </div>
