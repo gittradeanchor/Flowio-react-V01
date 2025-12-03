@@ -25,7 +25,8 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                     value={value}
                     onChange={(e) => onChange(Number(e.target.value))}
                     className="w-full h-2 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-0"
-                    style={{ background: trackBackground }}
+                    style={{ ['--track' as any]: trackBackground }}
+
                 />
             </div>
             
@@ -38,8 +39,13 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                     background: #ffffff;
                     border: 2px solid #FB923C;
                     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-                    margin-top: -8px; /* Corrects vertical alignment */
+                    margin-top: calc((8px - 24px) / 2); /* centers thumb on 8px track */
                     transition: transform 0.1s;
+                }
+                    input[type=range]{
+                    height: 24px;              /* big hit area */
+                    background: transparent;   /* we draw track below */
+                    touch-action: pan-x;       /* mobile drag */
                 }
                 input[type=range]:active::-webkit-slider-thumb {
                     transform: scale(1.1);
@@ -53,10 +59,11 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
                     transition: transform 0.1s;
                 }
-                input[type=range]::-webkit-slider-runnable-track {
-                    height: 8px;
-                    border-radius: 9999px;
-                    /* Background handled inline */
+                input[type=range]::-webkit-slider-runnable-track{
+                height: 8px;
+                border-radius: 9999px;
+                background: var(--track);  /* set via style prop */
+                cursor: pointer;
                 }
             `}</style>
         </div>
