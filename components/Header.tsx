@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-export const Header = ({ isHidden = false }: { isHidden?: boolean }) => {
+export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?: boolean, isSecondaryCta?: boolean }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -40,7 +40,11 @@ export const Header = ({ isHidden = false }: { isHidden?: boolean }) => {
                     {/* Desktop CTA */}
                     <a 
                         href="#funnel-cta" 
-                        className="hidden md:inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold bg-navy text-white rounded-xl shadow-btn-navy active:shadow-none active:translate-y-0.5 transition-all"
+                        className={`hidden md:inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold rounded-xl active:translate-y-0.5 transition-all ${
+                            isSecondaryCta 
+                                ? 'bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm' 
+                                : 'bg-navy text-white shadow-btn-navy hover:shadow-lg'
+                        }`}
                     >
                         Book a Demo
                     </a>
