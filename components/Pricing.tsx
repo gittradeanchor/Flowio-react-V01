@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 
-// Optimized Slider Component
+// Optimized Slider Component using Layered Approach for Native Feel
 const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: { label: string, value: number, min: number, max: number, unit: string, prefix?: string, onChange: (val: number) => void }) => {
     const percentage = ((value - min) / (max - min)) * 100;
     
-    // Gradient for the track to visualize progress
-    const trackBackground = `linear-gradient(to right, #FB923C 0%, #FB923C ${percentage}%, #E5E7EB ${percentage}%, #E5E7EB 100%)`;
-
     return (
-        <div className="mb-8 group">
+        <div className="mb-8">
             <div className="flex justify-between items-end mb-4">
                 <label className="text-navy font-bold text-base block">{label}</label>
                 <div className="bg-orange/10 text-orange-700 text-sm font-bold py-1 px-3 rounded-lg min-w-[60px] text-center">
@@ -16,7 +13,16 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                 </div>
             </div>
             
-            <div className="relative w-full h-6 flex items-center"> 
+            <div className="relative w-full h-6 flex items-center select-none">
+                {/* Visual Track Layer (Background) - Pointer Events None to prevent interference */}
+                <div className="absolute left-0 right-0 h-2 bg-gray-200 rounded-full overflow-hidden pointer-events-none">
+                    <div 
+                        className="h-full bg-orange" 
+                        style={{ width: `${percentage}%` }}
+                    ></div>
+                </div>
+
+                {/* Interaction Layer (Native Input) - Transparent but fully interactive */}
                 <input
                     type="range" 
                     min={min} 
@@ -24,12 +30,11 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                     step={1}
                     value={value}
                     onChange={(e) => onChange(Number(e.target.value))}
-                    className="w-full h-2 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-0"
-                    style={{ ['--track' as any]: trackBackground }}
-
+                    className="absolute w-full h-full opacity-100 bg-transparent appearance-none cursor-pointer z-10 touch-none focus:outline-none m-0 p-0"
                 />
             </div>
             
+            {/* Custom Thumb Styling - Track is transparent so we see the div below */}
             <style>{`
                 input[type=range]::-webkit-slider-thumb {
                     -webkit-appearance: none;
@@ -38,32 +43,39 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                     border-radius: 50%;
                     background: #ffffff;
                     border: 2px solid #FB923C;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-                    margin-top: calc((8px - 24px) / 2); /* centers thumb on 8px track */
-                    transition: transform 0.1s;
-                }
-                    input[type=range]{
-                    height: 24px;              /* big hit area */
-                    background: transparent;   /* we draw track below */
-                    touch-action: pan-x;       /* mobile drag */
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    margin-top: -8px; /* (Track 8px - Thumb 24px) / 2 */
+                    cursor: grab;
                 }
                 input[type=range]:active::-webkit-slider-thumb {
+                    cursor: grabbing;
                     transform: scale(1.1);
                 }
+                input[type=range]::-webkit-slider-runnable-track {
+                    width: 100%;
+                    height: 8px;
+                    background: transparent;
+                    border-radius: 9999px;
+                }
+                
+                /* Firefox Support */
                 input[type=range]::-moz-range-thumb {
                     height: 24px;
                     width: 24px;
                     border-radius: 50%;
                     background: #ffffff;
                     border: 2px solid #FB923C;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-                    transition: transform 0.1s;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    cursor: grab;
                 }
-                input[type=range]::-webkit-slider-runnable-track{
-                height: 8px;
-                border-radius: 9999px;
-                background: var(--track);  /* set via style prop */
-                cursor: pointer;
+                input[type=range]:active::-moz-range-thumb {
+                    cursor: grabbing;
+                    transform: scale(1.1);
+                }
+                input[type=range]::-moz-range-track {
+                    width: 100%;
+                    height: 8px;
+                    background: transparent;
                 }
             `}</style>
         </div>
