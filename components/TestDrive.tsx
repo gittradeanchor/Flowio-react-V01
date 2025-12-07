@@ -194,7 +194,7 @@ const formData = {
   referrer: attrib.referrer || document.referrer || "",
   user_agent: attrib.user_agent || navigator.userAgent || ""
 };
-await fetch(MAKE_WEBHOOK_URL, {
+await fetch(VITE_MAKE_WEBHOOK_URL, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(payload)
