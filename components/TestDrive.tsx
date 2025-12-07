@@ -87,22 +87,47 @@ export const TestDrive = () => {
         e.preventDefault();
         setSmsSending(true);
 
-        const formData = {
-            customer: {
-                name: leadName || 'Demo Lead',
-                trade: leadTrade,
-                phone: formMobile, 
-                email: formEmail
-            },
-            quote: { 
-                items: items.map(i => ({ sku: i.sku, name: i.name, qty: i.qty, total: i.qty * i.rate })),
-                total: totals.total 
-            },
-            meta: { 
-                source: 'react-app-demo',
-                timestamp: new Date().toISOString()
-            }
-        };
+const attrib = getAttribution();
+
+const formData = {
+  action: "demoLead",
+  timestamp: new Date().toISOString(),
+  leadId: getOrCreateLeadId(),
+
+  name: leadName || "Demo Lead",
+  trade: leadTrade || "",
+  phone: formMobile || "",
+  email: formEmail || "",
+
+  // only what you need
+  items: items
+    .filter(i => Number(i.qty) > 0)
+    .map(i => ({ sku: i.sku, qty: Number(i.qty) })),
+
+  total: totals?.total ?? "",
+
+  // 23-ish attribution fields
+  utm_source: attrib.utm_source || "",
+  utm_medium: attrib.utm_medium || "",
+  utm_campaign: attrib.utm_campaign || "",
+  utm_content: attrib.utm_content || "",
+  utm_term: attrib.utm_term || "",
+
+  fbclid: attrib.fbclid || "",
+  gclid: attrib.gclid || "",
+  msclkid: attrib.msclkid || "",
+  wbraid: attrib.wbraid || "",
+  gbraid: attrib.gbraid || "",
+
+  ad_id: attrib.ad_id || "",
+  adset_id: attrib.adset_id || "",
+  campaign_id: attrib.campaign_id || "",
+
+  landing_url: attrib.landing_url || window.location.href.split("#")[0],
+  referrer: attrib.referrer || document.referrer || "",
+  user_agent: attrib.user_agent || navigator.userAgent || ""
+};
+
 
         // Fallback hardcoded URL + Environment Variable check
         let webhookUrl = 'https://hook.us2.make.com/iowm5ja7jqtluqu6geuxu39ski3g9u2j';
