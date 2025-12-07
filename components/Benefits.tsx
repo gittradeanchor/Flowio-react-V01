@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 // Reusable Bento Card Component
@@ -22,7 +23,7 @@ const BentoCard = ({
             <img 
                 src={imgSrc} 
                 alt={imgAlt}
-                className={`w-full h-full transition-transform duration-700 hover:scale-105 ${padded ? 'object-contain p-6' : 'object-cover'}`}
+                className={`w-full h-full transition-transform duration-700 hover:scale-105 object-center ${padded ? 'object-contain p-6' : 'object-cover'}`}
                 onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
@@ -49,39 +50,11 @@ export const Benefits = () => {
         <section className="py-20 md:py-32 bg-gradient-to-b from-white to-slate-50">
             <div className="container mx-auto px-5 max-w-[1100px]">
                 
-                {/* RISK REVERSAL / TRUST BANNER */}
-                <div className="bg-white border border-slate-200 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] rounded-2xl p-6 md:p-8 mb-20 flex flex-col md:flex-row items-center gap-6 max-w-4xl mx-auto transform -translate-y-12 md:-translate-y-6">
-                    <div className="shrink-0">
-                        {/* Shield Icon SVG */}
-                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange/10 flex items-center justify-center animate-float">
-                            <svg className="w-8 h-8 md:w-10 md:h-10 text-orange" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div className="text-center md:text-left flex-1">
-                        <h3 className="text-2xl md:text-3xl font-black text-navy mb-2 tracking-tight">100% Results Guarantee</h3>
-                        <p className="text-[17px] text-text-muted font-medium">Save 5hrs/week in your first 30 days or we refund every cent. No questions asked.</p>
-                    </div>
-                    <div className="hidden md:flex flex-col gap-2 items-center opacity-40 grayscale">
-                         <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Secure With</div>
-                         <div className="flex gap-3">
-                             <div className="text-xl font-bold text-slate-400 flex items-center gap-1">
-                                <span className="tracking-tighter">Google</span>
-                             </div>
-                             <div className="w-[1px] h-6 bg-slate-300"></div>
-                             <div className="text-xl font-bold text-slate-400 flex items-center gap-1">
-                                <span className="tracking-tighter">Stripe</span>
-                             </div>
-                         </div>
-                    </div>
-                </div>
-
                 <div className="text-center mb-16 md:mb-20">
                     <h2 className="text-[32px] md:text-5xl font-black text-navy mb-6 tracking-tight leading-[1.1]">
-                        Built for tradies who<br className="hidden md:block" /> hate computers.
+                        Built for tradies who hate computers.
                     </h2>
-                    <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto font-medium">The power of a $50k enterprise app, inside a simple Google Sheet you already know how to use.</p>
+                    <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto font-medium">Stop fighting with complex software. Get full automation inside the Google Sheets you already own.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -117,7 +90,7 @@ export const Benefits = () => {
                     />
 
                     {/* Card 4: Mobile Companion (Wide) */}
-                    {/* Swapped to span 2. Image Size: 2752x1536 (Wide Ratio) */}
+                    {/* Swapped to span 2. Image Size: 1460x600 (Wide Ratio) */}
                     <BentoCard 
                         title="📲 Mobile Companion" 
                         desc="Manage jobs, send quotes, and check payments from anywhere." 
