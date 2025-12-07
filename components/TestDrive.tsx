@@ -194,11 +194,7 @@ const formData = {
   referrer: attrib.referrer || document.referrer || "",
   user_agent: attrib.user_agent || navigator.userAgent || ""
 };
-await fetch(VITE_MAKE_WEBHOOK_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload)
-});
+
 
         // Fallback hardcoded URL + Environment Variable check
         let webhookUrl = 'https://hook.us2.make.com/iowm5ja7jqtluqu6geuxu39ski3g9u2j';
