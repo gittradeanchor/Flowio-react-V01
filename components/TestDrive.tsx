@@ -4,7 +4,74 @@ import { JOB_DATA } from '../constants';
 import { JobItem, QuoteTotals } from '../types';
 import { AcceptFlow } from './AcceptFlow';
 
+// Atribution Capture
+
+const ATTRIB_KEY = 'flowio_attrib_v1';
+const LEAD_ID_KEY = 'flowio_lead_id_v1';
+
+function getOrCreateLeadId() {
+  const existing = localStorage.getItem(LEAD_ID_KEY);
+  if (existing) return existing;
+
+  const id =
+    (crypto?.randomUUID && crypto.randomUUID()) ||
+    `lead_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
+  localStorage.setItem(LEAD_ID_KEY, id);
+  return id;
+}
+
+function captureAttributionOnce() {
+  // Keep first-touch attribution (don’t overwrite if already stored)
+  const existing = localStorage.getItem(ATTRIB_KEY);
+  if (existing) return JSON.parse(existing);
+
+  const url = new URL(window.location.href);
+  const q = url.searchParams;
+
+  const attrib = {
+    utm_source: q.get('utm_source') || '',
+    utm_medium: q.get('utm_medium') || '',
+    utm_campaign: q.get('utm_campaign') || '',
+    utm_content: q.get('utm_content') || '',
+    utm_term: q.get('utm_term') || '',
+
+    fbclid: q.get('fbclid') || '',
+    gclid: q.get('gclid') || '',
+    msclkid: q.get('msclkid') || '',
+    wbraid: q.get('wbraid') || '',
+    gbraid: q.get('gbraid') || '',
+
+    // These only exist if YOU add them to your ad URL templates
+    ad_id: q.get('ad_id') || '',
+    adset_id: q.get('adset_id') || '',
+    campaign_id: q.get('campaign_id') || '',
+
+    landing_url: url.href.split('#')[0],
+    referrer: document.referrer || '',
+    user_agent: navigator.userAgent || ''
+  };
+
+  localStorage.setItem(ATTRIB_KEY, JSON.stringify(attrib));
+  return attrib;
+}
+
+function getAttribution() {
+  try {
+    return JSON.parse(localStorage.getItem(ATTRIB_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
 export const TestDrive = () => {
+
+      useEffect(() => {
+    captureAttributionOnce();
+    getOrCreateLeadId();
+  }, []);
+
+    
     // Stage Management
     // 1: Builder
     // 2: Sent Screen (QR Code / Success Message)
