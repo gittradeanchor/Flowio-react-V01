@@ -167,9 +167,9 @@ const formData = {
   email: formEmail || "",
 
   // only what you need
-  items: items
-    .filter(i => Number(i.qty) > 0)
-    .map(i => ({ sku: i.sku, qty: Number(i.qty) })),
+  items: (Array.isArray(items) ? items : [items])
+  .filter(i => Number(i.qty) > 0)
+  .map(i => ({ sku: i.sku, qty: Number(i.qty) })),
 
   total: totals?.total ?? "",
 
