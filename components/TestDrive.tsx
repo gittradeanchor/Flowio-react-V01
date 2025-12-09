@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { JOB_DATA } from '../constants';
+import { JOB_DATA as FALLBACK_JOB_DATA } from '../constants';
 import { JobItem, QuoteTotals } from '../types';
 import { AcceptFlow } from './AcceptFlow';
 
@@ -77,6 +77,31 @@ export const TestDrive = () => {
     // 2: Sent Screen (QR Code / Success Message)
     // "gate": Intermediate state where the blurred preview is shown
     const [stage, setStage] = useState<1 | 'gate' | 2 >(1); 
+    type PriceItem = { sku: string; name: string; rate: number };
+    
+    const [pricebook, setPricebook] = useState<PriceItem[]>(
+      Object.values(FALLBACK_JOB_DATA).map((x: any) => ({
+        sku: x.sku,
+        name: x.name,
+        rate: x.rate
+      }))
+    );
+    
+    useEffect(() => {
+      const url = "https://script.google.com/macros/s/AKfycbxhHLkZurdZAEYITVTw8BHcauaVltJK-CTMPS6_Vd6RtqNc852dOweTDFwyaIUQwUri/exec?a=pricebook";
+      fetch(url)
+        .then(r => r.json())
+        .then(data => {
+          if (data?.ok && Array.isArray(data.items) && data.items.length) {
+            setPricebook(data.items);
+          }
+        })
+        .catch(() => {
+          // keep fallback, zero UX change
+        });
+    }, []);
+
+  
     const sectionRef = useRef<HTMLElement>(null);
     
     // Switch to external Accept Flow component
@@ -123,15 +148,28 @@ export const TestDrive = () => {
     }, [stage, showAcceptFlow]);
 
     // Handlers
-    const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const key = e.target.value;
-        if (!key) return;
-        const newItem = JOB_DATA[key];
-        if (!items.find(i => i.sku === newItem.sku)) {
-            setItems([...items, newItem]);
-        }
-        e.target.value = ''; 
-    };
+const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const selectedSku = e.target.value;
+  if (!selectedSku) return;
+
+  const selected = pricebook.find(x => x.sku === selectedSku);
+  if (!selected) { e.target.value = ""; return; }
+
+  setItems((prev) => {
+    const idx = prev.findIndex(p => p.sku === selected.sku);
+    if (idx >= 0) {
+      const next = [...prev];
+      next[idx] = { ...next[idx], qty: Number(next[idx].qty || 0) + 1 };
+      return next;
+    }
+    if (prev.length >= 4) return prev;
+
+    return [...prev, { sku: selected.sku, name: selected.name, rate: selected.rate, qty: 1 } as any];
+  });
+
+  e.target.value = "";
+};
+
 
     const handleGenerate = () => {
         setGenerating(true);
@@ -327,9 +365,12 @@ const formData = {
                                                 <label className="text-[11px] font-bold text-text-muted uppercase block mb-1.5">Add Items From Price List:</label>
                                                 <select onChange={handleAddItem} className="w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer">
                                                     <option value="">-- Tap to Select Item --</option>
-                                                    {Object.entries(JOB_DATA).map(([key, item]) => (
-                                                        <option key={key} value={key}>{item.sku} · {item.name} (${item.rate})</option>
+                                                    {pricebook.map((item) => (
+                                                      <option key={item.sku} value={item.sku}>
+                                                        {item.sku} · {item.name} (${item.rate})
+                                                      </option>
                                                     ))}
+
                                                 </select>
                                                 <p className="text-[11px] text-text-muted mt-1.5 ml-1">
                                                     Pick up to 4 common items. Total updates automatically.
