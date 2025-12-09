@@ -123,28 +123,16 @@ export const TestDrive = () => {
     }, [stage, showAcceptFlow]);
 
     // Handlers
-const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  const selectedSku = e.target.value;
-  if (!selectedSku) return;
-
-  const catalog = Object.values(JOB_DATA);
-  const selected = catalog.find((x) => x.sku === selectedSku);
-  if (!selected) {
-    // reset dropdown and bail
-    e.target.value = "";
-    return;
-  }
-
-  setItems((prev) => {
-    // If already added, just increment qty
-    const existingIdx = prev.findIndex((p) => p.sku === selected.sku);
-    if (existingIdx >= 0) {
-      const next = [...prev];
-      next[existingIdx] = { ...next[existingIdx], qty: Number(next[existingIdx].qty || 0) + 1 };
-      return next;
-    }
-      e.target.value = ""; // optional: reset dropdown
+    const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const key = e.target.value;
+        if (!key) return;
+        const newItem = JOB_DATA[key];
+        if (!items.find(i => i.sku === newItem.sku)) {
+            setItems([...items, newItem]);
+        }
+        e.target.value = ''; 
     };
+
     const handleGenerate = () => {
         setGenerating(true);
         const startTime = Date.now();
@@ -336,16 +324,16 @@ const formData = {
 
                                             {/* SKU Selector */}
                                             <div className="mb-4">
-                                              <label className="text-[11px] font-bold text-text-muted uppercase block mb-1.5">Add Items From Price List:</label>
-                                              <select onChange={handleAddItem} className="w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer">
-                                                <option value="">-- Tap to Select Item --</option>
-                                                {Object.entries(JOB_DATA).map(([key, item]) => (
-                                                  <option key={key} value={key}>{item.sku} · {item.name} (${item.rate})</option>
-                                                ))}
-                                              </select>
-                                              <p className="text-[11px] text-text-muted mt-1.5 ml-1">
-                                                Pick up to 4 common items. Total updates automatically.
-                                              </p>
+                                                <label className="text-[11px] font-bold text-text-muted uppercase block mb-1.5">Add Items From Price List:</label>
+                                                <select onChange={handleAddItem} className="w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer">
+                                                    <option value="">-- Tap to Select Item --</option>
+                                                    {Object.entries(JOB_DATA).map(([key, item]) => (
+                                                        <option key={key} value={key}>{item.sku} · {item.name} (${item.rate})</option>
+                                                    ))}
+                                                </select>
+                                                <p className="text-[11px] text-text-muted mt-1.5 ml-1">
+                                                    Pick up to 4 common items. Total updates automatically.
+                                                </p>
                                             </div>
 
                                             {/* Items Table */}
