@@ -159,7 +159,7 @@ const attrib = getAttribution();
 const formData = {
   action: "demoLead",
   timestamp: new Date().toISOString(),
-  leadId: getOrCreateLeadId(),
+  leadId: crypto.randomUUID(),
 
   name: leadName || "Demo Lead",
   trade: leadTrade || "",
