@@ -123,16 +123,19 @@ export const TestDrive = () => {
     }, [stage, showAcceptFlow]);
 
     // Handlers
-    const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const key = e.target.value;
-        if (!key) return;
-        const newItem = JOB_DATA[key];
-        if (!items.find(i => i.sku === newItem.sku)) {
-            setItems([...items, newItem]);
-        }
-        e.target.value = ''; 
+      const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedSku = e.target.value;
+      if (!selectedSku) return;
+    
+      const item = Object.values(JOB_DATA).find(x => x.sku === selectedSku);
+      if (!item) return;
+    
+      // TODO: your existing "add item to state" code here, but use `item`
+      // example:
+      // setItems(prev => [...prev, { ...item, qty: 1 }]);
+    
+      e.target.value = ""; // optional: reset dropdown
     };
-
     const handleGenerate = () => {
         setGenerating(true);
         const startTime = Date.now();
@@ -327,9 +330,11 @@ const formData = {
                                                 <label className="text-[11px] font-bold text-text-muted uppercase block mb-1.5">Add Items From Price List:</label>
                                                 <select onChange={handleAddItem} className="w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer">
                                                     <option value="">-- Tap to Select Item --</option>
-                                                    {Object.entries(JOB_DATA).map(([key, item]) => (
-                                                        <option key={key} value={key}>{item.sku} · {item.name} (${item.rate})</option>
-                                                    ))}
+                                                    {Object.values(JOB_DATA).map((item) => (
+                                                    <option key={item.sku} value={item.sku}>
+                                                      {item.sku} · {item.name} (${item.rate})
+                                                    </option>
+                                                  ))}
                                                 </select>
                                                 <p className="text-[11px] text-text-muted mt-1.5 ml-1">
                                                     Pick up to 4 common items. Total updates automatically.
