@@ -88,7 +88,7 @@ export const TestDrive = () => {
     );
     
     useEffect(() => {
-      const url = "https://script.google.com/macros/s/AKfycbxkMjsssIQrUKUUf1UYWxQYuXDG7evXgp0X3A2tocmPHI_330ilJxTINiAMeijRRRTD/exec?a=pricebook";
+      const url = "https://script.google.com/macros/s/AKfycbwgIiZWwkwZOWY8u9FzypkbTupzGBEsanhOggAZuVO_vzit7S3Zsz5zuLlpObYZugvP/exec?a=pricebook";
       fetch(url)
         .then(r => r.json())
         .then(data => {
