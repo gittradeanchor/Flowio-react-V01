@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <script>
+      // 1) Put your demo_delivery GAS Web App /exec base here (NO key param)
+      const GAS_BASE = "https://script.google.com/macros/s/AKfycbxkMjsssIQrUKUUf1UYWxQYuXDG7evXgp0X3A2tocmPHI_330ilJxTINiAMeijRRRTD/exec";
+
+      // 2) Pass through the query params exactly (qid, t, exp, a=checkout, etc.)
+      const qs = window.location.search || "";
+      const target = GAS_BASE + qs;
+
+      // 3) Hard redirect
+      window.location.replace(target);
+    </script>
+  </body>
+</html>
