@@ -78,7 +78,7 @@ export const TestDrive = () => {
     // "gate": Intermediate state where the blurred preview is shown
     const [stage, setStage] = useState<1 | 'gate' | 2 >(1); 
     type PriceItem = { sku: string; name: string; rate: number };
-    
+    const isFirstRender = useRef(true); // Track initial mount
     const [pricebook, setPricebook] = useState<PriceItem[]>(
       Object.values(FALLBACK_JOB_DATA).map((x: any) => ({
         sku: x.sku,
@@ -137,6 +137,11 @@ export const TestDrive = () => {
 
     // Scroll Focus Logic
     useEffect(() => {
+              // STOP: Do not scroll on the very first render (page load)
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         const timeoutId = setTimeout(() => {
             if (sectionRef.current) {
                 // Smoothly scroll to the top of the section on stage change
@@ -522,7 +527,7 @@ const formData = {
                         {/* STAGE 2: SENT SCREEN */}
                         {stage === 2 && (
                             <div id="stage-2" className="flex items-center justify-center min-h-[400px] animate-fade-in py-6">
-                                <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-10 text-center max-w-[600px] w-full mx-4 border border-border">
+                                <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 text-center max-w-[510px] w-full mx-4 border border-border">
                                      <div className="w-8 h-8 bg-green/10 text-green rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">✓</div>
                                      <h2 className="text-2xl font-black text-navy mb-2">Sent. Check your phone.</h2>
                                      <p className="text-text-muted text-sm mb-4 leading-relaxed">
@@ -531,7 +536,7 @@ const formData = {
 
                                      {/* QR Code */}
                                      <div className="hidden md:inline-block bg-white border-2 border-dashed border-border rounded-xl p-2 mb-3 relative group cursor-default shadow-sm">
-                                        <div className="w-[90px] h-[90px] bg-navy relative overflow-hidden flex items-center justify-center">
+                                        <div className="w-[75px] h-[75px] bg-navy relative overflow-hidden flex items-center justify-center">
                                              <svg viewBox="0 0 100 100" fill="white" className="w-full h-full p-2 opacity-90">
                                                 <path d="M10,10 h30 v30 h-30 z M50,10 h30 v30 h-30 z M10,50 h30 v30 h-30 z M50,50 h10 v10 h-10 z M70,50 h10 v10 h-10 z M50,70 h10 v10 h-10 z M70,70 h10 v10 h-10 z" />
                                                 <rect x="20" y="20" width="10" height="10" fill="black"/>
