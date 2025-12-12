@@ -6,7 +6,14 @@
     <meta name="referrer" content="no-referrer" />
     <title>Redirecting…</title>
   </head>
+  
   <body>
+  <p>Redirecting…</p>
+  <p>
+    If nothing happens, tap:
+    <a id="open" href="#" target="_blank" rel="noopener noreferrer">Open checkout</a>
+  </p>
+    
     <script>
       // 1) Put your demo_delivery GAS Web App /exec base here (NO key param)
       const GAS_BASE = "https://script.google.com/macros/s/AKfycbx-HonjWiWfnVDLnD3M-hrYKUgfpKUyo3hWBiNg1w2NO3WbARMVcspd-QKQ0kMePH1A/exec";
@@ -14,9 +21,12 @@
       // 2) Pass through the query params exactly (qid, t, exp, a=checkout, etc.)
       const qs = window.location.search || "";
       const target = GAS_BASE + qs;
+      
+    // Set fallback link
+    document.getElementById('open').href = target;
 
-      // 3) Hard redirect
-      window.location.replace(target);
-    </script>
+    // Auto-redirect for normal browsers
+    window.location.replace(target);
+  </script>
   </body>
 </html>
