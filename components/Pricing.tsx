@@ -217,7 +217,7 @@ export const Pricing = () => {
     const SharedCTA = () => (
         <div className="p-6 bg-white border-t border-border text-center">
             <a href="#funnel-cta" className="flex items-center justify-center w-full md:max-w-md mx-auto py-4 bg-navy hover:bg-navy-light text-white rounded-xl shadow-btn-navy hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)] hover:-translate-y-0.5 transition-all duration-200 font-bold text-lg uppercase tracking-wide mb-3">
-                Secure your install slot →
+                Book a 10-min fit check →
             </a>
             <p className="text-sm font-medium text-navy mb-4">
                  We'll message you within 5 minutes.
