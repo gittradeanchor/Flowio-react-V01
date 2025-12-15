@@ -9,8 +9,33 @@ import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { ChatWidget } from './components/ChatWidget';
+import { BookingConfirmed } from './components/BookingConfirmed';
+import { useAttribution } from './hooks/useAttribution';
 
 const App = () => {
+    // Basic Routing Logic
+    const [currentPath, setCurrentPath] = useState(window.location.pathname);
+    
+    // 1. Capture Attribution (UTMs, Click IDs)
+    useAttribution();
+
+    useEffect(() => {
+        const handlePopState = () => setCurrentPath(window.location.pathname);
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
+    // RENDER: BOOKING CONFIRMED PAGE
+    if (currentPath === '/booking-confirmed' || currentPath === '/booking-confirmed/') {
+        return <BookingConfirmed />;
+    }
+
+    // RENDER: MAIN LANDING PAGE
+    return <LandingPage />;
+};
+
+// Extracted Main Landing Page Component for clarity
+const LandingPage = () => {
     // isFocusMode hides Header/Nav (for Pricing)
     const [isFocusMode, setIsFocusMode] = useState(false);
     // isTestDriveActive tracks visibility of Test Drive section
