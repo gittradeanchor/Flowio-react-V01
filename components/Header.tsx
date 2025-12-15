@@ -55,7 +55,7 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                             href="#funnel-cta"
                             className="px-3 py-1.5 text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
                         >
-                            Book Demo
+                            Book a Fit Call
                         </a>
                         <button 
                             className="p-1 text-navy focus:outline-none"
