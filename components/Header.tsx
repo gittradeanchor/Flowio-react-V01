@@ -46,7 +46,7 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                                 : 'bg-navy text-white shadow-btn-navy hover:shadow-lg'
                         }`}
                     >
-                        Book a Demo
+                        Book a Fit Call
                     </a>
 
                     {/* Mobile Right Side Group */}
