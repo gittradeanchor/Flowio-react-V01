@@ -28,9 +28,19 @@ export const FAQ = () => {
 
                 <div className="bg-bg-off border-t border-border py-12 px-6 md:px-12 rounded-3xl">
                     <div className="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-8 items-center text-center md:text-left">
-                        {/* Founder Image Placeholder */}
-                        <div className="w-[100px] h-[100px] rounded-full bg-slate-300 border-4 border-white shadow-lg mx-auto md:mx-0 overflow-hidden">
-                            <div className="w-full h-full bg-navy flex items-center justify-center text-white text-xs">FOUNDER</div>
+                        {/* Founder Image */}
+                        <div className="w-[100px] h-[100px] rounded-full bg-slate-300 border-4 border-white shadow-lg mx-auto md:mx-0 overflow-hidden relative group">
+                            <img 
+                                src="/images/Founder.png" 
+                                alt="Founder" 
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                }}
+                            />
+                            {/* Fallback if image fails to load */}
+                            <div className="hidden absolute inset-0 bg-navy flex items-center justify-center text-white text-xs">FOUNDER</div>
                         </div>
                         <div>
                             <h3 className="text-navy font-extrabold text-xl mb-2">I'm not a SaaS Company.</h3>
