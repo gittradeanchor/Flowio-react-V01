@@ -1,84 +1,23 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { JOB_DATA as FALLBACK_JOB_DATA } from '../constants';
 import { JobItem, QuoteTotals } from '../types';
 import { AcceptFlow } from './AcceptFlow';
-
-// Atribution Capture
-
-const ATTRIB_KEY = 'flowio_attrib_v1';
-const LEAD_ID_KEY = 'flowio_lead_id_v1';
-
-function getOrCreateLeadId() {
-  const existing = localStorage.getItem(LEAD_ID_KEY);
-  if (existing) return existing;
-
-  const id =
-    (crypto?.randomUUID && crypto.randomUUID()) ||
-    `lead_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-
-  localStorage.setItem(LEAD_ID_KEY, id);
-  return id;
-}
-
-function captureAttributionOnce() {
-  // Keep first-touch attribution (don’t overwrite if already stored)
-  const existing = localStorage.getItem(ATTRIB_KEY);
-  if (existing) return JSON.parse(existing);
-
-  const url = new URL(window.location.href);
-  const q = url.searchParams;
-
-  const attrib = {
-    utm_source: q.get('utm_source') || '',
-    utm_medium: q.get('utm_medium') || '',
-    utm_campaign: q.get('utm_campaign') || '',
-    utm_content: q.get('utm_content') || '',
-    utm_term: q.get('utm_term') || '',
-
-    fbclid: q.get('fbclid') || '',
-    gclid: q.get('gclid') || '',
-    msclkid: q.get('msclkid') || '',
-    wbraid: q.get('wbraid') || '',
-    gbraid: q.get('gbraid') || '',
-
-    // These only exist if YOU add them to your ad URL templates
-    ad_id: q.get('ad_id') || '',
-    adset_id: q.get('adset_id') || '',
-    campaign_id: q.get('campaign_id') || '',
-
-    landing_url: url.href.split('#')[0],
-    referrer: document.referrer || '',
-    user_agent: navigator.userAgent || ''
-  };
-
-  localStorage.setItem(ATTRIB_KEY, JSON.stringify(attrib));
-  return attrib;
-}
-
-function getAttribution() {
-  try {
-    return JSON.parse(localStorage.getItem(ATTRIB_KEY) || '{}');
-  } catch {
-    return {};
-  }
-}
+import { getStoredAttribution, getOrCreateLeadId } from '../hooks/useAttribution';
 
 export const TestDrive = () => {
-
-      useEffect(() => {
-    captureAttributionOnce();
-    getOrCreateLeadId();
-  }, []);
-
-    
     // Stage Management
     // 1: Builder
     // 2: Sent Screen (QR Code / Success Message)
     // "gate": Intermediate state where the blurred preview is shown
     const [stage, setStage] = useState<1 | 'gate' | 2 >(1); 
-    type PriceItem = { sku: string; name: string; rate: number };
+    const sectionRef = useRef<HTMLElement>(null);
     const isFirstRender = useRef(true); // Track initial mount
+    
+    // Switch to external Accept Flow component
+    const [showAcceptFlow, setShowAcceptFlow] = useState(false);
+
+    // Dynamic Pricebook State
+    type PriceItem = { sku: string; name: string; rate: number };
     const [pricebook, setPricebook] = useState<PriceItem[]>(
       Object.values(FALLBACK_JOB_DATA).map((x: any) => ({
         sku: x.sku,
@@ -86,7 +25,8 @@ export const TestDrive = () => {
         rate: x.rate
       }))
     );
-    
+
+    // Fetch Pricebook from Google Script
     useEffect(() => {
       const url = "https://script.google.com/macros/s/AKfycby01i3vP2zR2_zA5dDMPrrsFMnTHsM15yAaIlOPV-_qqZhmZ5LX-boS752IVjb3vZq4/exec?a=pricebook";
       fetch(url)
@@ -98,14 +38,9 @@ export const TestDrive = () => {
         })
         .catch(() => {
           // keep fallback, zero UX change
+          console.log("Using fallback pricebook");
         });
     }, []);
-
-  
-    const sectionRef = useRef<HTMLElement>(null);
-    
-    // Switch to external Accept Flow component
-    const [showAcceptFlow, setShowAcceptFlow] = useState(false);
 
     // Builder State
     const [items, setItems] = useState<JobItem[]>([]);
@@ -137,11 +72,12 @@ export const TestDrive = () => {
 
     // Scroll Focus Logic
     useEffect(() => {
-              // STOP: Do not scroll on the very first render (page load)
+        // STOP: Do not scroll on the very first render (page load)
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
+
         const timeoutId = setTimeout(() => {
             if (sectionRef.current) {
                 // Smoothly scroll to the top of the section on stage change
@@ -153,28 +89,28 @@ export const TestDrive = () => {
     }, [stage, showAcceptFlow]);
 
     // Handlers
-const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  const selectedSku = e.target.value;
-  if (!selectedSku) return;
+    const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedSku = e.target.value;
+        if (!selectedSku) return;
 
-  const selected = pricebook.find(x => x.sku === selectedSku);
-  if (!selected) { e.target.value = ""; return; }
+        const selected = pricebook.find(x => x.sku === selectedSku);
+        if (!selected) { e.target.value = ""; return; }
 
-  setItems((prev) => {
-    const idx = prev.findIndex(p => p.sku === selected.sku);
-    if (idx >= 0) {
-      const next = [...prev];
-      next[idx] = { ...next[idx], qty: Number(next[idx].qty || 0) + 1 };
-      return next;
-    }
-    if (prev.length >= 4) return prev;
+        setItems((prev) => {
+            const idx = prev.findIndex(p => p.sku === selected.sku);
+            if (idx >= 0) {
+                // Increment Quantity if exists
+                const next = [...prev];
+                next[idx] = { ...next[idx], qty: Number(next[idx].qty || 0) + 1 };
+                return next;
+            }
+            if (prev.length >= 4) return prev;
 
-    return [...prev, { sku: selected.sku, name: selected.name, rate: selected.rate, qty: 1 } as any];
-  });
+            return [...prev, { sku: selected.sku, name: selected.name, rate: selected.rate, qty: 1 } as any];
+        });
 
-  e.target.value = "";
-};
-
+        e.target.value = "";
+    };
 
     const handleGenerate = () => {
         setGenerating(true);
@@ -197,47 +133,29 @@ const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
         e.preventDefault();
         setSmsSending(true);
 
-const attrib = getAttribution();
+        const attrib = getStoredAttribution();
 
-const formData = {
-  action: "demoLead",
-  timestamp: new Date().toISOString(),
-  leadId: crypto.randomUUID(),
+        // Updated Payload Structure to match User requirements
+        const formData = {
+            action: "demoLead",
+            timestamp: new Date().toISOString(),
+            leadId: getOrCreateLeadId(), // Use persistent Lead ID
 
-  name: leadName || "Demo Lead",
-  trade: leadTrade || "",
-  phone: formMobile || "",
-  email: formEmail || "",
+            name: leadName || "Demo Lead",
+            trade: leadTrade || "",
+            phone: formMobile || "",
+            email: formEmail || "",
 
-  // only what you need
-  items: (Array.isArray(items) ? items : [items])
-  .filter(i => Number(i.qty) > 0)
-  .map(i => ({ sku: i.sku, qty: Number(i.qty) })),
+            // Only send SKU and Qty as requested
+            items: (Array.isArray(items) ? items : [items])
+                .filter(i => Number(i.qty) > 0)
+                .map(i => ({ sku: i.sku, qty: Number(i.qty) })),
 
-  total: totals?.total ?? "",
+            total: totals?.total ?? "",
 
-  // 23-ish attribution fields
-  utm_source: attrib.utm_source || "",
-  utm_medium: attrib.utm_medium || "",
-  utm_campaign: attrib.utm_campaign || "",
-  utm_content: attrib.utm_content || "",
-  utm_term: attrib.utm_term || "",
-
-  fbclid: attrib.fbclid || "",
-  gclid: attrib.gclid || "",
-  msclkid: attrib.msclkid || "",
-  wbraid: attrib.wbraid || "",
-  gbraid: attrib.gbraid || "",
-
-  ad_id: attrib.ad_id || "",
-  adset_id: attrib.adset_id || "",
-  campaign_id: attrib.campaign_id || "",
-
-  landing_url: attrib.landing_url || window.location.href.split("#")[0],
-  referrer: attrib.referrer || document.referrer || "",
-  user_agent: attrib.user_agent || navigator.userAgent || ""
-};
-
+            // Flattened Attribution
+            ...attrib
+        };
 
         // Fallback hardcoded URL + Environment Variable check
         let webhookUrl = 'https://hook.us2.make.com/iowm5ja7jqtluqu6geuxu39ski3g9u2j';
@@ -371,11 +289,8 @@ const formData = {
                                                 <select onChange={handleAddItem} className="w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer">
                                                     <option value="">-- Tap to Select Item --</option>
                                                     {pricebook.map((item) => (
-                                                      <option key={item.sku} value={item.sku}>
-                                                        {item.sku} · {item.name} (${item.rate})
-                                                      </option>
+                                                        <option key={item.sku} value={item.sku}>{item.sku} · {item.name} (${item.rate})</option>
                                                     ))}
-
                                                 </select>
                                                 <p className="text-[11px] text-text-muted mt-1.5 ml-1">
                                                     Pick up to 4 common items. Total updates automatically.
@@ -544,8 +459,8 @@ const formData = {
                                                 <rect x="20" y="60" width="10" height="10" fill="black"/>
                                              </svg>
                                         </div>
-                                        <div className="mt-2 text-[7px] font-bold text-text-muted uppercase tracking-wide">
-                                            Scan with phone camera<br/>to open client link
+                                        <div className="mt-2 text-[6px] font-bold text-text-muted uppercase tracking-wide leading-tight">
+                                            Scan with phone<br/>to open
                                         </div>
                                      </div>
 
@@ -582,5 +497,3 @@ const formData = {
                 )}
             </div>
         </section>
-    );
-};
