@@ -143,7 +143,7 @@ export const Pricing = () => {
             </div>
 
             <div className="text-xs text-text-muted text-center border-t border-dashed border-border pt-4">
-                <span className="font-bold text-navy">What you need:</span> Google Workspace + Stripe (optional) + 15 mins.
+                <span className="font-bold text-navy">What you need:</span> Google Workspace + Stripe (optional) + 10 mins.
             </div>
         </>
     );
@@ -271,7 +271,7 @@ export const Pricing = () => {
             <div id="funnel-cta" className="mt-16 bg-navy text-white py-16 md:py-20 text-center">
                 <div className="container mx-auto px-5 max-w-[700px]">
                     <h2 className="text-2xl md:text-4xl font-black mb-5 leading-tight">I only onboard 3 trades per week.</h2>
-                    <p className="text-lg opacity-80 mb-10 leading-relaxed max-w-xl mx-auto">Let's chat for 15 minutes. No sales pressure—just a demo of how it works for your specific trade.</p>
+                    <p className="text-lg opacity-80 mb-10 leading-relaxed max-w-xl mx-auto">Let's chat for 10 minutes. No sales pressure—just a demo of how it works for your specific trade.</p>
                     
                     <div className="flex justify-center gap-5 flex-wrap">
                         <a href="https://calendly.com/" target="_blank" rel="noreferrer" className="bg-white text-navy px-8 py-4 rounded-xl font-bold text-lg shadow-btn-white hover:bg-slate-100 transition-colors flex items-center gap-2">
