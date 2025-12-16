@@ -28,7 +28,7 @@ export const TestDrive = () => {
 
     // Fetch Pricebook from Google Script
     useEffect(() => {
-      const url = "https://script.google.com/macros/s/AKfycbw7jJBkE_2lNUeDwW5lgfj63k5K_vI0MyEF2wbOhNGfiF9922_Wx3gF2osfAL2RsDm2/exec?a=pricebook";
+      const url = import.meta.env.VITE_GSCRIPT_PRICEBOOK_URL;
       fetch(url)
         .then(r => r.json())
         .then(data => {
