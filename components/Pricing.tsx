@@ -274,7 +274,7 @@ export const Pricing = () => {
                     <p className="text-lg opacity-80 mb-10 leading-relaxed max-w-xl mx-auto">Let's chat for 10 minutes. No sales pressure—just a demo of how it works for your specific trade.</p>
                     
                     <div className="flex justify-center gap-5 flex-wrap">
-                        <a href="https://calendly.com/" target="_blank" rel="noreferrer" className="bg-white text-navy px-8 py-4 rounded-xl font-bold text-lg shadow-btn-white hover:bg-slate-100 transition-colors flex items-center gap-2">
+                        <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="bg-white text-navy px-8 py-4 rounded-xl font-bold text-lg shadow-btn-white hover:bg-slate-100 transition-colors flex items-center gap-2">
                              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                              Book A 10-Min Fit check
                         </a>
