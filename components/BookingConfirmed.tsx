@@ -30,7 +30,7 @@ export const BookingConfirmed = () => {
 
             // B) Server-side Tracking (Optional) - using existing webhook or placeholder
             // Using a generic webhook structure as requested
-            const webhookUrl = 'https://hook.us2.make.com/iowm5ja7jqtluqu6geuxu39ski3g9u2j'; // Reusing the known webhook for simplicity
+            const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL || '';
             
             fetch(webhookUrl, {
                 method: 'POST',
