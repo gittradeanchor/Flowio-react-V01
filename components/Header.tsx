@@ -19,7 +19,7 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
     const navItems = [
         { label: 'Test Drive', href: '#test-drive' },
         { label: 'Pricing', href: '#offer' },
-        { label: 'Get in Touch', href: 'https://wa.me/61494186989', external: true },
+        { label: 'Get in Touch', href: import.meta.env.VITE_WHATSAPP_LINK, external: true },
         { label: 'Terms', href: '#footer' },
     ];
 
