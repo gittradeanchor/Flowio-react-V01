@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-
+const videoId = import.meta.env.VITE_YOUTUBE_ID;
 export const Hero = () => {
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
@@ -79,7 +79,7 @@ export const Hero = () => {
                                     aria-label="Play demo video"
                                 >
                                     <img 
-                                        src="https://i.ytimg.com/vi/Z2NO3qIiP5c/maxresdefault.jpg" 
+                                        src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`} 
                                         alt="Flowio Demo" 
                                         className="w-full h-full object-cover block" 
                                         loading="lazy"
@@ -91,7 +91,7 @@ export const Hero = () => {
                             ) : (
                                 <iframe
                                     className="absolute inset-0 w-full h-full border-0"
-                                    src="https://www.youtube-nocookie.com/embed/Z2NO3qIiP5c?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1&controls=1"
+                                    src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1&controls=1"
                                     title="Flowio Demo"
                                     allow="autoplay; encrypted-media; picture-in-picture"
                                     allowFullScreen
