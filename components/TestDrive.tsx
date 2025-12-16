@@ -140,8 +140,8 @@ export const TestDrive = () => {
         // This link is used by the SMS service to guide the user back to the demo
         const acceptUrl = typeof window !== 'undefined' 
             ? `${window.location.origin}/?demo=accept&id=${leadId}`
-            : `https://tradeanchor.com/?demo=accept&id=${leadId}`;
-
+            : `${import.meta.env.VITE_SITE_URL}/?demo=accept&id=${leadId}`;
+        
         // Updated Payload Structure to match User requirements
         const formData = {
             action: "demoLead",
