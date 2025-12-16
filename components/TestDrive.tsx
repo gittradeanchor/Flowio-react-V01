@@ -134,12 +134,20 @@ export const TestDrive = () => {
         setSmsSending(true);
 
         const attrib = getStoredAttribution();
+        const leadId = getOrCreateLeadId();
+        
+        // Define acceptUrl BEFORE usage to prevent ReferenceError in automation
+        // This link is used by the SMS service to guide the user back to the demo
+        const acceptUrl = typeof window !== 'undefined' 
+            ? `${window.location.origin}/?demo=accept&id=${leadId}`
+            : `https://tradeanchor.com/?demo=accept&id=${leadId}`;
 
         // Updated Payload Structure to match User requirements
         const formData = {
             action: "demoLead",
             timestamp: new Date().toISOString(),
-            leadId: getOrCreateLeadId(), // Use persistent Lead ID
+            leadId: leadId,
+            acceptUrl: acceptUrl,
 
             name: leadName || "Demo Lead",
             trade: leadTrade || "",
