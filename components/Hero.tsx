@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 const videoId = import.meta.env.VITE_YOUTUBE_ID;
+if (!videoId) return null; // or render a fallback block
+
 export const Hero = () => {
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
