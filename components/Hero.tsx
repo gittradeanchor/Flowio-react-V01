@@ -92,13 +92,14 @@ export const Hero = () => {
                                     </span>
                                 </button>
                             ) : (
-                                <iframe
-                                    className="absolute inset-0 w-full h-full border-0"
-                                    src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1&controls=1`}
-                                    title="Flowio Demo"
-                                    allow="autoplay; encrypted-media; picture-in-picture"
-                                    allowFullScreen
-                                ></iframe>
+                           <iframe
+                                  className="absolute inset-0 w-full h-full border-0"
+                                  src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1&controls=1`}
+                                  title="Flowio Demo"
+                                  allow="autoplay; encrypted-media; picture-in-picture"
+                                  allowFullScreen
+                                />
+
                             )}
                         </div>
                     </div>
