@@ -2,24 +2,14 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main] # Change this if your default branch is 'master'
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+    branches: [main]
+  pull_request:
+    branches: [main]
+...
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
