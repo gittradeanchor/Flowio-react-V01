@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
-const videoId = import.meta.env.VITE_YOUTUBE_ID;
-if (!videoId) return null; // or render a fallback block
+
 
 export const Hero = () => {
+    const videoId = import.meta.env.VITE_YOUTUBE_ID;
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-
+    
+    if (!videoId) return null; // or render a fallback block
     return (
         <section className="pt-20 pb-5 md:pt-32 md:pb-12 bg-gradient-to-b from-bg-off to-white">
             <div className="container mx-auto px-5 max-w-[1100px] flex flex-col items-center md:grid md:grid-cols-[1fr_1.2fr] gap-4 md:gap-12 md:items-center">
