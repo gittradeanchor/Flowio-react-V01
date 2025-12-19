@@ -5,6 +5,12 @@ export const BookingConfirmed = () => {
     const [fired, setFired] = useState(false);
 
     useEffect(() => {
+        // Strip Calendly junk + PII from URL (keep only src=calendly)
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('src') === 'calendly') {
+          window.history.replaceState({}, '', '/booking-confirmed?src=calendly');
+        }
+
         // 1. SEO: Add noindex, nofollow dynamically
         const metaRobots = document.createElement('meta');
         metaRobots.name = 'robots';
