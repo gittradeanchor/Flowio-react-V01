@@ -165,40 +165,38 @@ export const TestDrive = () => {
             ...attrib
         };
 
-        // Fallback hardcoded URL + Environment Variable check
-        const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL;
+        // Webhook URL (Cloudflare/Vite env baked at build time)
+        let webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL || '';
         
-        // Try to load from env if available (prevents hardcoding issues if you change it later)
-        // @ts-ignore
-        if (import.meta.env && import.meta.env.VITE_MAKE_WEBHOOK_URL) {
-            // @ts-ignore
-            webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL;
+        console.log("Sending payload to:", webhookUrl, formData);
+    
+         if (!webhookUrl) {
+          console.error("Missing VITE_MAKE_WEBHOOK_URL");
+          setStage(2);
+          setSmsSending(false);
+          return;
         }
 
-        console.log("Sending payload to:", webhookUrl, formData);
-
         try {
-             const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            
-            if (response.ok) {
-                console.log("Webhook Success");
-            } else {
-                console.warn("Webhook returned status:", response.status);
-            }
-             
-             // Move to Sent Screen regardless of webhook outcome to not block user
-             setStage(2);
-             
+          const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+        
+          if (response.ok) {
+            console.log("Webhook Success");
+          } else {
+            console.warn("Webhook returned status:", response.status);
+          }
+        
+          // Don't block user — proceed either way
+          setStage(2);
         } catch (e) {
-            console.error("Webhook Failed:", e);
-            // Still proceed to demo experience
-            setStage(2);
+          console.error("Webhook Failed:", e);
+          setStage(2);
         } finally {
-            setSmsSending(false);
+          setSmsSending(false);
         }
     };
     
