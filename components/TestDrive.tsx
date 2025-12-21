@@ -134,7 +134,8 @@ export const TestDrive = () => {
         setSmsSending(true);
 
         const attrib = getStoredAttribution();
-        const leadId = getOrCreateLeadId();
+        const leadId = crypto.randomUUID();
+
         
         // Define acceptUrl BEFORE usage to prevent ReferenceError in automation
         // This link is used by the SMS service to guide the user back to the demo
