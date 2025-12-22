@@ -148,13 +148,15 @@ export const TestDrive = () => {
         const formData = {
             action: "demoLead",
             timestamp: new Date().toISOString(),
-            personId: personId,
-            requestId: requestId,
+            personId,
+            requestId,
             leadId: requestId,
             acceptUrl: acceptUrl,
             source: "website", // hardcode in TestDrive for now
             source_detail: "testdrive", // or "landing:testdrive"
             referrer: document.referrer || "",
+            landing_url: window.location.href,
+            user_agent: navigator.userAgent,
 
             name: leadName || "Demo Lead",
             trade: leadTrade || "",
