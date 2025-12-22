@@ -152,6 +152,9 @@ export const TestDrive = () => {
             requestId: requestId,
             leadId: requestId,
             acceptUrl: acceptUrl,
+            source: "website" // hardcode in TestDrive for now
+            source_detail: "testdrive" // or "landing:testdrive"
+            referrer: document.referrer || ""
 
             name: leadName || "Demo Lead",
             trade: leadTrade || "",
