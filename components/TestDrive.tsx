@@ -135,8 +135,8 @@ export const TestDrive = () => {
 
         const attrib = getStoredAttribution();
         
-        const personId = getOrCreateLeadId(); (stable)
-        const requestId = crypto.randomUUID(); (per submit)
+        const personId = getOrCreateLeadId(); // stable
+        const requestId = crypto.randomUUID(); // per submit
         
         // Define acceptUrl BEFORE usage to prevent ReferenceError in automation
         // This link is used by the SMS service to guide the user back to the demo
