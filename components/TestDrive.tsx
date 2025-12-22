@@ -141,8 +141,8 @@ export const TestDrive = () => {
         // Define acceptUrl BEFORE usage to prevent ReferenceError in automation
         // This link is used by the SMS service to guide the user back to the demo
         const acceptUrl = typeof window !== 'undefined' 
-            ? `${window.location.origin}/?demo=accept&id=${leadId}`
-            : `${import.meta.env.VITE_SITE_URL}/?demo=accept&id=${leadId}`;
+            ? `${window.location.origin}/?demo=accept&id=${requestId}`
+            : `${import.meta.env.VITE_SITE_URL}/?demo=accept&id=${requestId}`;
         
         // Updated Payload Structure to match User requirements
         const formData = {
