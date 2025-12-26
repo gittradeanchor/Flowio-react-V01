@@ -4,61 +4,70 @@ import { getStoredAttribution } from '../hooks/useAttribution';
 export const BookingConfirmed = () => {
     const [fired, setFired] = useState(false);
 
-    useEffect(() => {
-        // Strip Calendly junk + PII from URL (keep only src=calendly)
-        const url = new URL(window.location.href);
-        if (url.searchParams.get('src') === 'calendly') {
-          window.history.replaceState({}, '', '/booking-confirmed?src=calendly');
-        }
+useEffect(() => {
+  // 0) Read Calendly params FIRST (before stripping)
+  const params = new URLSearchParams(window.location.search);
 
-        // 1. SEO: Add noindex, nofollow dynamically
-        const metaRobots = document.createElement('meta');
-        metaRobots.name = 'robots';
-        metaRobots.content = 'noindex, nofollow';
-        document.head.appendChild(metaRobots);
+  const booking = {
+    src: params.get('src') || '',
+    invitee_email: params.get('invitee_email') || '',
+    text_reminder_number: params.get('text_reminder_number') || '',
+    invitee_uuid: params.get('invitee_uuid') || '',
+    event_start_time: params.get('event_start_time') || '',
+    event_end_time: params.get('event_end_time') || '',
+    event_type_uuid: params.get('event_type_uuid') || '',
+    page_url: window.location.href,
+  };
 
-        // 2. TRACKING: Fire Meta Pixel (Schedule) - Once per session
-        const hasFired = sessionStorage.getItem('flowio_booking_tracked');
-        const attrib = getStoredAttribution();
-        
-        if (!hasFired) {
-            // A) Browser Pixel
-            if ((window as any).fbq) {
-                (window as any).fbq('track', 'Schedule', {
-                    value: 0,
-                    currency: 'AUD',
-                    ...attrib // Pass attribution data if pixel allows custom parameters
-                });
-                console.log('pixel_fired: Schedule');
-            } else {
-                console.log('pixel_missing: Schedule event simulated');
-            }
+  // 1) Strip Calendly junk + PII from URL (after capture)
+  if (booking.src === 'calendly') {
+    window.history.replaceState({}, '', '/booking-confirmed?src=calendly');
+  }
 
-            // B) Server-side Tracking (Optional) - using existing webhook or placeholder
-            // Using a generic webhook structure as requested
-            const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL || '';
-            
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    event: 'booking_confirmed',
-                    timestamp: new Date().toISOString(),
-                    ...attrib
-                }),
-            }).catch(err => console.error("Tracking error:", err));
+  // 2) SEO: noindex
+  const metaRobots = document.createElement('meta');
+  metaRobots.name = 'robots';
+  metaRobots.content = 'noindex, nofollow';
+  document.head.appendChild(metaRobots);
 
-            sessionStorage.setItem('flowio_booking_tracked', 'true');
-            setFired(true);
-        } else {
-            console.log('pixel_skipped: already fired this session');
-        }
+  // 3) Tracking: once per session
+  const hasFired = sessionStorage.getItem('flowio_booking_tracked');
+  const attrib = getStoredAttribution();
 
-        // Cleanup meta tag on unmount (optional, but good practice)
-        return () => {
-            document.head.removeChild(metaRobots);
-        };
-    }, []);
+  if (!hasFired) {
+    if ((window as any).fbq) {
+      (window as any).fbq('track', 'Schedule', {
+        value: 0,
+        currency: 'AUD',
+        ...attrib,
+      });
+    }
+
+    const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL || '';
+    if (webhookUrl) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'booking_confirmed',
+          timestamp: new Date().toISOString(),
+          booking,
+          ...attrib,
+        }),
+      }).catch(err => console.error('Tracking error:', err));
+    } else {
+      console.warn('Missing VITE_MAKE_WEBHOOK_URL');
+    }
+
+    sessionStorage.setItem('flowio_booking_tracked', 'true');
+    setFired(true);
+  }
+
+  return () => {
+    document.head.removeChild(metaRobots);
+  };
+}, []);
+
 
     return (
         <div className="min-h-screen bg-bg-off flex items-center justify-center p-4 font-sans">
