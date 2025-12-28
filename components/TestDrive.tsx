@@ -25,21 +25,41 @@ export const TestDrive = () => {
         rate: x.rate
       }))
     );
+    // Pricebook Loading States (prevents "mixed items" bug)
+    const [isPricebookLoading, setIsPricebookLoading] = useState(true);
+    const [pricebookError, setPricebookError] = useState(false);
+    
+    const fetchPricebook = async () => {
+      setIsPricebookLoading(true);
+      setPricebookError(false);
+    
+      const url = import.meta.env.VITE_GSCRIPT_PRICEBOOK_URL || '';
+      if (!url) {
+        setPricebookError(true);
+        setIsPricebookLoading(false);
+        return;
+      }
+    
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+    
+        if (data?.ok && Array.isArray(data.items) && data.items.length) {
+          setPricebook(data.items);
+        } else {
+          throw new Error('Invalid pricebook response');
+        }
+      } catch (err) {
+        console.warn('Pricebook fetch failed, using fallback items.');
+        setPricebookError(true);
+        // keep fallback pricebook
+      } finally {
+        setIsPricebookLoading(false);
+      }
+    };
 
-    // Fetch Pricebook from Google Script
     useEffect(() => {
-      const url = import.meta.env.VITE_GSCRIPT_PRICEBOOK_URL;
-      fetch(url)
-        .then(r => r.json())
-        .then(data => {
-          if (data?.ok && Array.isArray(data.items) && data.items.length) {
-            setPricebook(data.items);
-          }
-        })
-        .catch(() => {
-          // keep fallback, zero UX change
-          console.log("Using fallback pricebook");
-        });
+      fetchPricebook();
     }, []);
 
     // Builder State
@@ -90,6 +110,11 @@ export const TestDrive = () => {
 
     // Handlers
     const handleAddItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        // If there was an error, user can tap dropdown to retry
+        if (pricebookError && !e.target.value) {
+          fetchPricebook();
+          return;
+        }
         const selectedSku = e.target.value;
         if (!selectedSku) return;
 
@@ -301,12 +326,43 @@ export const TestDrive = () => {
                                             {/* SKU Selector */}
                                             <div className="mb-4">
                                                 <label className="text-[11px] font-bold text-text-muted uppercase block mb-1.5">Add Items From Price List:</label>
-                                                <select onChange={handleAddItem} className="w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer">
-                                                    <option value="">-- Tap to Select Item --</option>
-                                                    {pricebook.map((item) => (
-                                                        <option key={item.sku} value={item.sku}>{item.sku} · {item.name} (${item.rate})</option>
-                                                    ))}
-                                                </select>
+
+                                                <div className="relative">
+                                                  <select
+                                                    onChange={handleAddItem}
+                                                    disabled={isPricebookLoading}
+                                                    className={`w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer transition-opacity ${
+                                                      isPricebookLoading ? 'opacity-60' : 'opacity-100'
+                                                    }`}
+                                                  >
+                                                    {isPricebookLoading ? (
+                                                      <option value="">Loading price list...</option>
+                                                    ) : pricebookError ? (
+                                                      <option value="">Error. Tap to retry.</option>
+                                                    ) : (
+                                                      <option value="">-- Tap to Select Item --</option>
+                                                    )}
+                                                
+                                                    {!isPricebookLoading &&
+                                                      pricebook.map((item) => (
+                                                        <option key={item.sku} value={item.sku}>
+                                                          {item.sku} · {item.name} (${item.rate})
+                                                        </option>
+                                                      ))}
+                                                  </select>
+                                                
+                                                  {isPricebookLoading && (
+                                                    <div className="flex items-center gap-2 mt-2 px-1 text-[11px] text-orange font-bold">
+                                                      <svg className="animate-spin h-3 w-3 text-orange" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                      </svg>
+                                                      Syncing with Google Sheets...
+                                                    </div>
+                                                  )}
+                                                </div>
+
+                                                
                                                 <p className="text-[11px] text-text-muted mt-1.5 ml-1">
                                                     Pick up to 4 common items. Total updates automatically.
                                                 </p>
@@ -354,7 +410,7 @@ export const TestDrive = () => {
 
                                             <button 
                                                 onClick={handleGenerate}
-                                                disabled={items.length === 0 || generating}
+                                                disabled={items.length === 0 || generating || isPricebookLoading}
                                                 className="w-full mt-5 bg-green text-white py-4 rounded-lg font-bold text-lg hover:bg-[#0B844A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg active:translate-y-0.5"
                                             >
                                                 {generating ? '⚡ Generating...' : 'Send demo link →'}
