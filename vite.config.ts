@@ -7,5 +7,5 @@ export default defineConfig({
   // IMPORTANT: Replace 'REPO_NAME' with your actual GitHub repository name
   // e.g. base: '/tradeanchor-landing/'
   // If deploying to a custom domain (e.g. tradeanchor.com), set base: '/'
-  base: './', 
+  base: '/', 
 })
