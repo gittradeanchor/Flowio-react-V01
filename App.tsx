@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Hero } from './components/Hero';
+import Preinstall from "./components/Preinstall";
 import { TechStack } from './components/TechStack';
 import { Benefits } from './components/Benefits';
 import { TestDrive } from './components/TestDrive';
@@ -26,9 +27,11 @@ const App = () => {
     }, []);
 
     // RENDER: BOOKING CONFIRMED PAGE
-    if (currentPath === '/booking-confirmed' || currentPath === '/booking-confirmed/') {
-        return <BookingConfirmed />;
-    }
+    const path = (currentPath || "").replace(/\/+$/, "") || "/";
+    
+    if (path === "/booking-confirmed") return <BookingConfirmed />;
+    if (path === "/onboarding/preinstall") return <Preinstall />;
+
 
     // RENDER: MAIN LANDING PAGE
     return <LandingPage />;
