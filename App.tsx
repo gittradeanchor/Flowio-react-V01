@@ -19,7 +19,6 @@ const App = () => {
     
     // 1. Capture Attribution (UTMs, Click IDs)
     useAttribution();
-
     useEffect(() => {
         const handlePopState = () => setCurrentPath(window.location.pathname);
         window.addEventListener('popstate', handlePopState);
