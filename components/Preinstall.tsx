@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-meta name="robots" content="noindex, nofollow" /
+
+// --- Types & Configuration (Unchanged) ---
 type FormState = {
   workspace_admin_email: string;
   business_name: string;
@@ -75,6 +76,8 @@ const initialState: FormState = {
   pid: "",
 };
 
+// --- Helpers (Unchanged Logic) ---
+
 function looksLikeEmail(s: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s || "").trim());
 }
@@ -145,13 +148,15 @@ function buildSummary(obj: FormState) {
   return lines.join("\n");
 }
 
+// --- Component ---
+
 export default function Preinstall() {
   const [form, setForm] = useState<FormState>(initialState);
   const [submitError, setSubmitError] = useState<string>("");
   const [pricebookError, setPricebookError] = useState<boolean>(false);
   const [summary, setSummary] = useState<string>("");
 
-  // pull token/personId from URL if present
+  // 1. Load URL params
   useEffect(() => {
     const qs = new URLSearchParams(window.location.search);
     const t = qs.get("t") || "";
@@ -159,7 +164,7 @@ export default function Preinstall() {
     setForm((prev) => ({ ...prev, token: t, pid }));
   }, []);
 
-  // load draft once
+  // 2. Load Draft
   useEffect(() => {
     const raw = localStorage.getItem(DRAFT_KEY);
     if (!raw) return;
@@ -168,7 +173,6 @@ export default function Preinstall() {
       setForm((prev) => ({
         ...prev,
         ...obj,
-        // never try to restore file inputs as actual files; keep names only
         pricebook_file_names: Array.isArray(obj.pricebook_file_names) ? obj.pricebook_file_names : prev.pricebook_file_names,
         quote_examples_names: Array.isArray(obj.quote_examples_names) ? obj.quote_examples_names : prev.quote_examples_names,
         logo_file_names: Array.isArray(obj.logo_file_names) ? obj.logo_file_names : prev.logo_file_names,
@@ -178,7 +182,7 @@ export default function Preinstall() {
     }
   }, []);
 
-  // autosave draft on any change
+  // 3. Save Draft on Change
   useEffect(() => {
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
@@ -187,6 +191,7 @@ export default function Preinstall() {
     }
   }, [form]);
 
+  // Logic: Progress Calculation
   const essentialTotal = 7;
   const essentialFilled = useMemo(() => {
     let filled = 0;
@@ -216,6 +221,7 @@ export default function Preinstall() {
     return `mailto:?subject=${subject}&body=${body}`;
   }, [summary, form.business_name]);
 
+  // Handlers
   function updateText(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     setSubmitError("");
@@ -256,7 +262,6 @@ export default function Preinstall() {
     setSummary("");
     setForm((prev) => ({
       ...initialState,
-      // preserve URL token/pid if present
       token: prev.token,
       pid: prev.pid,
     }));
@@ -290,7 +295,6 @@ export default function Preinstall() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // essentials validation
     const missing: string[] = [];
     if (!form.workspace_admin_email.trim() || !looksLikeEmail(form.workspace_admin_email)) missing.push("Google Workspace Admin Email");
     if (!form.business_name.trim()) missing.push("Business Name");
@@ -318,533 +322,385 @@ export default function Preinstall() {
     const s = buildSummary(form);
     setSummary(s);
 
-    // keep draft
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
     } catch {
       // ignore
     }
 
-    // scroll to summary
     setTimeout(() => {
       const el = document.getElementById("summaryWrap");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
   }
 
-  return (
-    <div className="min-h-screen" style={{ background: BG, fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}>
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900">Flowio Pre-Install Checklist</h1>
-            <p className="text-xs sm:text-sm text-gray-500">
-              Fill this once. We install Flowio in your Google Workspace and you can start quoting the same day.
-            </p>
-          </div>
+  // Styles for clean UI
+  const sectionCardClass = "bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden";
+  const headerClass = "px-6 py-4 border-b border-gray-50 flex items-center justify-between bg-gray-50/50";
+  const headerTitleClass = "text-lg font-bold text-gray-800";
+  const contentClass = "p-6 sm:p-8 space-y-6";
+  const labelClass = "block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5";
+  const inputClass = "w-full bg-white border border-gray-300 rounded-md px-4 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all";
+  const helperClass = "mt-1.5 text-xs text-gray-500";
 
-          <div className="min-w-[160px] text-right">
-            <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Essentials</div>
-            <div className="flex items-center justify-end gap-3 mt-1">
-              <div className="text-lg font-extrabold" style={{ color: BRAND }}>
-                {essentialsPct}%
-              </div>
-              <div className="w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full transition-all duration-300" style={{ width: `${essentialsPct}%`, background: BRAND }} />
+  return (
+    <div className="min-h-screen pb-20" style={{ background: BG, fontFamily: "Inter, sans-serif" }}>
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div>
+            <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">Flowio Checklist</h1>
+            <p className="text-xs text-gray-500 hidden sm:block">Pre-install requirements</p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Progress</div>
+              <div className="flex items-center gap-2">
+                <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-green-600 transition-all duration-500" style={{ width: `${essentialsPct}%` }} />
+                </div>
+                <span className="text-xs font-bold text-green-700">{essentialsPct}%</span>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        {/* Top instructions */}
-        <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)]">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <main className="max-w-3xl mx-auto px-4 py-8 space-y-8">
+        
+        {/* Intro Card */}
+        <section className={sectionCardClass}>
+          <div className="p-6 sm:p-8 text-center sm:text-left sm:flex sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-extrabold text-gray-900">What this does (10 seconds)</h2>
-              <p className="text-sm text-gray-600 mt-1">
-                You give us the basics. We install Flowio inside your Google Workspace so you can send a quote → customer accepts → job gets booked.
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Let's get you set up.</h2>
+              <p className="text-sm text-gray-600 max-w-lg">
+                We need these details to configure your Flowio workspace. 
+                It takes about 10 minutes.
               </p>
             </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={saveDraftNow}
-                className="px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 font-semibold text-sm"
-              >
-                Save draft
+            <div className="mt-4 sm:mt-0 flex gap-2 justify-center">
+              <button onClick={saveDraftNow} className="text-xs font-semibold text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+                Save Draft
               </button>
-              <button
-                type="button"
-                onClick={clearAll}
-                className="px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 font-semibold text-sm"
-              >
-                Clear
+              <button onClick={clearAll} className="text-xs font-semibold text-red-500 hover:bg-red-50 px-3 py-2 rounded-md transition-colors">
+                Reset
               </button>
             </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-            <div className="rounded-lg bg-gray-50 border border-gray-200 p-3">
-              <div className="font-extrabold text-gray-900">Step 1</div>
-              <div className="text-gray-600">Fill the Essentials (required)</div>
-            </div>
-            <div className="rounded-lg bg-gray-50 border border-gray-200 p-3">
-              <div className="font-extrabold text-gray-900">Step 2</div>
-              <div className="text-gray-600">Upload pricebook OR paste items</div>
-            </div>
-            <div className="rounded-lg bg-gray-50 border border-gray-200 p-3">
-              <div className="font-extrabold text-gray-900">Step 3</div>
-              <div className="text-gray-600">Submit → you get a summary to send us</div>
-            </div>
-          </div>
-
-          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-            <span className="font-bold">Tip:</span> If you’re busy, do only the fields marked with a red star. That’s enough for us to start.
           </div>
         </section>
 
-        {/* Form */}
-        <form className="space-y-6" noValidate onSubmit={onSubmit}>
-          {/* ESSENTIALS */}
-          <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)] border-l-4" style={{ borderLeftColor: BRAND }}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Essentials (required)</h3>
-                <p className="text-sm text-gray-600">If you fill only this section, we can proceed.</p>
-              </div>
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">~ 2 minutes</span>
+        <form onSubmit={onSubmit} className="space-y-8">
+          
+          {/* STEP 1: ESSENTIALS */}
+          <section className={sectionCardClass}>
+            <div className={headerClass}>
+              <h3 className={headerTitleClass}>
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs font-bold mr-2">1</span>
+                Essentials
+              </h3>
+              <span className="text-xs font-medium text-red-500 bg-red-50 px-2 py-1 rounded">Required</span>
             </div>
+            
+            <div className={contentClass}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                
+                <div className="sm:col-span-2">
+                  <label className={labelClass}>Google Workspace Admin Email <span className="text-red-500">*</span></label>
+                  <input
+                    name="workspace_admin_email"
+                    type="email"
+                    className={inputClass}
+                    value={form.workspace_admin_email}
+                    onChange={updateText}
+                    placeholder="admin@yourcompany.com"
+                  />
+                  <p className={helperClass}>We need this to verify account ownership.</p>
+                </div>
 
-            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Google Workspace Admin Email
-                </label>
-                <input
-                  name="workspace_admin_email"
-                  type="email"
-                  autoComplete="email"
-                  value={form.workspace_admin_email}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-0"
-                  style={{ boxShadow: "none" }}
-                  placeholder="admin@yourdomain.com"
-                />
-                <p className="mt-1 text-xs text-gray-500">We use this to confirm ownership and set permissions correctly.</p>
+                <div>
+                  <label className={labelClass}>Business Name <span className="text-red-500">*</span></label>
+                  <input
+                    name="business_name"
+                    type="text"
+                    className={inputClass}
+                    value={form.business_name}
+                    onChange={updateText}
+                    placeholder="e.g. Acme Plumbing"
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Trade Type <span className="text-red-500">*</span></label>
+                  <select name="trade" value={form.trade} onChange={updateText} className={inputClass}>
+                    <option value="">Select...</option>
+                    <option>Electrician</option>
+                    <option>HVAC</option>
+                    <option>Plumber</option>
+                    <option>Handyman</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className={labelClass}>Primary Mobile (For SMS Tests) <span className="text-red-500">*</span></label>
+                  <input
+                    name="primary_mobile"
+                    type="tel"
+                    className={inputClass}
+                    value={form.primary_mobile}
+                    onChange={updateText}
+                    placeholder="e.g. 0400 000 000"
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Who Answers Calls? <span className="text-red-500">*</span></label>
+                  <input
+                    name="call_answerer"
+                    type="text"
+                    className={inputClass}
+                    value={form.call_answerer}
+                    onChange={updateText}
+                    placeholder="e.g. Sam (Mon-Fri 9-5)"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Business Name
-                </label>
-                <input
-                  name="business_name"
-                  type="text"
-                  value={form.business_name}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                  placeholder="Balnora Home Comfort"
-                />
+              {/* Deposit Section (Moved from Optional) */}
+              <div className="border-t border-b border-gray-100 py-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-bold text-gray-700 text-sm">Do you take deposits? <span className="text-red-500">*</span></span>
+                  <label className="flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input type="checkbox" name="deposit_enabled" checked={form.deposit_enabled} onChange={updateCheckbox} className="sr-only" />
+                      <div className={`block w-10 h-6 rounded-full transition-colors ${form.deposit_enabled ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                      <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${form.deposit_enabled ? 'transform translate-x-4' : ''}`}></div>
+                    </div>
+                    <div className="ml-3 text-sm font-medium text-gray-700">{form.deposit_enabled ? 'Yes' : 'No'}</div>
+                  </label>
+                </div>
+
+                {form.deposit_enabled && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                      <label className={labelClass}>Amount / %</label>
+                      <input name="deposit_amount" type="text" className={inputClass} value={form.deposit_amount} onChange={updateText} placeholder="e.g. 50%" />
+                    </div>
+                    <div>
+                      <label className={labelClass}>When is it charged?</label>
+                      <input name="deposit_when" type="text" className={inputClass} value={form.deposit_when} onChange={updateText} placeholder="e.g. On booking" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className={labelClass}>Cancellation Policy</label>
+                      <textarea name="deposit_policy" rows={2} className={inputClass} value={form.deposit_policy} onChange={updateText} placeholder="e.g. Non-refundable within 24h" />
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Primary Mobile (SMS)
-                </label>
-                <input
-                  name="primary_mobile"
-                  type="tel"
-                  inputMode="tel"
-                  value={form.primary_mobile}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                  placeholder="04xx xxx xxx"
-                />
-                <p className="mt-1 text-xs text-gray-500">We use this to test the SMS flow with you.</p>
-              </div>
-
-              <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Who Answers Calls?
-                </label>
-                <input
-                  name="call_answerer"
-                  type="text"
-                  value={form.call_answerer}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                  placeholder="Sam (7am–5pm)"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Trade
-                </label>
-                <select
-                  name="trade"
-                  value={form.trade}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                >
-                  <option value="">Select…</option>
-                  <option>Electrician</option>
-                  <option>HVAC</option>
-                  <option>Plumber</option>
-                  <option>Handyman</option>
-                  <option>Other</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+              {/* Checkboxes */}
+              <div className="bg-gray-50 rounded-lg p-4 space-y-3 border border-gray-100">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     name="confirm_access"
                     type="checkbox"
                     checked={form.confirm_access}
                     onChange={updateCheckbox}
-                    className="mt-1 h-5 w-5"
-                    style={{ accentColor: BRAND }}
+                    className="mt-1 w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
                   />
-                  <div>
-                    <div className="font-extrabold text-gray-900 text-sm">
-                      <span className="text-red-500">*</span> I confirm I can access Google Sheets, Drive, Calendar (and Gmail if used).
-                    </div>
-                    <div className="text-xs text-gray-600">If you’re unsure, still tick it and we’ll verify during install.</div>
-                  </div>
+                  <span className="text-sm text-gray-700">
+                    <span className="font-bold">Access Confirmation:</span> I confirm I can access Google Sheets, Drive, and Calendar. <span className="text-red-500">*</span>
+                  </span>
                 </label>
-              </div>
 
-              <div className="md:col-span-2">
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Consent
+                <div className="border-t border-gray-200 my-2"></div>
+
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    name="consent"
+                    type="checkbox"
+                    checked={form.consent}
+                    onChange={updateCheckbox}
+                    className="mt-1 w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
+                  />
+                  <span className="text-sm text-gray-700">
+                    <span className="font-bold">Consent:</span> “I consent to Flowio sending SMS/email to customers on my behalf for quotes, booking confirmations and reminders.” <span className="text-red-500">*</span>
+                  </span>
                 </label>
-                <div className="mt-1 rounded-lg text-white p-4" style={{ background: BRAND }}>
-                  <p className="text-sm italic opacity-95">
-                    “I consent to Flowio sending SMS/email to customers on my behalf for quotes, booking confirmations and reminders.”
-                  </p>
-                  <label className="mt-3 flex items-center gap-3 cursor-pointer rounded-lg p-3 hover:opacity-95" style={{ background: "rgba(255,255,255,0.12)" }}>
-                    <input
-                      name="consent"
-                      type="checkbox"
-                      checked={form.consent}
-                      onChange={updateCheckbox}
-                      className="h-5 w-5"
-                      style={{ accentColor: "white" }}
-                    />
-                    <span className="font-extrabold text-sm">Yes, I consent</span>
-                  </label>
-                </div>
               </div>
             </div>
           </section>
 
-          {/* PRICEBOOK */}
-          <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)] border-l-4 border-gray-600">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Pricebook (required)</h3>
-                <p className="text-sm text-gray-600">Upload a CSV/Sheet, or paste 10–30 common line items.</p>
-              </div>
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">~ 3 minutes</span>
+          {/* STEP 2: PRICEBOOK */}
+          <section className={sectionCardClass}>
+            <div className={headerClass}>
+              <h3 className={headerTitleClass}>
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-gray-700 text-xs font-bold mr-2">2</span>
+                Pricebook
+              </h3>
+              <span className="text-xs font-medium text-red-500 bg-red-50 px-2 py-1 rounded">Required</span>
             </div>
 
-            <div className="mt-5 grid grid-cols-1 gap-4">
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="font-extrabold text-gray-900 text-sm">Option A — Upload price list</div>
-                <p className="text-xs text-gray-600 mt-1">CSV is ideal. Google Sheet link is also fine (paste below if easier).</p>
-
-                <label className="mt-3 block">
+            <div className={contentClass}>
+              <p className="text-sm text-gray-600 mb-4">Please provide your pricing using <strong>one</strong> of the options below.</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Option A */}
+                <div className="border-2 border-dashed border-gray-200 rounded-lg p-5 hover:border-green-500 transition-colors bg-gray-50/50">
+                  <span className="block text-xs font-bold text-gray-400 uppercase mb-3">Option A: Upload File</span>
                   <input
                     name="pricebook_file"
                     type="file"
-                    accept=".csv,.xlsx,.xls,.pdf,.png,.jpg,.jpeg"
+                    accept=".csv,.xlsx,.xls,.pdf"
                     onChange={updateFiles("pricebook_file_names")}
-                    className="block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-gray-900 file:px-4 file:py-2 file:font-extrabold file:text-white hover:file:bg-gray-800"
+                    className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
-                </label>
+                  <div className="mt-4">
+                    <label className="text-xs font-bold text-gray-500 mb-1 block">Or paste Sheet Link</label>
+                    <input
+                      name="pricebook_sheet_link"
+                      type="url"
+                      value={form.pricebook_sheet_link}
+                      onChange={updateText}
+                      className={inputClass}
+                      placeholder="https://docs.google.com/..."
+                    />
+                  </div>
+                </div>
 
-                <div className="mt-3">
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Pricebook Sheet Link (optional)</label>
-                  <input
-                    name="pricebook_sheet_link"
-                    type="url"
-                    value={form.pricebook_sheet_link}
+                {/* Option B */}
+                <div className="border-2 border-gray-100 rounded-lg p-5 bg-white">
+                  <span className="block text-xs font-bold text-gray-400 uppercase mb-3">Option B: Paste Items Manually</span>
+                  <textarea
+                    name="pricebook_text"
+                    rows={6}
+                    value={form.pricebook_text}
                     onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="https://docs.google.com/spreadsheets/d/..."
+                    className={inputClass}
+                    placeholder={`SKU, Item Name, Price\nELEC01, Call Out, 120\nELEC02, Labour 1h, 110`}
                   />
+                  <p className={helperClass}>Enter 10-30 common items.</p>
                 </div>
               </div>
 
-              <div className="text-center text-xs font-extrabold text-gray-400">— OR —</div>
-
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="font-extrabold text-gray-900 text-sm">Option B — Paste items</div>
-                <p className="text-xs text-gray-600 mt-1">
-                  One per line. Format: <span className="font-mono">SKU, Name, Price, Default Qty (optional)</span>
-                </p>
-
-                <textarea
-                  name="pricebook_text"
-                  rows={6}
-                  value={form.pricebook_text}
-                  onChange={updateText}
-                  className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
-                  placeholder={`ELEC-001, Call-out (incl GST), 120, 1\nELEC-002, Power point supply+install, 165, 1\nGEN-002, Labour (per hour), 110, 2`}
-                />
-              </div>
-
               {pricebookError && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-                  Please provide a pricebook via upload or pasted items (or a sheet link).
+                <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md font-medium">
+                  ⚠️ Please upload a file, paste a link, or enter items manually.
                 </div>
               )}
             </div>
           </section>
 
-          {/* OPTIONAL */}
-          <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)]">
-            <details>
-              <summary className="cursor-pointer select-none">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-extrabold text-gray-900">Optional (helps us install faster)</h3>
-                    <p className="text-sm text-gray-600">If you skip this, we’ll confirm on the phone.</p>
-                  </div>
-                  <span className="text-sm font-extrabold" style={{ color: BRAND }}>
-                    Expand
-                  </span>
-                </div>
+          {/* STEP 3: OPTIONAL DETAILS */}
+          <section className={sectionCardClass}>
+            <details className="group">
+              <summary className={`${headerClass} cursor-pointer list-none`}>
+                <h3 className={headerTitleClass}>
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-gray-700 text-xs font-bold mr-2">3</span>
+                  Optional Details
+                </h3>
+                <span className="flex items-center text-xs font-bold text-gray-500 group-open:text-green-600">
+                  {form.abn ? "Editing" : "Click to Expand"} 
+                  <span className="ml-2 transform group-open:rotate-180 transition-transform">▼</span>
+                </span>
               </summary>
+              
+              <div className={contentClass}>
+                <p className="text-sm text-gray-500">
+                  Filling this now speeds up installation. If skipped, we will ask you later.
+                </p>
 
-              <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">ABN</label>
-                  <input
-                    name="abn"
-                    type="text"
-                    value={form.abn}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="00 000 000 000"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Business Address</label>
-                  <input
-                    name="business_address"
-                    type="text"
-                    value={form.business_address}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="Street, suburb, state"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Service Area</label>
-                  <input
-                    name="service_area"
-                    type="text"
-                    value={form.service_area}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="e.g. Western Sydney, Blue Mountains"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Business Hours</label>
-                  <input
-                    name="business_hours"
-                    type="text"
-                    value={form.business_hours}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="Mon–Fri 7am–5pm"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Current Quote Template (optional upload)</label>
-                  <input
-                    name="quote_examples"
-                    type="file"
-                    multiple
-                    accept=".pdf,.png,.jpg,.jpeg"
-                    onChange={updateFiles("quote_examples_names")}
-                    className="mt-1 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-gray-900 file:px-4 file:py-2 file:font-extrabold file:text-white hover:file:bg-gray-800"
-                  />
-                </div>
-
-                <div className="md:col-span-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="font-extrabold text-gray-900 text-sm">Deposits (optional)</div>
-                      <p className="text-xs text-gray-600 mt-1">If you’re unsure, leave OFF for now.</p>
-                    </div>
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        name="deposit_enabled"
-                        type="checkbox"
-                        checked={form.deposit_enabled}
-                        onChange={updateCheckbox}
-                        className="h-5 w-5"
-                        style={{ accentColor: BRAND }}
-                      />
-                      <span className="font-extrabold text-sm text-gray-900">Enable</span>
-                    </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className={labelClass}>ABN</label>
+                    <input name="abn" type="text" className={inputClass} value={form.abn} onChange={updateText} placeholder="00 000 000 000" />
                   </div>
-
-                  <div className={`mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 ${form.deposit_enabled ? "" : "opacity-50 pointer-events-none"}`}>
-                    <div>
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Amount / %</label>
-                      <input
-                        name="deposit_amount"
-                        type="text"
-                        value={form.deposit_amount}
-                        onChange={updateText}
-                        className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
-                        placeholder="e.g. 20% or $200"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">When Charged</label>
-                      <input
-                        name="deposit_when"
-                        type="text"
-                        value={form.deposit_when}
-                        onChange={updateText}
-                        className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
-                        placeholder="e.g. on booking"
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Refund / Cancellation</label>
-                      <textarea
-                        name="deposit_policy"
-                        rows={3}
-                        value={form.deposit_policy}
-                        onChange={updateText}
-                        className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
-                        placeholder="e.g. Refundable with 24h notice. Otherwise $80 admin fee."
-                      />
-                    </div>
+                  <div>
+                    <label className={labelClass}>Business Address</label>
+                    <input name="business_address" type="text" className={inputClass} value={form.business_address} onChange={updateText} placeholder="123 Main St" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Service Area</label>
+                    <input name="service_area" type="text" className={inputClass} value={form.service_area} onChange={updateText} placeholder="e.g. Metro Area" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Business Hours</label>
+                    <input name="business_hours" type="text" className={inputClass} value={form.business_hours} onChange={updateText} placeholder="e.g. Mon-Fri 9-5" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={labelClass}>Upload Logo</label>
+                    <input name="logo_file" type="file" accept="image/*" onChange={updateFiles("logo_file_names")} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={labelClass}>Quote Template (PDF/Image)</label>
+                    <input name="quote_examples" type="file" multiple accept=".pdf,image/*" onChange={updateFiles("quote_examples_names")} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Calendar Name</label>
+                    <input name="calendar_name" type="text" className={inputClass} value={form.calendar_name} onChange={updateText} placeholder="e.g. 'Work' or 'Jobs'" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Booking Restrictions</label>
+                    <input name="booking_restrictions" type="text" className={inputClass} value={form.booking_restrictions} onChange={updateText} placeholder="e.g. No weekends" />
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Calendar Name</label>
-                  <input
-                    name="calendar_name"
-                    type="text"
-                    value={form.calendar_name}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="Jobs"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Booking Restrictions</label>
-                  <input
-                    name="booking_restrictions"
-                    type="text"
-                    value={form.booking_restrictions}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="No bookings after 4:30pm"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Logo (optional)</label>
-                  <input
-                    name="logo_file"
-                    type="file"
-                    accept=".png,.jpg,.jpeg,.svg"
-                    onChange={updateFiles("logo_file_names")}
-                    className="mt-1 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-gray-900 file:px-4 file:py-2 file:font-extrabold file:text-white hover:file:bg-gray-800"
-                  />
-                </div>
               </div>
             </details>
           </section>
 
           {/* SUBMIT */}
-          <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)]">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Submit</h3>
-                <p className="text-sm text-gray-600">After submit, you’ll get a clean summary you can copy/paste into an email or message to us.</p>
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                <button
-                  type="button"
-                  onClick={downloadJson}
-                  className="px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 font-extrabold text-sm"
-                >
-                  Download JSON
-                </button>
-                <button
-                  type="button"
-                  onClick={copySummary}
-                  className="px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 font-extrabold text-sm"
-                >
-                  Copy Summary
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-lg text-white font-extrabold text-sm"
-                  style={{ background: BRAND }}
-                >
-                  Submit Checklist
-                </button>
-              </div>
-            </div>
-
+          <section className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sm:p-8 text-center">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Ready?</h3>
+            <p className="text-sm text-gray-600 mb-6">Click submit to generate your installation summary.</p>
+            
             {submitError && (
-              <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+              <div className="mb-6 bg-red-50 text-red-600 px-4 py-3 rounded-md text-sm font-bold border border-red-100">
                 {submitError}
               </div>
             )}
 
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                type="submit"
+                className="w-full sm:w-auto px-8 py-3 bg-green-700 hover:bg-green-800 text-white font-bold rounded-lg shadow-md transition-transform transform active:scale-95"
+              >
+                Submit Checklist
+              </button>
+            </div>
+
+            {/* Summary Output */}
             {summary && (
-              <div id="summaryWrap" className="mt-4">
-                <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wider mb-2">Your summary</div>
-                <pre className="whitespace-pre-wrap rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800">
-                  {summary}
-                </pre>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <a
-                    href={mailtoHref}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 font-extrabold text-sm"
-                  >
-                    Email this summary
-                  </a>
+              <div id="summaryWrap" className="mt-8 text-left animate-fade-in">
+                <div className="bg-gray-900 rounded-xl p-6 shadow-2xl">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Generated Summary</span>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={copySummary} className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded transition-colors">Copy</button>
+                      <button type="button" onClick={downloadJson} className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded transition-colors">Download JSON</button>
+                    </div>
+                  </div>
+                  <pre className="text-sm text-gray-300 whitespace-pre-wrap font-mono bg-gray-800 p-4 rounded-lg overflow-x-auto border border-gray-700">
+                    {summary}
+                  </pre>
+                  <div className="mt-4 text-center">
+                    <a href={mailtoHref} className="inline-block bg-white text-gray-900 font-bold px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+                      Open in Email App
+                    </a>
+                    <p className="text-xs text-gray-500 mt-2">Don't forget to attach files manually!</p>
+                  </div>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
-                  Note: file uploads can’t be emailed automatically from a static page. If you uploaded files, attach them to your email manually.
-                </p>
               </div>
             )}
           </section>
+
         </form>
 
-        <footer className="py-6 text-center text-xs text-gray-500">
-          Flowio installs are limited to 3 per week. We’ll confirm your slot after the phone check.
+        <footer className="text-center text-xs text-gray-400 py-8">
+          Flowio Installation Checklist &copy; {new Date().getFullYear()}
         </footer>
       </main>
-
-      {/* minimal focus ring behavior */}
-      <style>{`
-        input:focus, textarea:focus, select:focus { outline: none; border-color: ${BRAND}; box-shadow: 0 0 0 3px rgba(74,124,89,0.20); background:#fff; }
-      `}</style>
     </div>
   );
 }
