@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+<meta name="robots" content="noindex, nofollow" />
 type FormState = {
   workspace_admin_email: string;
   business_name: string;
