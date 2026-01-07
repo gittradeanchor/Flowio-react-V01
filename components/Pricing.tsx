@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-// Optimized Slider Component using Layered Approach for Native Feel
+// Optimized Slider Component using Layered Approach for Native Feel 
 const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: { label: string, value: number, min: number, max: number, unit: string, prefix?: string, onChange: (val: number) => void }) => {
     const percentage = ((value - min) / (max - min)) * 100;
     
