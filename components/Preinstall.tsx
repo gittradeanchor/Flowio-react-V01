@@ -11,7 +11,6 @@ type FormState = {
   confirm_access: boolean;
   consent: boolean;
 
-  pricebook_file_names: string[];
   pricebook_sheet_link: string;
   pricebook_text: string;
 
@@ -20,7 +19,6 @@ type FormState = {
   service_area: string;
   business_hours: string;
 
-  quote_examples_names: string[];
 
   deposit_enabled: boolean;
   deposit_amount: string;
@@ -30,7 +28,6 @@ type FormState = {
   calendar_name: string;
   booking_restrictions: string;
 
-  logo_file_names: string[];
 
   // optional: included if present in URL
   token: string;
@@ -51,7 +48,6 @@ const initialState: FormState = {
   confirm_access: false,
   consent: false,
 
-  pricebook_file_names: [],
   pricebook_sheet_link: "",
   pricebook_text: "",
 
@@ -60,7 +56,6 @@ const initialState: FormState = {
   service_area: "",
   business_hours: "",
 
-  quote_examples_names: [],
 
   deposit_enabled: false,
   deposit_amount: "",
@@ -70,7 +65,6 @@ const initialState: FormState = {
   calendar_name: "",
   booking_restrictions: "",
 
-  logo_file_names: [],
 
   token: "",
   pid: "",
@@ -110,7 +104,6 @@ function buildSummary(obj: FormState) {
   lines.push(``);
 
   lines.push(`PRICEBOOK`);
-  lines.push(`- Upload file(s): ${obj.pricebook_file_names?.length ? obj.pricebook_file_names.join(", ") : "-"}`);
   lines.push(`- Sheet link: ${obj.pricebook_sheet_link || "-"}`);
   lines.push(`- Pasted items: ${obj.pricebook_text ? "Yes (see below)" : "No"}`);
   if (obj.pricebook_text) {
@@ -208,10 +201,9 @@ export default function Preinstall() {
   const essentialsPct = Math.round((essentialFilled / essentialTotal) * 100);
 
   const pricebookProvided = useMemo(() => {
-    const hasFile = (form.pricebook_file_names || []).length > 0;
     const hasText = !!form.pricebook_text.trim();
     const hasLink = !!form.pricebook_sheet_link.trim();
-    return hasFile || hasText || hasLink;
+    return hasText || hasLink;
   }, [form]);
 
   const mailtoHref = useMemo(() => {
@@ -358,7 +350,7 @@ export default function Preinstall() {
               <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Progress</div>
               <div className="flex items-center gap-2">
                 <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-600 transition-all duration-500" style={{ width: `${essentialsPct}%` }} />
+                  <div className="h-full transition-all duration-500" style={{ width: `${essentialsPct}%`, backgroundColor: BRAND }} />
                 </div>
                 <span className="text-xs font-bold text-green-700">{essentialsPct}%</span>
               </div>
@@ -548,25 +540,20 @@ export default function Preinstall() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Option A */}
                 <div className="border-2 border-dashed border-gray-200 rounded-lg p-5 hover:border-green-500 transition-colors bg-gray-50/50">
-                  <span className="block text-xs font-bold text-gray-400 uppercase mb-3">Option A: Upload File</span>
+                  <span className="block text-xs font-bold text-gray-400 uppercase mb-3">Option A: Paste Google Sheet Link</span>
+                
+                  <label className="text-xs font-bold text-gray-500 mb-1 block">Google Sheets link (view access)</label>
                   <input
-                    name="pricebook_file"
-                    type="file"
-                    accept=".csv,.xlsx,.xls,.pdf"
-                    onChange={updateFiles("pricebook_file_names")}
-                    className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                    name="pricebook_sheet_link"
+                    type="url"
+                    value={form.pricebook_sheet_link}
+                    onChange={updateText}
+                    className={inputClass}
+                    placeholder="https://docs.google.com/spreadsheets/d/..."
                   />
-                  <div className="mt-4">
-                    <label className="text-xs font-bold text-gray-500 mb-1 block">Or paste Sheet Link</label>
-                    <input
-                      name="pricebook_sheet_link"
-                      type="url"
-                      value={form.pricebook_sheet_link}
-                      onChange={updateText}
-                      className={inputClass}
-                      placeholder="https://docs.google.com/..."
-                    />
-                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Make sure link sharing is set to “Anyone with the link can view” (or explicitly shared with us).
+                  </p>
                 </div>
 
                 {/* Option B */}
@@ -586,7 +573,7 @@ export default function Preinstall() {
 
               {pricebookError && (
                 <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md font-medium">
-                  ⚠️ Please upload a file, paste a link, or enter items manually.
+                  ⚠️ Please paste a link, or enter items manually.
                 </div>
               )}
             </div>
@@ -662,12 +649,13 @@ export default function Preinstall() {
             )}
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-8 py-3 bg-green-700 hover:bg-green-800 text-white font-bold rounded-lg shadow-md transition-transform transform active:scale-95"
-              >
-                Submit Checklist
-              </button>
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-8 py-3 font-bold rounded-lg shadow-md transition-transform transform active:scale-95"
+              style={{ backgroundColor: BRAND, color: "#fff" }}
+            >
+              Submit Checklist
+            </button>
             </div>
 
             {/* Summary Output */}
