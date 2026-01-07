@@ -124,7 +124,6 @@ function buildSummary(obj: FormState) {
     ["Deposit when", obj.deposit_when],
     ["Deposit policy", obj.deposit_policy],
     ["Quote examples", obj.quote_examples_names?.length ? obj.quote_examples_names.join(", ") : ""],
-    ["Logo", obj.logo_file_names?.length ? obj.logo_file_names.join(", ") : ""],
   ];
 
   const hasAnyOptional = optionalPairs.some(([, v]) => (v || "").trim());
@@ -166,9 +165,7 @@ export default function Preinstall() {
       setForm((prev) => ({
         ...prev,
         ...obj,
-        pricebook_file_names: Array.isArray(obj.pricebook_file_names) ? obj.pricebook_file_names : prev.pricebook_file_names,
         quote_examples_names: Array.isArray(obj.quote_examples_names) ? obj.quote_examples_names : prev.quote_examples_names,
-        logo_file_names: Array.isArray(obj.logo_file_names) ? obj.logo_file_names : prev.logo_file_names,
       }));
     } catch {
       // ignore
@@ -617,7 +614,6 @@ export default function Preinstall() {
                   </div>
                   <div className="sm:col-span-2">
                     <label className={labelClass}>Upload Logo</label>
-                    <input name="logo_file" type="file" accept="image/*" onChange={updateFiles("logo_file_names")} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
                   </div>
                   <div className="sm:col-span-2">
                     <label className={labelClass}>Quote Template (PDF/Image)</label>
