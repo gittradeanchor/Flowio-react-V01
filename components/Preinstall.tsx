@@ -10,7 +10,7 @@ type FormState = {
   confirm_access: boolean;
   consent: boolean;
 
-  // Pricebook (required)
+  // Pricebook (required) 
   pricebook_sheet_link: string; // share link to sheet/drive/dropbox/etc
   pricebook_text: string; // paste items
 
