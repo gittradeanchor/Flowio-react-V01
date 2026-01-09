@@ -232,24 +232,26 @@ export default function Preinstall() {
       if (form.pid) body.set("pid", form.pid);
       body.set("payload", JSON.stringify(payload));
 
-      const res = await fetch(endpoint, {
+      //const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
         body: body.toString(),
       });
 
-      // Best-effort parse (some GAS setups can be weird, so keep it robust)
+       const raw = await res.text();
+      console.log("GAS raw response:", raw);
+      
       let ok = false;
       try {
-        const json = await res.json();
-        ok = !!json?.ok;
+        ok = !!JSON.parse(raw)?.ok;
       } catch {
-        ok = res.ok; // fallback
+        // if it's not JSON, ok stays false
+      }
+      
+      if (!ok) {
+        throw new Error(`GAS response not ok: ${raw}`);
       }
 
-      if (!ok) {
-        throw new Error("GAS did not return ok=true");
-      }
 
       // Success
       localStorage.removeItem(DRAFT_KEY);
