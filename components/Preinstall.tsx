@@ -232,13 +232,13 @@ export default function Preinstall() {
       if (form.pid) body.set("pid", form.pid);
       body.set("payload", JSON.stringify(payload));
 
-      //const res = await fetch(endpoint, {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
         body: body.toString(),
       });
 
-       const raw = await res.text();
+      const raw = await res.text();
       console.log("GAS raw response:", raw);
       
       let ok = false;
