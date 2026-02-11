@@ -80,13 +80,14 @@ export const Benefits = () => {
                     />
 
                     {/* Card 3: Own, Don't Rent (Narrow) */}
-                    {/* Swapped to span 1. Image Size: 2048x1536 (4:3 Ratio) */}
-                    <BentoCard 
-                        title="🔒 Own, Don't Rent" 
-                        desc="Stop paying monthly subscriptions for data you should own. One-time setup, yours forever." 
-                        span={1} 
+                    {/* Swapped to span 1. Image Size: 2048x1536 (4:3 Ratio) - padded to prevent crop */}
+                    <BentoCard
+                        title="🔒 Own, Don't Rent"
+                        desc="Stop paying monthly subscriptions for data you should own. One-time setup, yours forever."
+                        span={1}
                         imgSrc="/images/renting-vs-owning.jpg"
                         imgAlt="Lifetime ownership comparison"
+                        padded={true}
                     />
 
                     {/* Card 4: Mobile Companion (Wide) */}

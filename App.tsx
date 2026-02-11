@@ -11,6 +11,8 @@ import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { ChatWidget } from './components/ChatWidget';
 import { BookingConfirmed } from './components/BookingConfirmed';
+import { Testimonials } from './components/Testimonials';
+import { QuotingAudit } from './components/QuotingAudit';
 import { useAttribution } from './hooks/useAttribution';
 
 const App = () => {
@@ -96,8 +98,10 @@ const LandingPage = () => {
                 <Hero />
                 <TechStack />
                 <Benefits />
+                <Testimonials />
                 <TestDrive />
                 <LogicSection />
+                <QuotingAudit />
                 <Pricing />
                 <FAQ />
             </main>

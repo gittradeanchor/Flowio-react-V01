@@ -38,11 +38,13 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                     </a>
 
                     {/* Desktop CTA */}
-                    <a 
-                        href="#funnel-cta" 
+                    <a
+                        href={import.meta.env.VITE_CALENDLY_URL}
+                        target="_blank"
+                        rel="noreferrer"
                         className={`hidden md:inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold rounded-xl active:translate-y-0.5 transition-all ${
-                            isSecondaryCta 
-                                ? 'bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm' 
+                            isSecondaryCta
+                                ? 'bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm'
                                 : 'bg-navy text-white shadow-btn-navy hover:shadow-lg'
                         }`}
                     >
@@ -51,8 +53,10 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
 
                     {/* Mobile Right Side Group */}
                     <div className="flex items-center gap-3 md:hidden">
-                        <a 
-                            href="#funnel-cta"
+                        <a
+                            href={import.meta.env.VITE_CALENDLY_URL}
+                            target="_blank"
+                            rel="noreferrer"
                             className="px-3 py-1.5 text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
                         >
                             Book a Fit Call
