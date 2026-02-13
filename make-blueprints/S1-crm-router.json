@@ -1,0 +1,147 @@
+{
+  "name": "S1 - CRM Lead Router",
+  "metadata": { "version": 1 },
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": { "hook": 1598724 },
+      "mapper": {},
+      "metadata": { "designer": { "x": 0, "y": 0 }, "restore": {} }
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "parameters": {},
+      "mapper": {},
+      "metadata": { "designer": { "x": 300, "y": 0 } },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 3,
+              "module": "google-sheets:addRow",
+              "version": 2,
+              "parameters": { "__IMTCONN__": 6370955 },
+              "mapper": {
+                "mode": "map",
+                "spreadsheetId": "1BJCDY3mOZ7qXHK2yJQXXTHtuti8soNRM",
+                "sheetId": "Pipeline",
+                "tableFirstRow": "A1:Z1",
+                "insertUnformatted": false,
+                "valueInputOption": "USER_ENTERED",
+                "insertDataOption": "INSERT_ROWS",
+                "0": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+                "1": "{{1.name}}",
+                "2": "{{1.phone}}",
+                "3": "{{1.email}}",
+                "4": "{{1.trade}}",
+                "5": "demoLead",
+                "6": "{{1.utm_source}}",
+                "7": "{{1.utm_medium}}",
+                "8": "{{1.utm_campaign}}",
+                "9": "new",
+                "10": "",
+                "11": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+                "12": "",
+                "13": "0",
+                "14": "{{formatDate(now; \"YYYY-MM-DD\")}}"
+              },
+              "metadata": { "designer": { "x": 600, "y": -200 } },
+              "filter": {
+                "name": "Is Demo Lead",
+                "conditions": [
+                  [{ "a": "{{1.action}}", "b": "demoLead", "o": "text:equal" }]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 4,
+              "module": "google-sheets:addRow",
+              "version": 2,
+              "parameters": { "__IMTCONN__": 6370955 },
+              "mapper": {
+                "mode": "map",
+                "spreadsheetId": "1BJCDY3mOZ7qXHK2yJQXXTHtuti8soNRM",
+                "sheetId": "Pipeline",
+                "tableFirstRow": "A1:Z1",
+                "insertUnformatted": false,
+                "valueInputOption": "USER_ENTERED",
+                "insertDataOption": "INSERT_ROWS",
+                "0": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+                "1": "{{1.name}}",
+                "2": "{{1.phone}}",
+                "3": "{{1.email}}",
+                "4": "{{1.trade}}",
+                "5": "booking_confirmed",
+                "6": "{{1.utm_source}}",
+                "7": "{{1.utm_medium}}",
+                "8": "{{1.utm_campaign}}",
+                "9": "booked",
+                "10": "",
+                "11": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+                "12": "",
+                "13": "0",
+                "14": ""
+              },
+              "metadata": { "designer": { "x": 600, "y": 200 } },
+              "filter": {
+                "name": "Is Booking",
+                "conditions": [
+                  [{ "a": "{{1.action}}", "b": "booking_confirmed", "o": "text:equal" }]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 5,
+              "module": "google-sheets:addRow",
+              "version": 2,
+              "parameters": { "__IMTCONN__": 6370955 },
+              "mapper": {
+                "mode": "map",
+                "spreadsheetId": "1BJCDY3mOZ7qXHK2yJQXXTHtuti8soNRM",
+                "sheetId": "Pipeline",
+                "tableFirstRow": "A1:Z1",
+                "insertUnformatted": false,
+                "valueInputOption": "USER_ENTERED",
+                "insertDataOption": "INSERT_ROWS",
+                "0": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+                "1": "{{1.name}}",
+                "2": "{{1.phone}}",
+                "3": "{{1.email}}",
+                "4": "{{1.trade}}",
+                "5": "audit_lead",
+                "6": "{{1.utm_source}}",
+                "7": "{{1.utm_medium}}",
+                "8": "{{1.utm_campaign}}",
+                "9": "new",
+                "10": "",
+                "11": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+                "12": "",
+                "13": "0",
+                "14": "{{formatDate(now; \"YYYY-MM-DD\")}}"
+              },
+              "metadata": { "designer": { "x": 600, "y": 600 } },
+              "filter": {
+                "name": "Is Audit Lead",
+                "conditions": [
+                  [{ "a": "{{1.action}}", "b": "audit_lead", "o": "text:equal" }]
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

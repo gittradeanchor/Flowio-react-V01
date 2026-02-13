@@ -7,6 +7,7 @@ export const QuotingAudit = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phone: '',
         trade: 'Electrician',
         quotesPerWeek: '',
         minutesPerQuote: '',
@@ -40,7 +41,7 @@ export const QuotingAudit = () => {
         const annualCostWasted = annualHoursWasted * rate;
 
         try {
-            const webhookUrl = import.meta.env.VITE_AUDIT_WEBHOOK_URL || import.meta.env.VITE_MAKE_WEBHOOK_URL;
+            const webhookUrl = import.meta.env.VITE_MARKETING_ENGINE_URL || import.meta.env.VITE_AUDIT_WEBHOOK_URL || import.meta.env.VITE_MAKE_WEBHOOK_URL;
 
             await fetch(webhookUrl, {
                 method: 'POST',
@@ -140,6 +141,18 @@ export const QuotingAudit = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     placeholder="you@email.com"
+                                    className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-navy font-bold text-sm block mb-1.5">Phone</label>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    placeholder="04XX XXX XXX"
                                     className="w-full px-4 py-3 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
                                 />
                             </div>

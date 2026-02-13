@@ -13,6 +13,7 @@ import { ChatWidget } from './components/ChatWidget';
 import { BookingConfirmed } from './components/BookingConfirmed';
 import { Testimonials } from './components/Testimonials';
 import { QuotingAudit } from './components/QuotingAudit';
+import { SocialProofBar } from './components/SocialProofBar';
 import { useAttribution } from './hooks/useAttribution';
 
 const App = () => {
@@ -96,6 +97,7 @@ const LandingPage = () => {
             
             <main>
                 <Hero />
+                <SocialProofBar />
                 <TechStack />
                 <Benefits />
                 <Testimonials />

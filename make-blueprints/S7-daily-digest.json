@@ -1,0 +1,55 @@
+{
+  "name": "S7 - Daily Dashboard Digest (8am AEST)",
+  "metadata": { "version": 1 },
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-sheets:filterRows",
+      "version": 2,
+      "parameters": { "__IMTCONN__": 6370955 },
+      "mapper": {
+        "mode": "map",
+        "spreadsheetId": "1BJCDY3mOZ7qXHK2yJQXXTHtuti8soNRM",
+        "sheetId": "Pipeline",
+        "tableFirstRow": "A1:Z1",
+        "includesHeaders": true,
+        "sortOrder": "desc",
+        "orderBy": "0",
+        "filter": [],
+        "valueRenderOption": "FORMATTED_VALUE",
+        "limit": 200
+      },
+      "metadata": {
+        "designer": { "x": 0, "y": 0 },
+        "note": "Fetches all pipeline rows to aggregate stats"
+      }
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicAggregator",
+      "version": 1,
+      "parameters": {
+        "fepiHeaders": false
+      },
+      "mapper": {
+        "structure": [
+          { "name": "stage", "label": "Stage", "type": "text" },
+          { "name": "date", "label": "Date", "type": "text" }
+        ]
+      },
+      "metadata": { "designer": { "x": 300, "y": 0 } }
+    },
+    {
+      "id": 3,
+      "module": "google-email:ActionSendEmail",
+      "version": 2,
+      "parameters": { "account": 6370955 },
+      "mapper": {
+        "to": ["sean@tradeanchor.com.au"],
+        "subject": "Flowio Daily Digest - {{formatDate(now; \"DD MMM YYYY\")}}",
+        "html": "<div style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">\n  <h1 style=\"color: #0F172A; font-size: 22px;\">Trade<span style=\"color: #F97316;\">Anchor</span> Daily Digest</h1>\n  <p style=\"color: #64748B;\">{{formatDate(now; \"dddd, DD MMMM YYYY\")}}</p>\n  \n  <div style=\"background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; margin: 20px 0;\">\n    <h3 style=\"margin-top: 0; color: #0F172A;\">Pipeline Summary</h3>\n    <p style=\"color: #475569;\">Total leads in pipeline: {{length(1)}} records</p>\n    <p style=\"color: #475569; font-size: 13px;\"><em>Note: For detailed stage breakdowns, check the Pipeline tab in your <a href='https://docs.google.com/spreadsheets/d/1BJCDY3mOZ7qXHK2yJQXXTHtuti8soNRM/edit'>Command Center</a>.</em></p>\n  </div>\n  \n  <div style=\"background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 20px; margin: 20px 0;\">\n    <h3 style=\"margin-top: 0; color: #166534;\">Today's Actions</h3>\n    <ul style=\"color: #475569;\">\n      <li>Check Pipeline tab for new leads</li>\n      <li>Review Nurture Status tab for pending follow-ups</li>\n      <li>Send 20-30 DMs on Instagram/Facebook</li>\n      <li>Post 1 piece of content</li>\n    </ul>\n  </div>\n  \n  <div style=\"text-align: center; margin-top: 30px;\">\n    <a href='https://docs.google.com/spreadsheets/d/1BJCDY3mOZ7qXHK2yJQXXTHtuti8soNRM/edit' style=\"display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;\">Open Command Center</a>\n  </div>\n</div>"
+      },
+      "metadata": { "designer": { "x": 600, "y": 0 } }
+    }
+  ]
+}
