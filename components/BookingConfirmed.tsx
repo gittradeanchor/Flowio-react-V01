@@ -43,20 +43,32 @@ useEffect(() => {
       });
     }
 
+    const payload = {
+      action: 'booking_confirmed',
+      event: 'booking_confirmed',
+      timestamp: new Date().toISOString(),
+      booking,
+      ...attrib,
+    };
+
+    // Send to Marketing Engine (Apps Script) if configured
+    const engineUrl = import.meta.env.VITE_MARKETING_ENGINE_URL || '';
+    if (engineUrl) {
+      fetch(engineUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch(err => console.error('Engine tracking error:', err));
+    }
+
+    // Also send to Make.com webhook (keeps existing Booking-confirmed scenario working)
     const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL || '';
     if (webhookUrl) {
       fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: 'booking_confirmed',
-          timestamp: new Date().toISOString(),
-          booking,
-          ...attrib,
-        }),
-      }).catch(err => console.error('Tracking error:', err));
-    } else {
-      console.warn('Missing VITE_MAKE_WEBHOOK_URL');
+        body: JSON.stringify(payload),
+      }).catch(err => console.error('Make tracking error:', err));
     }
 
     sessionStorage.setItem('flowio_booking_tracked', 'true');

@@ -23,7 +23,7 @@
 const CONFIG = {
   // Sheet IDs
   COMMAND_CENTER_ID: '1ZdAsJ4uyR22B0Z2U3MBfVbgXdXf1qxWG1EYi8PqgA2o',
-  CRM_SHEET_ID: '11wr33JzinkyRcIUEPu2Zm8FUMEl85PSKzIKtikThGsU',
+  CRM_SHEET_ID: '1aTcY7yul6whuGmFmigCGUfjmlp8InLK14pwrEIcY-TU',
 
   // Tab names
   PIPELINE_TAB: 'Pipeline',
@@ -131,30 +131,48 @@ function setupSheet() {
     }
   }
 
-  // Setup Settings tab with defaults
+  // Setup Settings tab with defaults — always ensures all keys exist
   const settings = ss.getSheetByName(CONFIG.SETTINGS_TAB);
   if (settings) {
-    const settFirst = settings.getRange('A1').getValue();
-    if (settFirst === '') {
-      const settingsData = [
-        ['Setting', 'Value'],
-        ['Owner Email', CONFIG.OWNER_EMAIL],
-        ['Calendly URL', CONFIG.CALENDLY_URL],
-        ['WhatsApp URL', CONFIG.WHATSAPP_URL],
-        ['Site URL', CONFIG.SITE_URL],
-        ['ClickSend Username', ''],
-        ['ClickSend API Key', ''],
-        ['Google Review Link', ''],
-        ['Referral Bonus', '$200/$200'],
-        ['Lite Price', '$497'],
-        ['Full Price', '$1,997'],
-        ['Payment Plan', '3x $699/mo'],
-        ['SMS Enabled', 'false'],
-      ];
-      settings.getRange(1, 1, settingsData.length, 2).setValues(settingsData);
-      settings.getRange(1, 1, 1, 2).setFontWeight('bold').setBackground('#0F172A').setFontColor('#FFFFFF');
-      Logger.log('Settings tab populated.');
+    const settingsData = [
+      ['Setting', 'Value'],
+      ['Owner Email', CONFIG.OWNER_EMAIL],
+      ['Calendly URL', CONFIG.CALENDLY_URL],
+      ['WhatsApp URL', CONFIG.WHATSAPP_URL],
+      ['Site URL', CONFIG.SITE_URL],
+      ['CRM Sheet ID', CONFIG.CRM_SHEET_ID],
+      ['Command Center Sheet ID', CONFIG.COMMAND_CENTER_ID],
+      ['ClickSend Username', ''],
+      ['ClickSend API Key', ''],
+      ['Google Review Link', ''],
+      ['Referral Bonus', '$200/$200'],
+      ['Lite Price', '$497'],
+      ['Full Price', '$1,997'],
+      ['Payment Plan', '3x $699/mo'],
+      ['SMS Enabled', 'false'],
+    ];
+
+    // Read existing values to preserve user-entered data (like API keys)
+    const existing = {};
+    const currentData = settings.getDataRange().getValues();
+    for (let i = 1; i < currentData.length; i++) {
+      const key = String(currentData[i][0]).trim();
+      const val = String(currentData[i][1]).trim();
+      if (key && val) existing[key] = val;
     }
+
+    // Merge: keep user values, fill defaults for new keys
+    for (let i = 1; i < settingsData.length; i++) {
+      const key = settingsData[i][0];
+      if (existing[key] && existing[key] !== '') {
+        settingsData[i][1] = existing[key];
+      }
+    }
+
+    settings.clearContents();
+    settings.getRange(1, 1, settingsData.length, 2).setValues(settingsData);
+    settings.getRange(1, 1, 1, 2).setFontWeight('bold').setBackground('#0F172A').setFontColor('#FFFFFF');
+    Logger.log('Settings tab populated/updated (' + settingsData.length + ' rows).');
   }
 
   // Setup Nurture Status headers
@@ -242,7 +260,8 @@ function setupTriggers() {
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    const action = data.action || 'unknown';
+    // Support both "action" field (new) and "event" field (BookingConfirmed page legacy)
+    const action = data.action || data.event || 'unknown';
     const now = new Date();
     const timestamp = Utilities.formatDate(now, 'Australia/Sydney', 'yyyy-MM-dd HH:mm');
 
@@ -253,8 +272,8 @@ function doPost(e) {
 
     // Common fields
     const name = data.name || data.full_name || '';
-    const phone = data.phone || data.phone_number || '';
-    const email = data.email || '';
+    let phone = data.phone || data.phone_number || '';
+    let email = data.email || '';
     const trade = data.trade || '';
 
     // UTM attribution
@@ -289,7 +308,17 @@ function doPost(e) {
         stage = 'booked';
         nurtureStep = '';
         nurtureNextDate = '';
-        notes = 'Fit Call booked via Calendly';
+        // Extract Calendly booking data if present
+        const booking = data.booking || {};
+        const eventTime = booking.event_start_time || '';
+        notes = 'Fit Call booked via Calendly' + (eventTime ? ' | ' + eventTime : '');
+        // BookingConfirmed page sends invitee_email inside booking object
+        if (!email && booking.invitee_email) {
+          email = booking.invitee_email;
+        }
+        if (!phone && booking.text_reminder_number) {
+          phone = booking.text_reminder_number;
+        }
         break;
 
       case 'meta_ad':
