@@ -54,23 +54,21 @@ export const Hero = () => {
                            md:w-auto: Auto width on desktop (prevents stretching to container width)
                            md:min-w-[360px]: Enforces a wide button look on desktop
                         */}
-                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto md:min-w-[360px] px-8 py-4 min-h-[60px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-3 md:mb-6">
+                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto md:min-w-[360px] px-8 py-4 min-h-[60px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-2 md:mb-3">
                             Run a Live Demo (30s) <span className="ml-3 text-4xl leading-[0] pb-2">▸</span>
                         </a>
-                        
-                        {/* Subtext 1 */}
-                        <p className="text-[13px] text-text-muted font-medium mb-1 w-full text-center md:text-left opacity-95">
-                            ✅ Experience the full workflow • No credit card
-                        </p>
-                        
-                         {/* Subtext 2 */}
-                        <p className="text-[13px] text-text-muted font-medium mb-2 w-full text-center md:text-left opacity-95">
-                            📩 You'll receive a live quote by SMS + email
+
+                        {/* Price Anchor — immediately under CTA, above fold on mobile */}
+                        <p className="text-[13px] text-navy/70 font-semibold mb-2 w-full text-center md:text-left">
+                            Starting from $497 · One-time · No subscription
                         </p>
 
-                        {/* Price Anchor */}
-                        <p className="text-[13px] text-navy/70 font-semibold mb-0 w-full text-center md:text-left">
-                            Starting from $497 · One-time · No subscription
+                        {/* Subtext — below fold on mobile, visible on desktop */}
+                        <p className="hidden md:block text-[13px] text-text-muted font-medium mb-1 w-full text-left opacity-95">
+                            ✅ Experience the full workflow • No credit card
+                        </p>
+                        <p className="hidden md:block text-[13px] text-text-muted font-medium mb-0 w-full text-left opacity-95">
+                            📩 You'll receive a live quote by SMS + email
                         </p>
                     </div>
                 </div>
