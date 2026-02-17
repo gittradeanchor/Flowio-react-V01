@@ -30,21 +30,10 @@ export const Hero = () => {
                             Send quote ▸ client accepts ▸ job booked.
                         </p>
 
-                        {/* 3 Bullet Points in a compact flex layout to preserve height (2 lines) */}
-                        <ul className="list-none flex flex-wrap gap-x-6 gap-y-1 md:gap-y-2 p-0 m-0">
-                            <li className="flex items-center gap-2.5">
-                                <div className="w-1.5 h-1.5 rounded-full bg-orange shrink-0" />
-                                <span>Runs in Google Sheets</span>
-                            </li>
-                            <li className="flex items-center gap-2.5">
-                                <div className="w-1.5 h-1.5 rounded-full bg-orange shrink-0" />
-                                <span>No subscription</span>
-                            </li>
-                            <li className="flex items-center gap-2.5 w-full md:w-auto">
-                                <div className="w-1.5 h-1.5 rounded-full bg-orange shrink-0" />
-                                <span>Auto SMS follow-ups</span>
-                            </li>
-                        </ul>
+                        {/* Differentiators — one scannable line */}
+                        <p className="text-[14px] md:text-[16px] text-text-muted font-medium">
+                            One-time setup · Runs in your Google Sheets · You own everything
+                        </p>
                     </div>
 
                     {/* CTA Group */}
@@ -58,18 +47,14 @@ export const Hero = () => {
                             Run a Live Demo (30s) <span className="ml-3 text-4xl leading-[0] pb-2">▸</span>
                         </a>
 
-                        {/* Price Anchor — immediately under CTA, above fold on mobile */}
-                        <p className="text-[13px] text-navy/70 font-semibold mb-2 w-full text-center md:text-left">
-                            Starting from $497 · One-time · No subscription
-                        </p>
-
-                        {/* Subtext — below fold on mobile, visible on desktop */}
-                        <p className="hidden md:block text-[13px] text-text-muted font-medium mb-1 w-full text-left opacity-95">
-                            ✅ Experience the full workflow • No credit card
-                        </p>
-                        <p className="hidden md:block text-[13px] text-text-muted font-medium mb-0 w-full text-left opacity-95">
-                            📩 You'll receive a live quote by SMS + email
-                        </p>
+                        {/* Objection-killer pill — price, speed, risk reversal in one line */}
+                        <div className="flex items-center justify-center md:justify-start gap-2 md:gap-3 text-[12px] md:text-[14px] font-semibold text-[#9A3412] bg-[#FFF7ED] border border-[#FED7AA] rounded-full px-4 py-1.5 w-fit mx-auto md:mx-0">
+                            <span>$497 one-time</span>
+                            <span className="text-[#FDBA74]">·</span>
+                            <span>Live in 48 hrs</span>
+                            <span className="text-[#FDBA74]">·</span>
+                            <span>Full refund guarantee</span>
+                        </div>
                     </div>
                 </div>
 
