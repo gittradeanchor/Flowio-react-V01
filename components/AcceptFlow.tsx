@@ -209,6 +209,13 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                         </div>
 
                         <button onClick={handleConfirmBooking} className="w-full bg-navy text-white py-4 rounded-xl font-bold text-base hover:bg-navy-light shadow-btn-navy">Confirm & Book (Demo)</button>
+
+                        {/* Trust Signals */}
+                        <div className="flex items-center justify-center gap-4 mt-4 text-[11px] text-text-muted">
+                            <span className="flex items-center gap-1">🔒 Secure payment via Stripe</span>
+                            <span>·</span>
+                            <span className="flex items-center gap-1">✅ Full refund guarantee</span>
+                        </div>
                     </div>
                 </div>
             )}

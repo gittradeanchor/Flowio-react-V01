@@ -91,7 +91,7 @@ useEffect(() => {
                         ✓
                     </div>
                     <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Booked. You’re in.</h1>
-                    <p className="text-white/80 text-lg font-medium">10-min phone fit check (no video).</p>
+                    <p className="text-white/80 text-lg font-medium">15-min phone fit check (no video).</p>
                 </div>
 
                 {/* Content Section */}

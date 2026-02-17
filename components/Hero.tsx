@@ -65,7 +65,12 @@ export const Hero = () => {
                         
                          {/* Subtext 2 */}
                         <p className="text-[13px] text-text-muted font-medium mb-2 w-full text-center md:text-left opacity-95">
-                            📩 You’ll receive a live quote by SMS + email
+                            📩 You'll receive a live quote by SMS + email
+                        </p>
+
+                        {/* Price Anchor */}
+                        <p className="text-[13px] text-navy/70 font-semibold mb-0 w-full text-center md:text-left">
+                            Starting from $497 · One-time · No subscription
                         </p>
                     </div>
                 </div>

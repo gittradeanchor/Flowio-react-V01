@@ -1013,23 +1013,48 @@ function updateExistingLead_(pipeline, email, newStage, newNotes, timestamp) {
 
 
 /**
- * Sync lead to CRM sheet (Form Responses tab)
+ * Sync lead to CRM sheet — Leads tab
+ * Headers: timestamp, source, source_detail, personId, requestId, name, Trade, phone, email,
+ *          itemsJSON, total, utm_source, utm_medium, utm_campaign, utm_content, utm_term,
+ *          fbclid, gclid, msclkid, wbraid, gbraid, ad_id, adset_id, campaign_id, landing_url, referrer
  */
 function syncToCRM_(data, source, timestamp) {
   try {
     const crm = SpreadsheetApp.openById(CONFIG.CRM_SHEET_ID);
-    const formResponses = crm.getSheetByName('Form Responses 4');
-    if (!formResponses) return;
+    const leadsTab = crm.getSheetByName('Leads');
+    if (!leadsTab) {
+      Logger.log('CRM sync skipped — "Leads" tab not found.');
+      return;
+    }
 
-    // Add a row with basic lead info — adapt columns to match your CRM structure
-    formResponses.appendRow([
-      timestamp,
-      data.name || data.full_name || '',
-      data.email || '',
-      data.phone || data.phone_number || '',
-      data.trade || '',
-      source,
-      'Marketing Engine'
+    // Match exact CRM Leads tab column order (26 columns A-Z)
+    leadsTab.appendRow([
+      timestamp,                                          // A: timestamp
+      source,                                             // B: source
+      'Marketing Engine',                                 // C: source_detail
+      '',                                                 // D: personId
+      '',                                                 // E: requestId
+      data.name || data.full_name || '',                  // F: name
+      data.trade || '',                                   // G: Trade
+      data.phone || data.phone_number || '',              // H: phone
+      data.email || '',                                   // I: email
+      '',                                                 // J: itemsJSON
+      '',                                                 // K: total
+      data.utm_source || data.utmSource || '',            // L: utm_source
+      data.utm_medium || data.utmMedium || '',            // M: utm_medium
+      data.utm_campaign || data.utmCampaign || '',        // N: utm_campaign
+      data.utm_content || '',                             // O: utm_content
+      data.utm_term || '',                                // P: utm_term
+      data.fbclid || '',                                  // Q: fbclid
+      data.gclid || '',                                   // R: gclid
+      data.msclkid || '',                                 // S: msclkid
+      data.wbraid || '',                                  // T: wbraid
+      data.gbraid || '',                                  // U: gbraid
+      data.ad_id || '',                                   // V: ad_id
+      data.adset_id || '',                                // W: adset_id
+      data.campaign_id || '',                             // X: campaign_id
+      data.landing_url || '',                             // Y: landing_url
+      data.referrer || data.referredBy || '',             // Z: referrer
     ]);
     Logger.log('Synced to CRM: ' + (data.email || ''));
   } catch (err) {

@@ -413,11 +413,11 @@ export const TestDrive = () => {
                                                 disabled={items.length === 0 || generating || isPricebookLoading}
                                                 className="w-full mt-5 bg-green text-white py-4 rounded-lg font-bold text-lg hover:bg-[#0B844A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg active:translate-y-0.5"
                                             >
-                                                {generating ? '⚡ Generating...' : 'Send demo link →'}
+                                                {generating ? '⚡ Generating...' : 'Generate My Quote →'}
                                             </button>
                                             
                                             <p className="text-center text-[11px] font-semibold text-text-muted mt-3">
-                                                You’ll get: SMS link + PDF + accept page (10 sec).
+                                                Add items, tap Generate — see the full quote-to-booking flow in 10 seconds.
                                             </p>
                                         </div>
                                     </div>
@@ -486,11 +486,11 @@ export const TestDrive = () => {
                                                 type="submit" disabled={smsSending}
                                                 className="bg-navy text-white font-bold py-3.5 rounded-xl mt-2 hover:bg-navy-light shadow-btn-navy transition-all flex justify-center items-center"
                                             >
-                                                {smsSending ? 'Sending...' : 'Send my demo link →'}
+                                                {smsSending ? 'Sending...' : 'Send My Live Demo →'}
                                             </button>
                                         </form>
                                         <p className="text-[10px] text-text-muted text-center mt-4 opacity-70">
-                                            You’ll get: SMS accept link + PDF email (10 sec).
+                                            You'll receive a live quote by SMS + email in under 10 seconds.
                                         </p>
                                     </div>
                                 </div>
