@@ -60,9 +60,14 @@ export const Hero = () => {
                     <div className="flex flex-col items-center md:items-start w-full md:w-auto order-4 md:order-none mt-1 md:mt-0">
 
                         {/* CTA Button */}
-                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto md:min-w-[360px] px-8 py-4 min-h-[58px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-3 md:mb-4">
+                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto md:min-w-[360px] px-8 py-4 min-h-[58px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-2">
                             Run a Live Demo (30s) <span className="ml-3 text-4xl leading-[0] pb-2">▸</span>
                         </a>
+
+                        {/* What happens after click — reduces friction */}
+                        <p className="text-[12px] md:text-[13px] text-text-muted text-center md:text-left mb-3 md:mb-4 w-full">
+                            Build a real quote below — we'll text it to your phone with a live accept link.
+                        </p>
 
                         {/* Starting from $497 badge — sleek pill style */}
                         <div className="flex items-center gap-2.5 mb-3 md:mb-4 mx-auto md:mx-0">
