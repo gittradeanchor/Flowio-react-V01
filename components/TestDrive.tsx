@@ -417,7 +417,10 @@ export const TestDrive = () => {
                                             </button>
                                             
                                             <p className="text-center text-[11px] font-semibold text-text-muted mt-3">
-                                                Add items, tap Generate — see the full quote-to-booking flow in 10 seconds.
+                                                Add items, tap Generate — see the full quote-to-booking flow.
+                                            </p>
+                                            <p className="text-center text-[10px] text-orange font-medium mt-1.5 opacity-80">
+                                                Next: We'll text this quote to your phone with a live accept link →
                                             </p>
                                         </div>
                                     </div>
@@ -486,7 +489,7 @@ export const TestDrive = () => {
                                                 type="submit" disabled={smsSending}
                                                 className="bg-navy text-white font-bold py-3.5 rounded-xl mt-2 hover:bg-navy-light shadow-btn-navy transition-all flex justify-center items-center"
                                             >
-                                                {smsSending ? 'Sending...' : 'Send My Live Demo →'}
+                                                {smsSending ? 'Sending...' : 'Text Me My Quote →'}
                                             </button>
                                         </form>
                                         <p className="text-[10px] text-text-muted text-center mt-4 opacity-70">

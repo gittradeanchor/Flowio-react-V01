@@ -210,11 +210,20 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
 
                         <button onClick={handleConfirmBooking} className="w-full bg-navy text-white py-4 rounded-xl font-bold text-base hover:bg-navy-light shadow-btn-navy">Confirm & Book (Demo)</button>
 
-                        {/* Trust Signals */}
-                        <div className="flex items-center justify-center gap-4 mt-4 text-[11px] text-text-muted">
-                            <span className="flex items-center gap-1">🔒 Secure payment via Stripe</span>
-                            <span>·</span>
-                            <span className="flex items-center gap-1">✅ Full refund guarantee</span>
+                        {/* Trust Signals — 2×2 grid */}
+                        <div className="grid grid-cols-2 gap-2 mt-5">
+                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                                <span className="shrink-0">🔒</span><span>Secure payment via Stripe</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                                <span className="shrink-0">✅</span><span>Full refund guarantee</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                                <span className="shrink-0">📋</span><span>ABN: 45 529 331 663</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                                <span className="shrink-0">💼</span><span>Tax deductible for your business</span>
+                            </div>
                         </div>
                     </div>
                 </div>
