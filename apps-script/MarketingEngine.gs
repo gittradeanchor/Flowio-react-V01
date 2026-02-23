@@ -1,20 +1,8 @@
 /**
  * ╔══════════════════════════════════════════════════════════════╗
  * ║  FLOWIO MARKETING ENGINE v1.0                               ║
- * ║  Replaces all 7 Make.com scenarios in one Apps Script        ║
  * ║  Bound to: Marketing Command Center Google Sheet             ║
  * ╚══════════════════════════════════════════════════════════════╝
- *
- * SETUP:
- * 1. Open Marketing Command Center sheet
- * 2. Extensions > Apps Script
- * 3. Paste this entire file into Code.gs
- * 4. Run setupSheet() once to ensure headers exist
- * 5. Run setupTriggers() once to create time-driven triggers
- * 6. Deploy > New deployment > Web app > Anyone > Deploy
- * 7. Copy the web app URL into your website .env as VITE_MARKETING_ENGINE_URL
- * 8. Update QuotingAudit.tsx and TestDrive webhook to POST to this URL
- */
 
 // ═══════════════════════════════════════════════════════════════
 // CONFIG
@@ -943,6 +931,13 @@ function sendDailyDigest() {
 
   GmailApp.sendEmail(CONFIG.OWNER_EMAIL, subject, '', { htmlBody: html, name: 'Flowio Engine' });
   Logger.log('✅ Daily digest sent.');
+
+  // Also update Dashboard tab with live stats
+  try {
+    updateDashboard();
+  } catch (err) {
+    Logger.log('Dashboard update error (non-critical): ' + err.message);
+  }
 }
 
 
@@ -1176,6 +1171,623 @@ function sendSms_(to, message) {
 
 
 // ═══════════════════════════════════════════════════════════════
+// OUTBOUND ENGINE: Lead Import + Scoring + Call List + Cold Email
+// ═══════════════════════════════════════════════════════════════
+
+// --- New tab names ---
+const RAW_LEADS_TAB = 'Raw Leads';
+const CALL_LIST_TAB = 'Call List';
+
+// --- Column indices for Raw Leads tab (0-based) ---
+const RAW_COL = {
+  NAME: 0,      // A
+  PHONE: 1,     // B
+  EMAIL: 2,     // C
+  TRADE: 3,     // D
+  CITY: 4,      // E
+  REVIEWS: 5,   // F
+  WEBSITE: 6,   // G
+  IMPORTED: 7,  // H — "yes" once imported
+};
+
+const RAW_LEADS_HEADERS = ['Name', 'Phone', 'Email', 'Trade', 'City', 'Reviews', 'Website', 'Imported'];
+const CALL_LIST_HEADERS = ['Name', 'Phone', 'Trade', 'City', 'Reviews', 'Lead Score', 'Email', 'Last Email Status', 'Call Notes', 'Call Result'];
+
+// Target trades for scoring boost
+const TARGET_TRADES = ['electrician', 'plumber', 'painter', 'carpenter', 'builder', 'roofer', 'concreter', 'landscaper', 'tiler', 'hvac', 'air con'];
+
+
+/**
+ * Import leads from "Raw Leads" tab into Pipeline.
+ * Deduplicates by email. Marks imported rows so they aren't re-processed.
+ * Run manually or via trigger after pasting scraped leads.
+ */
+function importLeads() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  const rawSheet = ss.getSheetByName(RAW_LEADS_TAB);
+  if (!rawSheet) {
+    Logger.log('❌ "Raw Leads" tab not found. Run setupSheet() first.');
+    return;
+  }
+
+  const pipeline = ss.getSheetByName(CONFIG.PIPELINE_TAB);
+  const rawData = rawSheet.getDataRange().getValues();
+  const pipelineData = pipeline.getDataRange().getValues();
+  const now = new Date();
+  const timestamp = Utilities.formatDate(now, 'Australia/Sydney', 'yyyy-MM-dd HH:mm');
+  const todayStr = Utilities.formatDate(now, 'Australia/Sydney', 'yyyy-MM-dd');
+
+  // Build existing emails set from Pipeline for dedup
+  const existingEmails = new Set();
+  for (let i = 1; i < pipelineData.length; i++) {
+    const em = String(pipelineData[i][CONFIG.COL.EMAIL]).toLowerCase().trim();
+    if (em) existingEmails.add(em);
+  }
+
+  let imported = 0;
+  let skipped = 0;
+
+  for (let i = 1; i < rawData.length; i++) {
+    const row = rawData[i];
+    const alreadyImported = String(row[RAW_COL.IMPORTED]).toLowerCase().trim();
+    if (alreadyImported === 'yes') continue;
+
+    const name = String(row[RAW_COL.NAME]).trim();
+    const phone = String(row[RAW_COL.PHONE]).trim();
+    const email = String(row[RAW_COL.EMAIL]).toLowerCase().trim();
+    const trade = String(row[RAW_COL.TRADE]).trim();
+    const city = String(row[RAW_COL.CITY]).trim();
+    const reviews = parseInt(row[RAW_COL.REVIEWS]) || 0;
+    const website = String(row[RAW_COL.WEBSITE]).trim();
+
+    // Must have at least a name and (email or phone)
+    if (!name || (!email && !phone)) {
+      skipped++;
+      continue;
+    }
+
+    // Dedup by email
+    if (email && existingEmails.has(email)) {
+      rawSheet.getRange(i + 1, RAW_COL.IMPORTED + 1).setValue('duplicate');
+      skipped++;
+      continue;
+    }
+
+    // Build notes
+    const notes = 'Outbound scrape | ' + city + ' | ' + reviews + ' reviews' + (website ? ' | ' + website : '');
+
+    // Add to Pipeline
+    const newRow = [
+      timestamp,            // Date
+      name,                 // Name
+      phone,                // Phone
+      email,                // Email
+      trade,                // Trade
+      'outbound_scrape',    // Source
+      '',                   // UTM Source
+      '',                   // UTM Medium
+      '',                   // UTM Campaign
+      'new',                // Stage
+      notes,                // Notes
+      '',                   // Last Contact
+      '',                   // Next Action
+      0,                    // Nurture Step
+      todayStr,             // Nurture Next Date
+    ];
+    pipeline.appendRow(newRow);
+
+    // Mark as imported
+    rawSheet.getRange(i + 1, RAW_COL.IMPORTED + 1).setValue('yes');
+    if (email) existingEmails.add(email);
+    imported++;
+  }
+
+  Logger.log('✅ Import complete. Imported: ' + imported + ', Skipped: ' + skipped);
+}
+
+
+/**
+ * Score all Pipeline leads. Adds/updates Lead Score column (P).
+ * Scoring:
+ *   +3 has phone, +2 has email, +1 has website (in notes)
+ *   +3 reviews 20-80, +1 reviews 80+, +2 target trade
+ *   +1 source = test_drive or audit (warm), +2 source = booking
+ */
+function scoreLeads_() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  const pipeline = ss.getSheetByName(CONFIG.PIPELINE_TAB);
+  const data = pipeline.getDataRange().getValues();
+  const C = CONFIG.COL;
+
+  // Ensure "Lead Score" header exists in column P (index 15)
+  const SCORE_COL = 15; // 0-based = column P
+  if (data.length > 0 && String(data[0][SCORE_COL]).trim() !== 'Lead Score') {
+    pipeline.getRange(1, SCORE_COL + 1).setValue('Lead Score');
+    pipeline.getRange(1, SCORE_COL + 1).setFontWeight('bold').setBackground('#0F172A').setFontColor('#FFFFFF');
+  }
+
+  const scores = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    let score = 0;
+
+    const phone = String(row[C.PHONE]).trim();
+    const email = String(row[C.EMAIL]).trim();
+    const trade = String(row[C.TRADE]).toLowerCase().trim();
+    const source = String(row[C.SOURCE]).toLowerCase().trim();
+    const notes = String(row[C.NOTES]).toLowerCase();
+
+    // Contact info
+    if (phone) score += 3;
+    if (email) score += 2;
+    if (notes.includes('http') || notes.includes('www') || notes.includes('.com')) score += 1;
+
+    // Reviews (extracted from notes: "X reviews")
+    const reviewMatch = notes.match(/(\d+)\s*review/);
+    if (reviewMatch) {
+      const reviewCount = parseInt(reviewMatch[1]);
+      if (reviewCount >= 20 && reviewCount < 80) score += 3;
+      else if (reviewCount >= 80) score += 1; // Big operations less likely to switch
+    }
+
+    // Target trade
+    if (TARGET_TRADES.some(t => trade.includes(t))) score += 2;
+
+    // Warm source bonus
+    if (['test_drive', 'audit'].includes(source)) score += 1;
+    if (source === 'booking') score += 2;
+
+    scores.push([score]);
+  }
+
+  if (scores.length > 0) {
+    pipeline.getRange(2, SCORE_COL + 1, scores.length, 1).setValues(scores);
+  }
+
+  Logger.log('✅ Lead scoring complete. Scored ' + scores.length + ' leads.');
+}
+
+
+/**
+ * Generate/refresh the "Call List" tab — sorted by lead score desc.
+ * Only includes leads with a phone number and active stages.
+ */
+function refreshCallList() {
+  // Score first
+  scoreLeads_();
+
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  const pipeline = ss.getSheetByName(CONFIG.PIPELINE_TAB);
+  const data = pipeline.getDataRange().getValues();
+  const C = CONFIG.COL;
+  const SCORE_COL = 15;
+
+  let callList = ss.getSheetByName(CALL_LIST_TAB);
+  if (!callList) {
+    Logger.log('❌ "Call List" tab not found. Run setupOutboundTabs() first.');
+    return;
+  }
+
+  // Clear existing data (keep headers)
+  const lastRow = callList.getLastRow();
+  if (lastRow > 1) {
+    callList.getRange(2, 1, lastRow - 1, CALL_LIST_HEADERS.length).clearContent();
+  }
+
+  // Collect eligible leads
+  const leads = [];
+  const activeStages = ['new', 'engaged', 'nurture_complete', 'email_sent'];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const phone = String(row[C.PHONE]).trim();
+    const stage = String(row[C.STAGE]).toLowerCase().trim();
+    const email = String(row[C.EMAIL]).trim();
+
+    if (!phone) continue;
+    if (!activeStages.includes(stage)) continue;
+
+    const name = String(row[C.NAME]).trim();
+    const trade = String(row[C.TRADE]).trim();
+    const notes = String(row[C.NOTES]);
+    const score = parseInt(row[SCORE_COL]) || 0;
+
+    // Extract city from notes (format: "Outbound scrape | City | X reviews")
+    let city = '';
+    const cityMatch = notes.match(/\|\s*([^|]+?)\s*\|/);
+    if (cityMatch) city = cityMatch[1].trim();
+
+    // Extract reviews
+    let reviews = '';
+    const revMatch = notes.match(/(\d+)\s*review/);
+    if (revMatch) reviews = revMatch[1];
+
+    // Get last email status from Next Action column
+    const lastEmailStatus = String(row[C.NEXT_ACTION]).trim();
+
+    leads.push([name, phone, trade, city, reviews, score, email, lastEmailStatus, '', '']);
+  }
+
+  // Sort by score descending
+  leads.sort((a, b) => b[5] - a[5]);
+
+  // Write to Call List
+  if (leads.length > 0) {
+    callList.getRange(2, 1, leads.length, CALL_LIST_HEADERS.length).setValues(leads);
+  }
+
+  Logger.log('✅ Call List refreshed. ' + leads.length + ' leads ready for calling.');
+}
+
+
+/**
+ * Cold outreach email templates — shorter, colder than warm nurture.
+ * 3-email sequence: Day 0, Day 3, Day 6
+ */
+function getColdOutreachTemplates_(name, trade, city) {
+  const firstName = (name || 'there').split(' ')[0];
+  const tradeLabel = trade || 'tradie';
+  const cityLabel = city || 'your area';
+
+  return [
+    // Cold Step 0: Day 0 — Direct intro
+    {
+      subject: firstName + ', quick question about your quoting process',
+      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
+        <p>G'day ${firstName},</p>
+        <p>Found your ${tradeLabel} business in ${cityLabel} and had a quick question — how long does it take you to send a quote?</p>
+        <p>I built a tool called <strong>Flowio</strong> that lets tradies send professional PDF quotes in under 2 minutes, straight from Google Sheets. Client gets an SMS with an accept link, pays online, job gets booked to your calendar. All automatic.</p>
+        <p>No monthly fees — just a one-time setup starting from $497.</p>
+        <p>Worth a quick look?</p>
+        <p><a href="${CONFIG.TEST_DRIVE_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Try the 30-second demo</a></p>
+        <p>Cheers,<br>${CONFIG.SENDER_NAME}<br><span style="font-size: 13px; color: #94A3B8;">TradeAnchor | Sydney</span></p>
+      </div>`
+    },
+
+    // Cold Step 1: Day 3 — Social proof nudge
+    {
+      subject: 'How ' + cityLabel + ' tradies are winning more jobs (without more admin)',
+      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
+        <p>G'day ${firstName},</p>
+        <p>Following up on my last note. The tradies using Flowio tell us the same thing:</p>
+        <ul>
+          <li>"I quote in 2 minutes instead of 30"</li>
+          <li>"Clients pay the deposit before I even get off the phone"</li>
+          <li>"It runs in Google Sheets — nothing new to learn"</li>
+        </ul>
+        <p>Unlike ServiceM8 or Jobber, there's no monthly subscription. One-time setup, you own everything, runs in the tools you already use.</p>
+        <p>If you've got 15 min, happy to run through how it'd work for your ${tradeLabel} business:</p>
+        <p><a href="${CONFIG.CALENDLY_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Book a Quick Chat</a></p>
+        <p>${CONFIG.SENDER_NAME}</p>
+      </div>`
+    },
+
+    // Cold Step 2: Day 6 — Final, breakup-style
+    {
+      subject: 'No worries if not, ' + firstName,
+      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
+        <p>G'day ${firstName},</p>
+        <p>Last note from me — no worries if the timing isn't right.</p>
+        <p>Quick summary in case you want to bookmark it for later:</p>
+        <ul>
+          <li>Flowio = quoting + booking + payments inside Google Sheets</li>
+          <li>Done-for-you setup in 48 hours, starting from $497</li>
+          <li>No monthly fees, full refund if not live in 48 hrs</li>
+        </ul>
+        <p>Whenever you're ready: <a href="${CONFIG.TEST_DRIVE_URL}" style="color: #F97316; font-weight: 700;">try the demo</a> or <a href="${CONFIG.CALENDLY_URL}" style="color: #0F172A; font-weight: 700;">book a chat</a>.</p>
+        <p>All the best with the business, ${firstName}!</p>
+        <p>Sean<br><span style="font-size: 13px; color: #94A3B8;">TradeAnchor | Sydney</span></p>
+      </div>`
+    }
+  ];
+}
+
+
+/**
+ * Run cold outreach for outbound-scraped leads.
+ * 3-step email sequence: Day 0, Day 3, Day 6.
+ * Respects "Do Not Email" in Next Action column.
+ * Daily trigger at 11am AEST recommended.
+ */
+function runColdOutreach() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  const pipeline = ss.getSheetByName(CONFIG.PIPELINE_TAB);
+  const data = pipeline.getDataRange().getValues();
+  const today = new Date();
+  const todayStr = Utilities.formatDate(today, 'Australia/Sydney', 'yyyy-MM-dd');
+  const C = CONFIG.COL;
+
+  let processed = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const source = String(row[C.SOURCE]).toLowerCase().trim();
+    const stage = String(row[C.STAGE]).toLowerCase().trim();
+    const email = String(row[C.EMAIL]).trim();
+    const name = String(row[C.NAME]).trim();
+    const trade = String(row[C.TRADE]).trim();
+    const notes = String(row[C.NOTES]);
+    const nurtureStep = parseInt(row[C.NURTURE_STEP]) || 0;
+    const nurtureNext = String(row[C.NURTURE_NEXT]).trim();
+    const nextAction = String(row[C.NEXT_ACTION]).toLowerCase().trim();
+
+    // Only process outbound-scraped leads
+    if (source !== 'outbound_scrape') continue;
+
+    // Skip if no email, already booked/paid/installed/cold, or opted out
+    if (!email) continue;
+    if (['booked', 'paid', 'installed', 'cold', 'do_not_email'].includes(stage)) continue;
+    if (nextAction === 'do_not_email') continue;
+
+    // Cold sequence has 3 steps (0, 1, 2)
+    if (nurtureStep >= 3) continue;
+    if (!nurtureNext) continue;
+    if (nurtureNext > todayStr) continue;
+
+    // Extract city from notes
+    let city = '';
+    const cityMatch = notes.match(/\|\s*([^|]+?)\s*\|/);
+    if (cityMatch) city = cityMatch[1].trim();
+
+    // Get cold templates
+    const templates = getColdOutreachTemplates_(name, trade, city);
+    const template = templates[nurtureStep];
+    if (!template) continue;
+
+    try {
+      GmailApp.sendEmail(email, template.subject, '', {
+        htmlBody: template.html,
+        name: CONFIG.SENDER_NAME,
+      });
+
+      const rowNum = i + 1;
+      const nextStep = nurtureStep + 1;
+      const nowStr = Utilities.formatDate(today, 'Australia/Sydney', 'yyyy-MM-dd HH:mm');
+
+      // Update Pipeline row
+      pipeline.getRange(rowNum, C.LAST_CONTACT + 1).setValue(nowStr);
+      pipeline.getRange(rowNum, C.NURTURE_STEP + 1).setValue(nextStep);
+      pipeline.getRange(rowNum, C.STAGE + 1).setValue('email_sent');
+
+      if (nextStep >= 3) {
+        // Cold sequence complete → mark cold
+        pipeline.getRange(rowNum, C.NURTURE_NEXT + 1).setValue('');
+        pipeline.getRange(rowNum, C.STAGE + 1).setValue('cold');
+      } else {
+        // Schedule next cold email (3 days apart)
+        const nextDate = new Date(today);
+        nextDate.setDate(nextDate.getDate() + 3);
+        const nextDateStr = Utilities.formatDate(nextDate, 'Australia/Sydney', 'yyyy-MM-dd');
+        pipeline.getRange(rowNum, C.NURTURE_NEXT + 1).setValue(nextDateStr);
+      }
+
+      processed++;
+      Logger.log('Cold email step ' + nurtureStep + ' sent to: ' + email);
+
+    } catch (err) {
+      Logger.log('Cold email error for ' + email + ': ' + err.message);
+    }
+
+    // Batch limit
+    if (processed >= 20) {
+      Logger.log('Reached batch limit of 20. Will continue tomorrow.');
+      break;
+    }
+  }
+
+  Logger.log('✅ Cold outreach complete. Processed: ' + processed);
+}
+
+
+/**
+ * Update Dashboard tab with live stats from Pipeline.
+ * Call after daily digest or manually.
+ */
+function updateDashboard() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  const pipeline = ss.getSheetByName(CONFIG.PIPELINE_TAB);
+  const dashboard = ss.getSheetByName(CONFIG.DASHBOARD_TAB);
+
+  if (!pipeline || !dashboard) {
+    Logger.log('❌ Pipeline or Dashboard tab not found.');
+    return;
+  }
+
+  const data = pipeline.getDataRange().getValues();
+  const today = new Date();
+  const todayStr = Utilities.formatDate(today, 'Australia/Sydney', 'yyyy-MM-dd');
+  const C = CONFIG.COL;
+
+  // Date boundaries
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekAgoStr = Utilities.formatDate(weekAgo, 'Australia/Sydney', 'yyyy-MM-dd');
+
+  const monthAgo = new Date(today);
+  monthAgo.setDate(monthAgo.getDate() - 30);
+  const monthAgoStr = Utilities.formatDate(monthAgo, 'Australia/Sydney', 'yyyy-MM-dd');
+
+  // Initialize counters: [today, week, month, allTime]
+  const metrics = {
+    'New Leads':        [0, 0, 0, 0],
+    'Test Drives':      [0, 0, 0, 0],
+    'Audit Requests':   [0, 0, 0, 0],
+    'Calls Booked':     [0, 0, 0, 0],
+    'Installs Completed': [0, 0, 0, 0],
+    'Revenue':          [0, 0, 0, 0],
+    'Pipeline Value':   [0, 0, 0, 0],
+    'Conversion Rate':  [0, 0, 0, 0],
+  };
+
+  const settings = getSettings_();
+  const fullPrice = parseFloat(String(settings['Full Price'] || '1997').replace(/[^0-9.]/g, ''));
+  const litePrice = parseFloat(String(settings['Lite Price'] || '497').replace(/[^0-9.]/g, ''));
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const dateStr = String(row[C.DATE]).substring(0, 10);
+    const source = String(row[C.SOURCE]).toLowerCase().trim();
+    const stage = String(row[C.STAGE]).toLowerCase().trim();
+
+    // Determine time buckets
+    const isToday = (dateStr === todayStr);
+    const isWeek = (dateStr >= weekAgoStr);
+    const isMonth = (dateStr >= monthAgoStr);
+    const buckets = [isToday ? 1 : 0, isWeek ? 1 : 0, isMonth ? 1 : 0, 1];
+
+    // New Leads (all)
+    for (let b = 0; b < 4; b++) metrics['New Leads'][b] += buckets[b];
+
+    // Test Drives
+    if (source === 'test_drive') {
+      for (let b = 0; b < 4; b++) metrics['Test Drives'][b] += buckets[b];
+    }
+
+    // Audit Requests
+    if (source === 'audit') {
+      for (let b = 0; b < 4; b++) metrics['Audit Requests'][b] += buckets[b];
+    }
+
+    // Calls Booked
+    if (stage === 'booked' || source === 'booking') {
+      for (let b = 0; b < 4; b++) metrics['Calls Booked'][b] += buckets[b];
+    }
+
+    // Installs Completed
+    if (stage === 'installed') {
+      for (let b = 0; b < 4; b++) metrics['Installs Completed'][b] += buckets[b];
+      for (let b = 0; b < 4; b++) metrics['Revenue'][b] += buckets[b] * fullPrice;
+    }
+
+    // Paid (but not yet installed)
+    if (stage === 'paid') {
+      for (let b = 0; b < 4; b++) metrics['Revenue'][b] += buckets[b] * fullPrice;
+    }
+
+    // Pipeline Value (active leads × average deal)
+    if (['new', 'engaged', 'nurture_complete', 'email_sent', 'booked'].includes(stage)) {
+      metrics['Pipeline Value'][3] += litePrice; // conservative estimate
+    }
+  }
+
+  // Conversion rate: installed / total leads (all time)
+  const totalLeads = metrics['New Leads'][3] || 1;
+  const installs = metrics['Installs Completed'][3];
+  for (let b = 0; b < 4; b++) {
+    const periodLeads = metrics['New Leads'][b] || 1;
+    const periodInstalls = metrics['Installs Completed'][b];
+    metrics['Conversion Rate'][b] = Math.round((periodInstalls / periodLeads) * 100) + '%';
+  }
+
+  // Pipeline value: only show all-time
+  metrics['Pipeline Value'][0] = '';
+  metrics['Pipeline Value'][1] = '';
+  metrics['Pipeline Value'][2] = '';
+  metrics['Pipeline Value'][3] = '$' + metrics['Pipeline Value'][3].toLocaleString();
+
+  // Format revenue as currency
+  for (let b = 0; b < 4; b++) {
+    if (typeof metrics['Revenue'][b] === 'number') {
+      metrics['Revenue'][b] = '$' + metrics['Revenue'][b].toLocaleString();
+    }
+  }
+
+  // Write to Dashboard
+  const metricRows = [
+    ['Metric', 'Today', 'This Week', 'This Month', 'All Time'],
+  ];
+
+  for (const [label, values] of Object.entries(metrics)) {
+    metricRows.push([label, values[0], values[1], values[2], values[3]]);
+  }
+
+  dashboard.getRange(1, 1, metricRows.length, 5).setValues(metricRows);
+  dashboard.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#0F172A').setFontColor('#FFFFFF');
+
+  // Add last updated timestamp
+  const updatedStr = Utilities.formatDate(today, 'Australia/Sydney', 'dd MMM yyyy HH:mm');
+  dashboard.getRange(metricRows.length + 2, 1).setValue('Last updated: ' + updatedStr);
+  dashboard.getRange(metricRows.length + 2, 1).setFontColor('#94A3B8').setFontSize(10);
+
+  Logger.log('✅ Dashboard updated with live stats.');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// UPDATED SETUP: Add Raw Leads + Call List tabs
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Extend setupSheet() to also create Raw Leads and Call List tabs.
+ * Run this after updating the engine code.
+ */
+function setupOutboundTabs() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+
+  // Raw Leads tab
+  let rawSheet = ss.getSheetByName(RAW_LEADS_TAB);
+  if (!rawSheet) {
+    rawSheet = ss.insertSheet(RAW_LEADS_TAB);
+    Logger.log('Created "Raw Leads" tab.');
+  }
+  const rawFirst = rawSheet.getRange('A1').getValue();
+  if (rawFirst === '' || rawFirst === null) {
+    rawSheet.getRange(1, 1, 1, RAW_LEADS_HEADERS.length).setValues([RAW_LEADS_HEADERS]);
+    rawSheet.getRange(1, 1, 1, RAW_LEADS_HEADERS.length)
+      .setFontWeight('bold')
+      .setBackground('#0F172A')
+      .setFontColor('#FFFFFF');
+    rawSheet.setFrozenRows(1);
+    Logger.log('Raw Leads headers created.');
+  }
+
+  // Call List tab
+  let callSheet = ss.getSheetByName(CALL_LIST_TAB);
+  if (!callSheet) {
+    callSheet = ss.insertSheet(CALL_LIST_TAB);
+    Logger.log('Created "Call List" tab.');
+  }
+  const callFirst = callSheet.getRange('A1').getValue();
+  if (callFirst === '' || callFirst === null) {
+    callSheet.getRange(1, 1, 1, CALL_LIST_HEADERS.length).setValues([CALL_LIST_HEADERS]);
+    callSheet.getRange(1, 1, 1, CALL_LIST_HEADERS.length)
+      .setFontWeight('bold')
+      .setBackground('#0F172A')
+      .setFontColor('#FFFFFF');
+    callSheet.setFrozenRows(1);
+    Logger.log('Call List headers created.');
+  }
+
+  Logger.log('✅ Outbound tabs setup complete.');
+}
+
+
+/**
+ * Setup cold outreach trigger (daily 11am AEST).
+ * Run once after deploying outbound engine.
+ */
+function setupOutboundTrigger() {
+  // Check if cold outreach trigger already exists
+  const existing = ScriptApp.getProjectTriggers();
+  const hasOutbound = existing.some(t => t.getHandlerFunction() === 'runColdOutreach');
+  if (hasOutbound) {
+    Logger.log('Cold outreach trigger already exists.');
+    return;
+  }
+
+  ScriptApp.newTrigger('runColdOutreach')
+    .timeBased()
+    .atHour(11)
+    .everyDays(1)
+    .inTimezone('Australia/Sydney')
+    .create();
+
+  Logger.log('✅ Cold outreach trigger created (daily 11am AEST).');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 // UTILITY: Manual test functions
 // ═══════════════════════════════════════════════════════════════
 
@@ -1239,6 +1851,7 @@ function runAllEngines() {
   runNurtureSequence();
   runFollowUpEngine();
   runPostInstallCheck();
-  sendDailyDigest();
+  runColdOutreach();
+  sendDailyDigest(); // Also updates Dashboard
   Logger.log('=== All engines complete ===');
 }
