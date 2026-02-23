@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════╗
- * ║  FLOWIO MARKETING ENGINE v1.0                               ║
+ * ║  FLOWIO MARKETING ENGINE v1.1                               ║
  * ║  Bound to: Marketing Command Center Google Sheet             ║
  * ╚══════════════════════════════════════════════════════════════╝
 
@@ -386,7 +386,7 @@ function doPost(e) {
 function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({
     status: 'ok',
-    engine: 'Flowio Marketing Engine v1.0',
+    engine: 'Flowio Marketing Engine v1.1',
     timestamp: new Date().toISOString()
   })).setMimeType(ContentService.MimeType.JSON);
 }
