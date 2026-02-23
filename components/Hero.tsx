@@ -8,19 +8,11 @@ export const Hero = () => {
 
     if (!videoId) return null; // or render a fallback block
     return (
-        <section className="pt-14 pb-5 md:pt-24 md:pb-12 bg-gradient-to-b from-bg-off to-white">
+        <section className="pt-10 pb-5 md:pt-20 md:pb-12 bg-gradient-to-b from-bg-off to-white">
             {/* Hero-only top bar with logo — visible when header is hidden (before scroll) */}
-            <div className="container mx-auto px-5 max-w-[1100px] mb-6 md:mb-10">
+            <div className="container mx-auto px-5 max-w-[1100px] mb-4 md:mb-7">
                 <div className="flex items-center justify-between">
-                    <img src="/tradeanchor-logo.png" alt="TradeAnchor" className="h-7 md:h-9" />
-                    <a
-                        href={import.meta.env.VITE_CALENDLY_URL || '#offer'}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hidden md:inline-flex items-center gap-2 px-5 py-2 text-[13px] font-bold text-navy border-2 border-navy/15 rounded-lg hover:border-navy/30 transition-colors"
-                    >
-                        Book a Fit Call <span className="text-[10px]">→</span>
-                    </a>
+                    <img src="/tradeanchor-logo.png" alt="TradeAnchor" className="h-8 md:h-11" />
                 </div>
             </div>
 
@@ -30,7 +22,7 @@ export const Hero = () => {
                   MOBILE LAYOUT ORDER:
                   1. Eyebrow + Headline + Sub
                   2. Video
-                  3. CTA + Badge + Trust
+                  3. CTA + Price + Micro-copy
                 */}
                 <div className="contents md:block order-1 md:order-none w-full">
 
@@ -38,7 +30,7 @@ export const Hero = () => {
                     <div className="flex items-center gap-2 mb-3 md:mb-4 order-1 w-full justify-center md:justify-start">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange/8 border border-orange/20 rounded-full text-[11px] md:text-[12px] uppercase tracking-[0.12em] font-bold text-orange">
                             <span className="w-1.5 h-1.5 bg-orange rounded-full"></span>
-                            For Australian Tradies
+                            Aussie Tradies
                         </span>
                     </div>
 
@@ -47,7 +39,7 @@ export const Hero = () => {
                     </h1>
 
                     {/* Subheadline Section */}
-                    <div className="text-center md:text-left mb-5 md:mb-8 max-w-[540px] order-2 w-full">
+                    <div className="text-center md:text-left mb-4 md:mb-6 max-w-[540px] order-2 w-full">
                         <p className="text-[16px] md:text-[20px] font-semibold text-navy/80 mb-1.5 md:mb-2 leading-snug">
                             Send quote ▸ client accepts ▸ job booked.
                         </p>
@@ -56,45 +48,32 @@ export const Hero = () => {
                         </p>
                     </div>
 
-                    {/* CTA + Price row */}
-                    <div className="flex flex-col items-center md:items-start w-full md:w-auto order-4 md:order-none mt-1 md:mt-0">
+                    {/* Price anchor */}
+                    <p className="text-[13px] text-text-muted font-medium text-center md:text-left mb-4 order-2 w-full max-w-[540px]">
+                        Starting from <span className="font-bold text-navy">$497</span> · one-time setup
+                    </p>
 
-                        {/* CTA Button */}
-                        <a href="#test-drive" className="flex items-center justify-center btn w-full md:w-auto md:min-w-[360px] px-8 py-4 min-h-[58px] text-lg font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover mb-2">
-                            Run a Live Demo (30s) <span className="ml-3 text-4xl leading-[0] pb-2">▸</span>
-                        </a>
+                    {/* CTA row */}
+                    <div className="flex flex-col items-center md:items-start w-full md:w-auto order-4 md:order-none mt-1 md:mt-0">
+                        <div className="flex flex-col sm:flex-row items-center md:items-start gap-3 w-full md:w-auto mb-2">
+                            <a href="#test-drive" className="flex items-center justify-center btn w-full sm:w-auto px-6 py-3.5 min-h-[52px] text-base font-bold text-white rounded-xl shadow-btn-primary hover:shadow-lg active:translate-y-0.5 transition-all relative overflow-hidden shine-effect bg-gradient-to-br from-orange to-orange-hover">
+                                Run a Live Demo (30s) <span className="ml-2 text-2xl leading-[0] pb-1">▸</span>
+                            </a>
+                            <a
+                                href={import.meta.env.VITE_CALENDLY_URL || '#offer'}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center justify-center w-full sm:w-auto px-6 py-3.5 min-h-[52px] text-base font-bold text-navy border-2 border-navy/20 rounded-xl hover:border-navy/35 transition-colors bg-white"
+                            >
+                                Book a Fit Call <span className="ml-1.5 text-[13px]">→</span>
+                            </a>
+                        </div>
 
                         {/* What happens after click — reduces friction */}
-                        <p className="text-[12px] md:text-[13px] text-text-muted text-center md:text-left mb-3 md:mb-4 w-full">
+                        <p className="text-[12px] md:text-[13px] text-text-muted text-center md:text-left w-full">
                             Build a real quote below — we'll text it to your phone with a live accept link.
                         </p>
 
-                        {/* Starting from $497 badge — sleek pill style */}
-                        <div className="flex items-center gap-2.5 mb-3 md:mb-4 mx-auto md:mx-0">
-                            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-navy to-[#1a2744] pl-2.5 pr-4 py-[7px] rounded-full shadow-lg">
-                                <span className="flex items-center justify-center w-6 h-6 bg-orange rounded-full shrink-0">
-                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                </span>
-                                <span className="text-white font-bold text-[14px] md:text-[15px] tracking-tight">Starting from <span className="text-orange font-black text-[17px] md:text-[19px]">$497</span></span>
-                            </div>
-                            <span className="text-[11px] md:text-[12px] text-text-muted font-semibold">one-time setup</span>
-                        </div>
-
-                        {/* Trust row — compact, credible */}
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-[11px] md:text-[12px] text-text-muted/90 font-medium">
-                            <span className="flex items-center gap-1.5">
-                                <svg className="w-3.5 h-3.5 text-green shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                                Live in 48 hrs
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <svg className="w-3.5 h-3.5 text-green shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                                Full refund guarantee
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <svg className="w-3.5 h-3.5 text-green shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                                Tax deductible
-                            </span>
-                        </div>
                     </div>
                 </div>
 
@@ -103,16 +82,16 @@ export const Hero = () => {
                     <div className="bg-navy p-2 rounded-xl md:rounded-[18px] shadow-[0_15px_40px_-10px_rgba(15,23,42,0.35)] transform transition-transform md:hover:scale-[1.02]">
                         <div className="relative w-full aspect-video overflow-hidden rounded-lg bg-black">
                             {!isVideoPlaying ? (
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="absolute inset-0 w-full h-full bg-black cursor-pointer border-0 p-0 m-0 group"
                                     onClick={() => setIsVideoPlaying(true)}
                                     aria-label="Play demo video"
                                 >
-                                    <img 
-                                        src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`} 
-                                        alt="Flowio Demo" 
-                                        className="w-full h-full object-cover block" 
+                                    <img
+                                        src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
+                                        alt="Flowio Demo"
+                                        className="w-full h-full object-cover block"
                                         loading="lazy"
                                     />
                                     <span className="absolute left-1/2 top-1/2 w-[60px] h-[60px] md:w-[68px] md:h-[68px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange/95 shadow-xl flex items-center justify-center transition-transform group-hover:scale-110">

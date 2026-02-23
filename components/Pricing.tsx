@@ -265,7 +265,7 @@ export const Pricing = () => {
     const SharedCTA = () => (
         <div className="p-6 bg-white border-t border-border text-center">
             <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="flex items-center justify-center w-full md:max-w-md mx-auto py-4 bg-navy hover:bg-navy-light text-white rounded-xl shadow-btn-navy hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)] hover:-translate-y-0.5 transition-all duration-200 font-bold text-lg uppercase tracking-wide mb-3">
-                Book a 15-min fit check &rarr;
+                Book a Fit Call &rarr;
             </a>
             <p className="text-sm font-medium text-navy mb-4">
                  We'll message you within 5 minutes.
@@ -360,7 +360,7 @@ export const Pricing = () => {
                     <div className="flex justify-center gap-5 flex-wrap">
                         <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="bg-white text-navy px-8 py-4 rounded-xl font-bold text-lg shadow-btn-white hover:bg-slate-100 transition-colors flex items-center gap-2">
                              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                             Book A 15-Min Fit Check
+                             Book a Fit Call
                         </a>
                     </div>
                 </div>

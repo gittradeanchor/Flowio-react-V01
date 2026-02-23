@@ -293,7 +293,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                     <div className="text-center mt-8">
                         <p className="mb-4 text-base text-white">You've seen the automation. Now let's build yours.</p>
                         <a href="#funnel-cta" className="inline-block bg-orange hover:bg-orange-hover text-white px-8 py-4 rounded-xl font-bold text-lg shadow-btn-primary transition-all">
-                            Book My Setup Call
+                            Book a Fit Call
                         </a>
                     </div>
                 </div>

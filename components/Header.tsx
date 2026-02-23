@@ -4,17 +4,26 @@ import React, { useState, useEffect } from 'react';
 export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?: boolean, isSecondaryCta?: boolean }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
-    // Only visible if scrolled AND not explicitly hidden
-    const isVisible = isScrolled && !isHidden;
+    // Always visible on mobile (hamburger accessible from page load)
+    // On desktop: only visible after scroll (slide-in nav behaviour unchanged)
+    const isVisible = !isHidden && (isScrolled || isMobile);
 
     const navItems = [
         { label: 'Test Drive', href: '#test-drive' },
