@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════╗
- * ║  FLOWIO MARKETING ENGINE v1.1                               ║
+ * ║  FLOWIO MARKETING ENGINE v1.3                               ║
  * ║  Bound to: Marketing Command Center Google Sheet             ║
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -188,7 +188,83 @@ function setupSheet() {
     }
   }
 
+  // Apply dropdowns to all multiple-choice columns
+  setupDropdowns();
+
   Logger.log('✅ Sheet setup complete.');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// CUSTOM MENU + AUTO-HANDLERS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Adds "Flowio Engine" menu to the sheet toolbar.
+ * Runs automatically when the spreadsheet is opened.
+ */
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('Flowio Engine')
+    .addItem('Import Raw Leads', 'importLeads')
+    .addItem('Refresh Call List', 'refreshCallList')
+    .addItem('Update Dashboard', 'updateDashboard')
+    .addSeparator()
+    .addItem('Run Nurture Sequence', 'runNurtureSequence')
+    .addItem('Run Follow-Up Engine', 'runFollowUpEngine')
+    .addItem('Run Cold Outreach', 'runColdOutreach')
+    .addItem('Run Post-Install Check', 'runPostInstallCheck')
+    .addSeparator()
+    .addItem('Send Daily Digest', 'sendDailyDigest')
+    .addItem('Run ALL Engines', 'runAllEngines')
+    .addSeparator()
+    .addItem('Sync Call Results to Pipeline', 'syncCallResultToPipeline_')
+    .addSeparator()
+    .addSubMenu(ui.createMenu('Setup (run once)')
+      .addItem('Setup Sheet Headers', 'setupSheet')
+      .addItem('Setup Outbound Tabs', 'setupOutboundTabs')
+      .addItem('Setup All Triggers', 'setupTriggers')
+      .addItem('Apply Dropdowns', 'setupDropdowns')
+      .addItem('Build Guide Tab', 'buildGuideTab_'))
+    .addToUi();
+}
+
+
+/**
+ * Auto-responds to manual cell edits in Pipeline.
+ * Updates Last Contact timestamp and shows toast on stage change.
+ * Simple trigger — CANNOT send emails or call external APIs.
+ */
+function onEdit(e) {
+  try {
+    const sheet = e.range.getSheet();
+    const sheetName = sheet.getName();
+
+    // Only react to Pipeline tab, Stage column (J = column 10)
+    if (sheetName !== CONFIG.PIPELINE_TAB) return;
+    if (e.range.getColumn() !== 10) return;
+    if (e.range.getRow() <= 1) return;
+
+    const newStage = String(e.value || '').toLowerCase().trim();
+    const name = sheet.getRange(e.range.getRow(), 2).getValue();
+
+    // Update Last Contact timestamp
+    const now = Utilities.formatDate(new Date(), 'Australia/Sydney', 'yyyy-MM-dd HH:mm');
+    sheet.getRange(e.range.getRow(), CONFIG.COL.LAST_CONTACT + 1).setValue(now);
+
+    // If moved to "booked" — clear nurture fields
+    if (newStage === 'booked') {
+      sheet.getRange(e.range.getRow(), CONFIG.COL.NURTURE_STEP + 1).setValue('');
+      sheet.getRange(e.range.getRow(), CONFIG.COL.NURTURE_NEXT + 1).setValue('');
+    }
+
+    // Toast feedback
+    SpreadsheetApp.getActiveSpreadsheet().toast(
+      name + ' → ' + newStage, 'Stage Updated', 3
+    );
+  } catch (err) {
+    // Silent fail — onEdit must not throw
+  }
 }
 
 
@@ -202,39 +278,71 @@ function setupTriggers() {
   existing.forEach(t => ScriptApp.deleteTrigger(t));
   Logger.log('Cleared ' + existing.length + ' existing triggers.');
 
-  // Daily 9am AEST — nurture sequence
-  ScriptApp.newTrigger('runNurtureSequence')
+  const tz = 'Australia/Sydney';
+
+  // 7:30am — morning routine (import, score, refresh, dashboard)
+  ScriptApp.newTrigger('morningRoutine_')
     .timeBased()
-    .atHour(9)
+    .atHour(7)
+    .nearMinute(30)
     .everyDays(1)
-    .inTimezone('Australia/Sydney')
+    .inTimezone(tz)
     .create();
 
-  // Daily 10am AEST — follow-up engine
-  ScriptApp.newTrigger('runFollowUpEngine')
-    .timeBased()
-    .atHour(10)
-    .everyDays(1)
-    .inTimezone('Australia/Sydney')
-    .create();
-
-  // Daily 9am AEST — post-install check
-  ScriptApp.newTrigger('runPostInstallCheck')
-    .timeBased()
-    .atHour(9)
-    .everyDays(1)
-    .inTimezone('Australia/Sydney')
-    .create();
-
-  // Daily 8am AEST — digest
+  // 8am — daily digest email
   ScriptApp.newTrigger('sendDailyDigest')
     .timeBased()
     .atHour(8)
     .everyDays(1)
-    .inTimezone('Australia/Sydney')
+    .inTimezone(tz)
     .create();
 
-  Logger.log('✅ 4 triggers created (8am digest, 9am nurture+post-install, 10am follow-up).');
+  // 9am — nurture sequence
+  ScriptApp.newTrigger('runNurtureSequence')
+    .timeBased()
+    .atHour(9)
+    .everyDays(1)
+    .inTimezone(tz)
+    .create();
+
+  // 9am — post-install check
+  ScriptApp.newTrigger('runPostInstallCheck')
+    .timeBased()
+    .atHour(9)
+    .everyDays(1)
+    .inTimezone(tz)
+    .create();
+
+  // 10am — follow-up engine
+  ScriptApp.newTrigger('runFollowUpEngine')
+    .timeBased()
+    .atHour(10)
+    .everyDays(1)
+    .inTimezone(tz)
+    .create();
+
+  // 11am — cold outreach
+  ScriptApp.newTrigger('runColdOutreach')
+    .timeBased()
+    .atHour(11)
+    .everyDays(1)
+    .inTimezone(tz)
+    .create();
+
+  Logger.log('✅ 6 triggers created (7:30am routine, 8am digest, 9am nurture+post-install, 10am follow-up, 11am cold outreach).');
+}
+
+
+/**
+ * Morning routine — runs at 7:30am daily via trigger.
+ * Ensures importLeads runs before refreshCallList (order matters).
+ */
+function morningRoutine_() {
+  Logger.log('=== Morning Routine ===');
+  importLeads();
+  refreshCallList();
+  updateDashboard();
+  Logger.log('=== Morning Routine Complete ===');
 }
 
 
@@ -250,7 +358,7 @@ function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
     // Support both "action" field (new) and "event" field (BookingConfirmed page legacy)
-    const action = data.action || data.event || 'unknown';
+    const action = data.action || data.type || data.event || 'unknown';
     const now = new Date();
     const timestamp = Utilities.formatDate(now, 'Australia/Sydney', 'yyyy-MM-dd HH:mm');
 
@@ -315,13 +423,17 @@ function doPost(e) {
         notes = 'FB Lead Ad: ' + (data.ad_name || data.campaign_name || '');
         // Send welcome email for ad leads
         sendAdLeadWelcomeEmail_(name, email);
+        // Log to Ad Tracker tab
+        logAdTracker_(ss, data, timestamp);
         break;
 
       case 'referral_lead':
         source = 'referral';
-        notes = 'Referred by: ' + (data.referrer || '');
+        var refName = data.referrerName || data.referrer || '';
+        var refEmail = data.referrerEmail || data.referrer_email || '';
+        notes = 'Referred by: ' + refName;
         // Log referral
-        logReferral_(ss, data.referrer || '', data.referrer_email || '', name, email);
+        logReferral_(ss, refName, refEmail, name, email);
         break;
 
       default:
@@ -362,6 +474,17 @@ function doPost(e) {
     pipeline.appendRow(newRow);
     Logger.log('✅ Lead added: ' + name + ' (' + source + ')');
 
+    // Instant notification to Sean
+    try {
+      GmailApp.sendEmail(CONFIG.OWNER_EMAIL,
+        'New Lead: ' + name + ' (' + source + ')',
+        'Name: ' + name + '\nPhone: ' + phone + '\nEmail: ' + email + '\nTrade: ' + trade + '\nSource: ' + source + '\nNotes: ' + notes + '\n\nOpen Pipeline: https://docs.google.com/spreadsheets/d/' + CONFIG.COMMAND_CENTER_ID + '/edit',
+        { name: 'Flowio Engine' }
+      );
+    } catch (notifErr) {
+      Logger.log('Notification email failed (non-critical): ' + notifErr.message);
+    }
+
     // Also sync to CRM sheet's Form Responses if it exists
     syncToCRM_(data, source, timestamp);
 
@@ -387,7 +510,7 @@ function doPost(e) {
 function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({
     status: 'ok',
-    engine: 'Flowio Marketing Engine v1.1',
+    engine: 'Flowio Marketing Engine v1.3',
     timestamp: new Date().toISOString()
   })).setMimeType(ContentService.MimeType.JSON);
 }
@@ -495,6 +618,8 @@ function runNurtureSequence() {
     if (nurtureNext > todayStr) continue;
 
     // Send appropriate nurture email
+    const templates = getNurtureTemplates_(name, trade);
+    const template = templates[nurtureStep];
     const sent = sendNurtureEmail_(name, email, trade, nurtureStep);
 
     if (sent) {
@@ -517,6 +642,9 @@ function runNurtureSequence() {
         const nextDateStr = Utilities.formatDate(nextDate, 'Australia/Sydney', 'yyyy-MM-dd');
         pipeline.getRange(rowNum, C.NURTURE_NEXT + 1).setValue(nextDateStr);
       }
+
+      // Log to Nurture Status tab
+      logNurtureStatus_(ss, name, email, nextStep, template ? template.subject : 'Step ' + nurtureStep);
 
       processed++;
       Logger.log('Nurture step ' + nurtureStep + ' sent to: ' + email);
@@ -637,8 +765,41 @@ function getNurtureTemplates_(name, trade) {
 }
 
 
+/**
+ * Log/update a lead's nurture status in the Nurture Status tab.
+ * Creates a new row if the lead doesn't exist, updates if they do.
+ */
+function logNurtureStatus_(ss, name, email, step, subject) {
+  const tab = ss.getSheetByName(CONFIG.NURTURE_TAB);
+  if (!tab) return;
+
+  const data = tab.getDataRange().getValues();
+  const now = Utilities.formatDate(new Date(), 'Australia/Sydney', 'yyyy-MM-dd');
+  const status = (step >= 4) ? 'completed' : 'active';
+  const nextDate = (step >= 4) ? '' : Utilities.formatDate(
+    new Date(new Date().getTime() + (CONFIG.NURTURE_SCHEDULE[step] || 0) * 86400000),
+    'Australia/Sydney', 'yyyy-MM-dd'
+  );
+
+  // Check if lead already has a row (match by email)
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]).toLowerCase().trim() === email.toLowerCase().trim()) {
+      const row = i + 1;
+      tab.getRange(row, 3).setValue(step);        // Current Step
+      tab.getRange(row, 4).setValue(nextDate);     // Next Send Date
+      tab.getRange(row, 5).setValue(subject);      // Last Email Subject
+      tab.getRange(row, 6).setValue(status);       // Status
+      return;
+    }
+  }
+
+  // New row
+  tab.appendRow([name, email, step, nextDate, subject, status]);
+}
+
+
 // ═══════════════════════════════════════════════════════════════
-// S4: FOLLOW-UP ENGINE (Daily 10am AEST)
+// FOLLOW-UP ENGINE (Daily 10am AEST)
 // ═══════════════════════════════════════════════════════════════
 
 function runFollowUpEngine() {
@@ -1355,6 +1516,9 @@ function scoreLeads_() {
  * Only includes leads with a phone number and active stages.
  */
 function refreshCallList() {
+  // Save any call results before clearing
+  syncCallResultToPipeline_();
+
   // Score first
   scoreLeads_();
 
@@ -1419,6 +1583,68 @@ function refreshCallList() {
   }
 
   Logger.log('✅ Call List refreshed. ' + leads.length + ' leads ready for calling.');
+}
+
+
+/**
+ * Sync call notes and results from Call List back to Pipeline.
+ * Matches leads by Name + Phone. Updates Pipeline stage based on call result.
+ * Run automatically before refreshCallList() clears data, or manually from menu.
+ */
+function syncCallResultToPipeline_() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  const callSheet = ss.getSheetByName(CALL_LIST_TAB);
+  const pipeline = ss.getSheetByName(CONFIG.PIPELINE_TAB);
+  if (!callSheet || !pipeline) return;
+
+  const callData = callSheet.getDataRange().getValues();
+  const pipeData = pipeline.getDataRange().getValues();
+  const C = CONFIG.COL;
+  const now = Utilities.formatDate(new Date(), 'Australia/Sydney', 'yyyy-MM-dd HH:mm');
+
+  // Build lookup: "name|phone" → pipeline row index (1-based)
+  const pipeMap = {};
+  for (let i = 1; i < pipeData.length; i++) {
+    const key = String(pipeData[i][C.NAME]).trim().toLowerCase() + '|' + String(pipeData[i][C.PHONE]).trim();
+    pipeMap[key] = i + 1;
+  }
+
+  let synced = 0;
+  // Call List columns: Name(0), Phone(1), Trade(2), City(3), Reviews(4), Lead Score(5), Email(6), Last Email Status(7), Call Notes(8), Call Result(9)
+  for (let i = 1; i < callData.length; i++) {
+    const callNotes = String(callData[i][8]).trim();
+    const callResult = String(callData[i][9]).trim().toLowerCase();
+    if (!callNotes && !callResult) continue;
+
+    const key = String(callData[i][0]).trim().toLowerCase() + '|' + String(callData[i][1]).trim();
+    const pipeRow = pipeMap[key];
+    if (!pipeRow) continue;
+
+    // Append call notes to Pipeline Notes column
+    if (callNotes) {
+      const existing = String(pipeData[pipeRow - 1][C.NOTES]);
+      if (!existing.includes(callNotes)) {
+        pipeline.getRange(pipeRow, C.NOTES + 1).setValue(existing + ' | Call: ' + callNotes);
+      }
+    }
+
+    // Update stage based on call result
+    if (callResult === 'booked') {
+      pipeline.getRange(pipeRow, C.STAGE + 1).setValue('booked');
+      pipeline.getRange(pipeRow, C.NURTURE_STEP + 1).setValue('');
+      pipeline.getRange(pipeRow, C.NURTURE_NEXT + 1).setValue('');
+    } else if (callResult === 'not interested') {
+      pipeline.getRange(pipeRow, C.STAGE + 1).setValue('cold');
+    } else if (callResult === 'follow up') {
+      pipeline.getRange(pipeRow, C.STAGE + 1).setValue('engaged');
+    }
+
+    // Update last contact
+    pipeline.getRange(pipeRow, C.LAST_CONTACT + 1).setValue(now);
+    synced++;
+  }
+
+  Logger.log('✅ Synced ' + synced + ' call results to Pipeline.');
 }
 
 
@@ -1764,28 +1990,7 @@ function setupOutboundTabs() {
 }
 
 
-/**
- * Setup cold outreach trigger (daily 11am AEST).
- * Run once after deploying outbound engine.
- */
-function setupOutboundTrigger() {
-  // Check if cold outreach trigger already exists
-  const existing = ScriptApp.getProjectTriggers();
-  const hasOutbound = existing.some(t => t.getHandlerFunction() === 'runColdOutreach');
-  if (hasOutbound) {
-    Logger.log('Cold outreach trigger already exists.');
-    return;
-  }
-
-  ScriptApp.newTrigger('runColdOutreach')
-    .timeBased()
-    .atHour(11)
-    .everyDays(1)
-    .inTimezone('Australia/Sydney')
-    .create();
-
-  Logger.log('✅ Cold outreach trigger created (daily 11am AEST).');
-}
+// setupOutboundTrigger() — REMOVED in v1.3 (consolidated into setupTriggers)
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -1855,4 +2060,205 @@ function runAllEngines() {
   runColdOutreach();
   sendDailyDigest(); // Also updates Dashboard
   Logger.log('=== All engines complete ===');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// DROPDOWNS (Data Validation)
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Apply dropdown data validation to all multiple-choice columns
+ * in both Command Center and CRM sheets.
+ * Run once from menu, or automatically via setupSheet().
+ */
+function setupDropdowns() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  const ROWS = 500;
+
+  // --- Pipeline ---
+  const pipeline = ss.getSheetByName(CONFIG.PIPELINE_TAB);
+  if (pipeline) {
+    applyDropdown_(pipeline, 'E', 2, ROWS, ['Electrician','Plumber','Painter','Carpenter','Builder','Roofer','Concreter','Landscaper','Tiler','HVAC','Air Con','Other']);
+    applyDropdown_(pipeline, 'F', 2, ROWS, ['test_drive','audit','booking','meta_ad','referral','outbound_scrape','direct','organic']);
+    applyDropdown_(pipeline, 'J', 2, ROWS, ['new','engaged','nurture_complete','email_sent','booked','paid','installed','cold']);
+  }
+
+  // --- Referrals ---
+  const referrals = ss.getSheetByName(CONFIG.REFERRALS_TAB);
+  if (referrals) {
+    applyDropdown_(referrals, 'F', 2, ROWS, ['pending','contacted','installed','paid_out']);
+    applyDropdown_(referrals, 'H', 2, ROWS, ['Yes','No']);
+  }
+
+  // --- Nurture Status ---
+  const nurture = ss.getSheetByName(CONFIG.NURTURE_TAB);
+  if (nurture) {
+    applyDropdown_(nurture, 'F', 2, ROWS, ['active','paused','completed','cold']);
+  }
+
+  // --- Call List ---
+  const callList = ss.getSheetByName(CALL_LIST_TAB);
+  if (callList) {
+    applyDropdown_(callList, 'J', 2, ROWS, ['booked','follow up','not interested','no answer','voicemail','callback']);
+  }
+
+  // --- Ad Tracker ---
+  const adTracker = ss.getSheetByName('Ad Tracker');
+  if (adTracker) {
+    applyDropdown_(adTracker, 'J', 2, ROWS, ['new','contacted','booked','installed','dead']);
+  }
+
+  // --- CRM Sheet ---
+  try {
+    const crm = SpreadsheetApp.openById(CONFIG.CRM_SHEET_ID);
+    const leads = crm.getSheetByName('Leads');
+    if (leads) {
+      applyDropdown_(leads, 'B', 2, ROWS, ['test_drive','audit','booking','meta_ad','referral','outbound_scrape','direct']);
+    }
+  } catch (err) {
+    Logger.log('CRM dropdown setup skipped: ' + err.message);
+  }
+
+  Logger.log('✅ All dropdowns applied.');
+}
+
+
+/**
+ * Helper: apply dropdown validation to a column range.
+ */
+function applyDropdown_(sheet, colLetter, startRow, numRows, values) {
+  const col = colLetter.charCodeAt(0) - 64; // A=1, B=2, etc.
+  const range = sheet.getRange(startRow, col, numRows, 1);
+  const rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(values, true)
+    .setAllowInvalid(false)
+    .build();
+  range.setDataValidation(rule);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// AD TRACKER
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Log Meta ad lead to the Ad Tracker tab.
+ * Called from doPost() when action = meta_ad.
+ */
+function logAdTracker_(ss, data, timestamp) {
+  const adTracker = ss.getSheetByName('Ad Tracker');
+  if (!adTracker) return;
+
+  // Ensure headers exist
+  const firstVal = adTracker.getRange('A1').getValue();
+  if (!firstVal) {
+    const headers = ['Date', 'Campaign', 'Ad Set', 'Ad Name', 'Lead Name', 'Lead Email', 'Lead Phone', 'Platform', 'Cost', 'Status'];
+    adTracker.getRange(1, 1, 1, headers.length).setValues([headers]);
+    adTracker.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#0F172A').setFontColor('#FFFFFF');
+    adTracker.setFrozenRows(1);
+  }
+
+  adTracker.appendRow([
+    timestamp,
+    data.campaign_name || data.utm_campaign || '',
+    data.adset_name || data.adset_id || '',
+    data.ad_name || data.ad_id || '',
+    data.name || data.full_name || '',
+    data.email || '',
+    data.phone || data.phone_number || '',
+    'Meta',
+    data.cost_per_lead || '',
+    'new'
+  ]);
+  Logger.log('✅ Ad tracked: ' + (data.campaign_name || 'unknown campaign'));
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// GUIDE TAB
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Create/rebuild the "Guide" tab with daily operations playbook.
+ * Run once from menu.
+ */
+function buildGuideTab_() {
+  const ss = SpreadsheetApp.openById(CONFIG.COMMAND_CENTER_ID);
+  let guide = ss.getSheetByName('Guide');
+  if (!guide) {
+    guide = ss.insertSheet('Guide');
+  } else {
+    guide.clearContents();
+    guide.clearFormats();
+  }
+
+  const rows = [
+    ['FLOWIO DAILY OPERATIONS GUIDE', '', ''],
+    ['Target: 3 installs/week ($6K/week)', '', ''],
+    ['', '', ''],
+    ['DAILY (Every Morning)', 'Action', 'Notes'],
+    ['1', 'Open Dashboard tab — check overnight metrics', 'Auto-updated at 7:30am'],
+    ['2', 'Check email for new lead notifications', 'Instant alerts from v1.3+'],
+    ['3', 'Open Call List — call top 5 leads by score', 'Highest score = best chance'],
+    ['4', 'Log call notes + result in Call List (cols I, J)', 'booked / follow up / not interested / no answer'],
+    ['5', 'Flowio Engine menu → Refresh Call List', 'Syncs results back to Pipeline'],
+    ['6', 'Send 20-30 DMs to local tradies on Instagram/Facebook', 'Link to test drive'],
+    ['7', 'Post 1 content piece (tip, before/after, testimonial)', 'Consistency > perfection'],
+    ['', '', ''],
+    ['EVERY 2-3 DAYS', 'Action', 'Notes'],
+    ['1', 'Paste 10-20 scraped leads into Raw Leads tab', 'Google Maps, HiPages, Yellow Pages'],
+    ['2', 'Flowio Engine menu → Import Raw Leads', 'Deduplicates automatically'],
+    ['3', 'Flowio Engine menu → Refresh Call List', 'Re-scores and re-sorts'],
+    ['4', 'Check Nurture Status tab for stalled leads', 'Manually follow up if stuck'],
+    ['5', 'Book calls with high-score engaged leads', 'Warm > cold always'],
+    ['', '', ''],
+    ['WEEKLY', 'Action', 'Notes'],
+    ['1', 'Review Dashboard — check conversion rate trend', 'Are calls converting?'],
+    ['2', 'Review cold leads — any worth re-engaging?', 'Change stage to "engaged" to restart nurture'],
+    ['3', 'Ask every installed client for a referral', '$200/$200 referral bonus'],
+    ['4', 'Plan next week content (2-3 posts)', 'Batch create on Sunday'],
+    ['', '', ''],
+    ['MONTHLY', 'Action', 'Notes'],
+    ['1', 'Review all Pipeline — clean dead leads', 'Archive rows older than 60 days if cold'],
+    ['2', 'Update pricebook if needed', 'Adjust to market'],
+    ['3', 'A/B test a new cold email subject line', 'Edit getColdOutreachTemplates_() in script'],
+    ['4', 'Calculate CAC from ad spend', 'Ad spend / installs = CAC'],
+    ['', '', ''],
+    ['KEY METRICS', 'Target', 'Why'],
+    ['Leads/week', '20-50', 'More leads = more at-bats'],
+    ['Call-to-book rate', '30%+', '1 in 3 calls should book a fit call'],
+    ['Book-to-install rate', '50%+', 'Half of fit calls should convert'],
+    ['Installs/week', '3', '$6K/week = $312K/year revenue'],
+    ['CAC (cost per acquisition)', '<$200', 'Keep customer acquisition cost under $200'],
+    ['', '', ''],
+    ['AUTOMATION SCHEDULE', 'Time (AEST)', 'What Happens'],
+    ['Morning Routine', '7:30am', 'Import leads → Score → Refresh Call List → Update Dashboard'],
+    ['Daily Digest Email', '8:00am', 'Pipeline summary emailed to you'],
+    ['Nurture Sequence', '9:00am', 'Sends next nurture email to warm leads'],
+    ['Post-Install Check', '9:00am', 'Day 7/14 emails to installed clients'],
+    ['Follow-Up Engine', '10:00am', 'SMS + final email for nurture_complete leads'],
+    ['Cold Outreach', '11:00am', 'Sends next cold email to outbound leads'],
+    ['Instant Notifications', 'Real-time', 'Email alert whenever a new lead comes in'],
+  ];
+
+  guide.getRange(1, 1, rows.length, 3).setValues(rows);
+
+  // Format title
+  guide.getRange(1, 1).setFontSize(16).setFontWeight('bold').setFontColor('#0F172A');
+  guide.getRange(2, 1).setFontSize(12).setFontColor('#F97316').setFontWeight('bold');
+
+  // Format section headers
+  const sectionRows = [4, 13, 20, 26, 32, 38];
+  sectionRows.forEach(r => {
+    guide.getRange(r, 1, 1, 3).setFontWeight('bold').setBackground('#0F172A').setFontColor('#FFFFFF');
+  });
+
+  // Column widths
+  guide.setColumnWidth(1, 60);
+  guide.setColumnWidth(2, 500);
+  guide.setColumnWidth(3, 350);
+  guide.setFrozenRows(1);
+
+  Logger.log('✅ Guide tab created.');
 }
