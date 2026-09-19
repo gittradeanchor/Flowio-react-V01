@@ -5,8 +5,8 @@ export const LogicSection = () => {
         <section className="py-16 md:py-24 bg-white">
             <div className="container mx-auto px-5 max-w-[1100px]">
                 <div className="text-center mb-12">
-                    <h2 className="text-[32px] md:text-4xl font-black text-navy mb-4 leading-tight">Why 78% of Tradies<br className="md:hidden"/> Quit SaaS Apps</h2>
-                    <p className="text-lg text-text-muted max-w-2xl mx-auto leading-relaxed">They are too complicated. Spreadsheets are too manual. Flowio is the best of both worlds.</p>
+                    <h2 className="text-[32px] md:text-4xl font-black text-navy mb-4 leading-tight">Why Tradies Ditch<br className="md:hidden"/> Complex Software</h2>
+                    <p className="text-lg text-text-muted max-w-2xl mx-auto leading-relaxed">Most job management apps are built for offices, not vans. Flowio gives you the automation without the learning curve.</p>
                 </div>
 
                 <div className="overflow-x-auto border border-border rounded-xl shadow-sm">

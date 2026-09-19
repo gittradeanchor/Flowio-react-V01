@@ -100,7 +100,7 @@ export const QuotingAudit = () => {
                             How much is quoting costing you?
                         </h2>
                         <p className="text-text-muted font-medium leading-relaxed mb-6">
-                            Most tradies waste 200+ hours a year on quoting admin. Get a free personalised report showing exactly how much time and money you're losing — and how to fix it.
+                            How much time do you spend each week writing quotes, chasing follow-ups, and doing admin after hours? Get a free personalised report showing exactly how much time and money you're losing — and how to fix it.
                         </p>
                         <div className="flex flex-col gap-3 text-sm text-navy font-medium">
                             <div className="flex items-center gap-2">

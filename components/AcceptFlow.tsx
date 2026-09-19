@@ -216,13 +216,13 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                                 <span className="shrink-0">🔒</span><span>Secure payment via Stripe</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
-                                <span className="shrink-0">✅</span><span>Full refund guarantee</span>
+                                <span className="shrink-0">✅</span><span>30-day money-back guarantee</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
                                 <span className="shrink-0">📋</span><span>ABN: 45 529 331 663</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
-                                <span className="shrink-0">💼</span><span>Tax deductible for your business</span>
+                                <span className="shrink-0">💼</span><span>Australian owned & operated</span>
                             </div>
                         </div>
                     </div>

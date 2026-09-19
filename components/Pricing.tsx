@@ -156,7 +156,7 @@ export const Pricing = () => {
                 <div className="flex flex-row items-baseline gap-3">
                      <span className="text-4xl md:text-5xl font-black text-navy tracking-tighter leading-none">$1,997</span>
                      <span className="text-xs font-bold text-navy bg-slate-100 px-2 py-1 rounded border border-slate-200 uppercase tracking-tight whitespace-nowrap transform -translate-y-1">
-                        One-time, Tax Deductible
+                        One-time payment
                     </span>
                 </div>
                 <p className="text-sm font-bold text-orange mt-2">or 3 &times; $699/mo</p>

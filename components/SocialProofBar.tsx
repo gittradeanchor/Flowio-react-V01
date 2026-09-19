@@ -65,8 +65,7 @@ export const SocialProofBar = () => {
                 <div className="flex items-center gap-2.5">
                     <span className="text-2xl">&#9889;</span>
                     <div>
-                        <span className="text-xl md:text-2xl font-black text-navy">{count.toLocaleString()}</span>
-                        <span className="text-sm text-text-muted font-medium ml-1.5">quotes sent via Flowio</span>
+                        <span className="text-sm text-text-muted font-medium">Built for Australian electricians</span>
                     </div>
                 </div>
                 <div className="hidden md:flex items-center gap-2.5 text-sm text-text-muted">
@@ -75,11 +74,11 @@ export const SocialProofBar = () => {
                 </div>
                 <div className="hidden md:flex items-center gap-2.5 text-sm text-text-muted">
                     <svg className="w-4 h-4 text-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
-                    <span className="font-medium">DFY setup in 48h</span>
+                    <span className="font-medium">Done-for-you setup</span>
                 </div>
                 <div className="hidden lg:flex items-center gap-2.5 text-sm text-text-muted">
                     <svg className="w-4 h-4 text-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
-                    <span className="font-medium">Full refund guarantee</span>
+                    <span className="font-medium">30-day money-back guarantee</span>
                 </div>
             </div>
         </div>
