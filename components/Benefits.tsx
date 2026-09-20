@@ -17,7 +17,7 @@ const BentoCard = ({
     span?: number,
     padded?: boolean 
 }) => (
-    <div className={`bg-white rounded-[24px] border border-border overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col ${span === 2 ? 'md:col-span-2' : 'md:col-span-1'}`}>
+    <div className={`bg-white rounded-md border border-border overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col ${span === 2 ? 'md:col-span-2' : 'md:col-span-1'}`}>
         {/* Increased height to 300px to better fit high-res screenshots/graphics */}
         <div className={`bg-bg-off border-b border-border h-[240px] md:h-[300px] relative overflow-hidden order-first flex items-center justify-center`}>
             <img 
@@ -47,22 +47,22 @@ const BentoCard = ({
 
 export const Benefits = () => {
     return (
-        <section className="py-20 md:py-32 bg-gradient-to-b from-white to-slate-50">
+        <section className="py-20 md:py-32 bg-bg-off">
             <div className="container mx-auto px-5 max-w-[1100px]">
                 
                 <div className="text-center mb-16 md:mb-20">
                     <h2 className="text-[32px] md:text-5xl font-black text-navy mb-6 tracking-tight leading-[1.1]">
-                        Built for tradies who hate computers.
+                        Built for electricians who hate computers.
                     </h2>
-                    <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto font-medium">Stop fighting with complex software. Get full automation inside the Google Sheets you already own.</p>
+                    <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto font-medium">No new app to learn. Send the quote, your customer accepts on their phone, you confirm the time and the job lands in your calendar, all from the Google Sheet you already use.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                     {/* Card 1: 1-Tap Automation (Wide) */}
                     {/* Image Size: 2752x1376 (2:1 Ratio). Padded=true requests slightly smaller look. */}
                     <BentoCard 
-                        title="⚡ 1-Tap Automation" 
-                        desc="From quote to paid in one tap. Your process runs on autopilot so you can focus on the tools, not the paperwork." 
+                        title="Quote to booked job"
+                        desc="One tap sends a branded PDF quote by SMS and email with an accept link. Your customer accepts and asks for a time; you confirm it and the job goes in your Google Calendar."
                         span={2}
                         imgSrc="/images/flow-diagram.jpg"
                         imgAlt="One tap automation workflow"
@@ -72,7 +72,7 @@ export const Benefits = () => {
                     {/* Card 2: Zero Learning Curve (Narrow) */}
                     {/* Image from user attachment. */}
                     <BentoCard 
-                        title="🎯 Zero Learning Curve" 
+                        title="Zero learning curve" 
                         desc="It's just a spreadsheet. If you can use Excel, you're already an expert." 
                         span={1} 
                         imgSrc="/images/zero-learning-curve.jpg"
@@ -82,22 +82,22 @@ export const Benefits = () => {
                     {/* Card 3: Own, Don't Rent (Narrow) */}
                     {/* Swapped to span 1. Image Size: 2048x1536 (4:3 Ratio) - padded to prevent crop */}
                     <BentoCard
-                        title="🔒 Own, Don't Rent"
-                        desc="Stop paying monthly subscriptions for data you should own. One-time setup, yours forever."
+                        title="Your Sheet stays yours"
+                        desc="Your prices, quote history and customer records live in your own Google account. One-time payment, and your data is yours to keep."
                         span={1}
                         imgSrc="/images/renting-vs-owning.jpg"
                         imgAlt="Lifetime ownership comparison"
                         padded={true}
                     />
 
-                    {/* Card 4: Mobile Companion (Wide) */}
-                    {/* Swapped to span 2. Image Size: 1460x600 (Wide Ratio) */}
-                    <BentoCard 
-                        title="📲 Mobile Companion" 
-                        desc="Manage jobs, send quotes, and check payments from anywhere." 
-                        span={2} 
+                    {/* Card 4: Customer side (Wide). Replaces "Mobile Companion" — no mobile interface for the tradie exists (05_PRODUCT). */}
+                    {/* Image Size: 1460x600 (Wide Ratio) */}
+                    <BentoCard
+                        title="Your customer accepts on their phone"
+                        desc="They tap the link and ask for a time. No app and no login for them. You quote from your Google Sheet; a phone version for you is not live yet."
+                        span={2}
                         imgSrc="/images/app-preview.png"
-                        imgAlt="Mobile app view"
+                        imgAlt="Customer quote acceptance on a phone"
                     />
                 </div>
             </div>

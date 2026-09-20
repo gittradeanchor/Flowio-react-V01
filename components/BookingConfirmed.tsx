@@ -130,13 +130,6 @@ useEffect(() => {
                         </p>
                     </div>
 
-                    {/* Footer Scarcity */}
-                    <div className="text-center pt-4 border-t border-border">
-                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                            Reminder: Only 3 installs / week
-                        </p>
-                    </div>
-
                 </div>
             </div>
         </div>

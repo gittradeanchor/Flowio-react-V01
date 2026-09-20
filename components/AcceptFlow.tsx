@@ -13,6 +13,10 @@ interface AcceptFlowProps {
     };
 }
 
+// Australian date (dd Mon yyyy), offset in days from today — replaces hard-coded 2025 dates.
+const auDate = (offsetDays: number) =>
+    new Date(Date.now() + offsetDays * 86400000).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+
 export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
     // Internal Stages: 
     // 1: PDF Preview (Skipped for now)
@@ -44,8 +48,8 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
         if (step === 3) {
             setAnimStep(0);
             const seq = [
-                { t: 800, txt: "Generating Invoice...", p: 45 },
-                { t: 1800, txt: "Syncing with Stripe...", p: 70 },
+                { t: 800, txt: "Booking your calendar...", p: 45 },
+                { t: 1800, txt: "Updating your Sheet...", p: 70 },
                 { t: 2800, txt: "Sending SMS...", p: 90 },
                 { t: 3500, txt: "Done!", p: 100 }
             ];
@@ -99,7 +103,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                                 <div className="w-2.5 h-2.5 rounded-full bg-slate-400"></div>
                                 <div className="w-2.5 h-2.5 rounded-full bg-slate-400"></div>
                             </div>
-                            <div className="flex-1 bg-white py-1.5 px-3 rounded text-xs text-text-muted font-mono truncate">tradeanchor.com.au/quote/Q0004</div>
+                            <div className="flex-1 bg-white py-1.5 px-3 rounded text-xs text-text-muted font-mono truncate">flowio.tradeanchor.com.au/quote/Q0004</div>
                         </div>
 
                         {/* PDF Content */}
@@ -123,7 +127,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                                {[ {l:'Quote ID',v:'Q0004'}, {l:'Quote Date',v:'22 Nov 2025'}, {l:'Due Date',v:'06 Dec 2025'} ].map((x,i) => (
+                                {[ {l:'Quote ID',v:'Q0004'}, {l:'Quote Date',v:auDate(0)}, {l:'Due Date',v:auDate(14)} ].map((x,i) => (
                                     <div key={i}>
                                         <label className="text-xs text-text-muted uppercase block mb-1">{x.l}</label>
                                         <div className="font-semibold">{x.v}</div>
@@ -213,7 +217,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                         {/* Trust Signals — 2×2 grid */}
                         <div className="grid grid-cols-2 gap-2 mt-5">
                             <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
-                                <span className="shrink-0">🔒</span><span>Secure payment via Stripe</span>
+                                <span className="shrink-0">📱</span><span>No app or login needed</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
                                 <span className="shrink-0">✅</span><span>30-day money-back guarantee</span>
@@ -257,15 +261,15 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                             <div className="mb-6 shrink-0">
                                 <div className="w-14 h-14 bg-green text-white rounded-full text-3xl flex items-center justify-center mx-auto mb-3 shadow-lg">✓</div>
                                 <h2 className="text-2xl font-black text-navy mb-1 leading-tight">Automation Complete</h2>
-                                <p className="text-xs text-text-muted">4 tasks completed in 3.8s</p>
+                                <p className="text-xs text-text-muted">Demo of what happens after your customer accepts</p>
                             </div>
 
                             <div className="flex flex-col gap-2.5 text-left flex-1">
                                  {[
                                     { i: '📅', t: 'Calendar Event Created', d: 'Job automatically added to your Google Calendar.', c: 'bg-blue-50 text-blue-600', delay: 'delay-[100ms]' },
                                     { i: '📲', t: 'Confirmation SMS', d: 'Customer receives instant confirmation with invite link.', c: 'bg-green-50 text-green-700', delay: 'delay-[300ms]' },
-                                    { i: '💳', t: 'Deposit Processed', d: 'Deposit payment captured via Stripe, funds in your account.', c: 'bg-sky-50 text-sky-500', delay: 'delay-[500ms]' },
-                                    { i: '🔔', t: 'Reminder Scheduled', d: 'Automatic SMS reminder sent 24 hours before job starts.', c: 'bg-orange-50 text-orange-500', delay: 'delay-[700ms]' }
+                                    { i: '✉️', t: 'Confirmation Email', d: 'Customer gets their booking details by email as well.', c: 'bg-sky-50 text-sky-500', delay: 'delay-[500ms]' },
+                                    { i: '📊', t: 'Your Sheet Updated', d: 'Quote marked Accepted and the job added to your Jobs tab.', c: 'bg-orange-50 text-orange-500', delay: 'delay-[700ms]' }
                                 ].map((x, i) => (
                                     <div key={i} className={`bg-white border border-border p-3 rounded-xl flex items-start gap-3 shadow-sm animate-fade-in-up ${x.delay}`}>
                                         <div className={`w-8 h-8 ${x.c} rounded-lg flex items-center justify-center text-base shrink-0 mt-0.5`}>{x.i}</div>
@@ -277,15 +281,8 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                                 ))}
                             </div>
 
-                            <div className="mt-6 pt-4 border-t border-dashed border-border flex justify-between items-center animate-fade-in-up delay-[900ms]">
-                                <div className="text-left">
-                                    <div className="text-[10px] font-bold text-text-muted uppercase">That took</div>
-                                    <div className="text-2xl font-black text-green">8 sec</div>
-                                </div>
-                                <div className="text-right opacity-50">
-                                    <div className="text-[10px] font-bold text-text-muted uppercase">Old Way</div>
-                                    <div className="text-lg font-bold line-through text-red-500">3h 15m</div>
-                                </div>
+                            <div className="mt-6 pt-4 border-t border-dashed border-border text-center text-[11px] text-text-muted animate-fade-in-up delay-[900ms]">
+                                Deposits and automatic rescheduling are not live yet.
                             </div>
                          </div>
                     </div>

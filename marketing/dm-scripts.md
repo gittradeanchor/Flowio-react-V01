@@ -20,7 +20,7 @@ tradies like yourself — it runs inside Google Sheets so there's
 literally zero learning curve.
 
 You can try a free demo here if you're curious (no sign-up needed):
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 
 Takes about 2 minutes and you'll see exactly how it works.
 ```
@@ -67,7 +67,7 @@ Best part — it's a one-time setup fee ($1,997 or 3x $699), not a
 monthly subscription that bleeds you dry.
 
 Want to try the free demo? No sign-up needed:
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 ```
 
 ---
@@ -86,7 +86,7 @@ and handles acceptance + payment automatically.
 $200 off if you sign up.
 
 Want to see how it works? Free demo here (no sign-up):
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 
 Or happy to chat: https://calendly.com/billing-tradeanchor/15min
 ```
@@ -109,7 +109,7 @@ Google Sheets. So:
 - You own all your data forever
 
 If you're curious, there's a free interactive demo on the website:
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 
 No sign-up needed. Takes 2 minutes.
 ```
@@ -174,7 +174,7 @@ https://calendly.com/billing-tradeanchor/15min
 No worries at all! Take your time.
 
 If it helps, here's a quick 2-min demo you can check out whenever:
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 
 And feel free to WhatsApp me anytime if questions come up:
 https://wa.me/61494186989

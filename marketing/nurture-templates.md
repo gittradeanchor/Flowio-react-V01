@@ -23,7 +23,7 @@ Flowio cuts that to under 2 minutes per quote. One tap, professional PDF,
 sent via SMS, tracked automatically. All inside Google Sheets.
 
 Want to see it work? Try the free Test Drive:
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 
 Or if you'd rather just chat:
 https://calendly.com/billing-tradeanchor/15min
@@ -57,7 +57,7 @@ The average tradie saves 15-20 hours/month on admin after setup.
 That's 2-3 extra billable days.
 
 See it in action (takes 2 minutes):
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 
 Sean | TradeAnchor
 ```
@@ -138,7 +138,7 @@ Sydney, Australia
 ```
 Hey {{name}}, Sean from TradeAnchor here. Saw you checked out Flowio -
 want to see a 60-sec demo of how it works for {{trade}}s?
-https://tradeanchor.com.au#test-drive
+https://flowio.tradeanchor.com.au#test-drive
 ```
 
 ### Post-Install Day 7 SMS (optional, use if email unread)

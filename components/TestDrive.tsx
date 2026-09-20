@@ -4,11 +4,121 @@ import { JobItem, QuoteTotals } from '../types';
 import { AcceptFlow } from './AcceptFlow';
 import { getStoredAttribution, getOrCreateLeadId } from '../hooks/useAttribution';
 
+// ---------------------------------------------------------------------------
+// QuoteSheet: a demo quote laid out like the Claude Design quote document
+// (A4 sheet on desktop, 375px phone layout on mobile). Business fields are placeholders.
+// Kept to structures a Google Doc can reproduce (tables, rules, one accent colour).
+// ---------------------------------------------------------------------------
+const Q_INK = '#171A1D';
+const Q_SLATE = '#57534E';
+const Q_INFO = '#1C1917';
+const Q_RULE = '#E4DCCF';
+const qHead: React.CSSProperties = { fontFamily: "'Saira Condensed', 'Inter', sans-serif" };
+const qBody: React.CSSProperties = { fontFamily: "'Source Sans 3', 'Inter', sans-serif", color: Q_INK };
+const qLabel: React.CSSProperties = { fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: Q_INFO };
+const qMoney = (n: number) => n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals: QuoteTotals; customerName: string }) => {
+    const today = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+    const forName = customerName || 'Your customer';
+    return (
+        <>
+            {/* A4 sheet (tablet and desktop) */}
+            <div className="hidden md:flex flex-col bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, minHeight: 720, padding: '44px 40px' }}>
+                <div className="flex justify-between items-end gap-6 pb-3" style={{ borderBottom: `4px solid ${Q_INFO}` }}>
+                    <div>
+                        <div style={{ ...qHead, fontSize: 31, fontWeight: 700, lineHeight: 1.04, letterSpacing: '0.01em' }}>Your Business Name</div>
+                        <div style={{ fontSize: 13, lineHeight: 1.5, color: Q_SLATE, marginTop: 6, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
+                    </div>
+                    <div style={{ ...qHead, fontSize: 24, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-6" style={{ padding: '18px 0 22px' }}>
+                    <div>
+                        <div style={qLabel}>Prepared for</div>
+                        <div style={{ fontSize: 14, lineHeight: 1.55, marginTop: 5 }}>{forName}<br />Site address<br />Suburb NSW 2000</div>
+                    </div>
+                    <div>
+                        <div style={qLabel}>Site</div>
+                        <div style={{ fontSize: 14, lineHeight: 1.55, marginTop: 5 }}>As above<br />Access, business hours</div>
+                    </div>
+                    <div>
+                        <div style={qLabel}>Reference</div>
+                        <div style={{ fontSize: 14, lineHeight: 1.55, marginTop: 5, fontVariantNumeric: 'tabular-nums' }}>Q-0004 (demo)<br />{today}<br />Valid 30 days</div>
+                    </div>
+                </div>
+
+                <div className="grid text-white" style={{ gridTemplateColumns: '1fr 46px 88px 96px', background: Q_INFO, padding: '7px 0' }}>
+                    <div style={{ ...qLabel, color: '#fff', paddingLeft: 10 }}>Description</div>
+                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Qty</div>
+                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Rate</div>
+                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right', paddingRight: 10 }}>Amount</div>
+                </div>
+                {items.map((item, idx) => (
+                    <div key={idx} className="grid" style={{ gridTemplateColumns: '1fr 46px 88px 96px', padding: '11px 0', borderBottom: `1px solid ${Q_RULE}`, fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>
+                        <div style={{ paddingLeft: 10, paddingRight: 8 }}>{item.name}</div>
+                        <div style={{ textAlign: 'right' }}>{item.qty}</div>
+                        <div style={{ textAlign: 'right' }}>{qMoney(Number(item.rate))}</div>
+                        <div style={{ textAlign: 'right', fontWeight: 700, paddingRight: 10 }}>{qMoney(item.qty * item.rate)}</div>
+                    </div>
+                ))}
+
+                <div className="flex justify-end" style={{ marginTop: 18 }}>
+                    <div style={{ width: 282, fontVariantNumeric: 'tabular-nums' }}>
+                        <div className="flex justify-between" style={{ fontSize: 14, padding: '6px 10px' }}><span style={{ color: Q_SLATE }}>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
+                        <div className="flex justify-between" style={{ fontSize: 14, padding: '6px 10px', borderBottom: `1px solid ${Q_INFO}` }}><span style={{ color: Q_SLATE }}>GST</span><span>{qMoney(totals.gst)}</span></div>
+                        <div className="flex justify-between items-baseline" style={{ padding: '12px 10px 0' }}><span style={{ ...qHead, fontSize: 20, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 23, fontWeight: 700 }}>{qMoney(totals.total)}</span></div>
+                    </div>
+                </div>
+
+                <div className="grid mt-auto" style={{ gridTemplateColumns: '1fr 175px', gap: 32, paddingTop: 20, marginTop: 36, borderTop: `4px solid ${Q_INFO}` }}>
+                    <div>
+                        <div style={qLabel}>Terms</div>
+                        <div style={{ fontSize: 12, lineHeight: 1.55, marginTop: 5 }}>Quote valid 30 days from the date above. Your payment terms and conditions print here, as you write them.</div>
+                    </div>
+                    <div>
+                        <div style={qLabel}>Accept</div>
+                        <div style={{ height: 38, borderBottom: `1px solid ${Q_INK}`, marginTop: 14 }} />
+                        <div style={{ fontSize: 11, color: Q_SLATE, marginTop: 5 }}>Signature and date</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Phone layout (375px) */}
+            <div className="md:hidden bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, padding: '22px 18px' }}>
+                <div style={{ ...qHead, fontSize: 27, fontWeight: 700, lineHeight: 1.04 }}>Your Business Name</div>
+                <div style={{ fontSize: 12, lineHeight: 1.5, color: Q_SLATE, marginTop: 5, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
+                <div className="flex justify-between items-baseline gap-3" style={{ marginTop: 12, paddingTop: 10, borderTop: `4px solid ${Q_INFO}` }}>
+                    <span style={{ ...qHead, fontSize: 20, fontWeight: 700, color: Q_INFO }}>Quotation</span>
+                    <span style={{ fontSize: 12, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}>Q-0004 &nbsp;·&nbsp; {today}</span>
+                </div>
+                <div style={{ fontSize: 13, lineHeight: 1.55, color: Q_SLATE, marginTop: 10 }}>{forName}<br />Site address, Suburb NSW 2000</div>
+                <div style={{ marginTop: 14 }}>
+                    <div style={{ background: Q_INFO, color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 8px' }}>Items</div>
+                    {items.map((item, idx) => (
+                        <div key={idx} style={{ padding: '10px 0', borderBottom: `1px solid ${Q_RULE}` }}>
+                            <div style={{ fontSize: 15, lineHeight: 1.4 }}>{item.name}</div>
+                            <div className="flex justify-between" style={{ marginTop: 4, fontSize: 13, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}>
+                                <span>{item.qty} &times; {qMoney(Number(item.rate))}</span>
+                                <span style={{ fontWeight: 700, color: Q_INK }}>{qMoney(item.qty * item.rate)}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="flex justify-between" style={{ fontSize: 13, paddingTop: 8, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}><span>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
+                <div className="flex justify-between" style={{ fontSize: 13, padding: '4px 0 8px', borderBottom: `1px solid ${Q_INFO}`, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}><span>GST</span><span>{qMoney(totals.gst)}</span></div>
+                <div className="flex justify-between items-baseline" style={{ paddingTop: 11 }}><span style={{ ...qHead, fontSize: 18, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{qMoney(totals.total)}</span></div>
+                <div style={{ fontSize: 12, lineHeight: 1.55, color: Q_SLATE, marginTop: 12 }}>Quote valid 30 days. Your payment terms and conditions print here, as you write them.</div>
+            </div>
+        </>
+    );
+};
+
 export const TestDrive = () => {
     // Stage Management
     // 1: Builder
-    // 2: Sent Screen (QR Code / Success Message)
-    // "gate": Intermediate state where the blurred preview is shown
+    // 2: Sent Screen (success message)
+    // "gate": finished quote shown first, then the contact form to deliver it
     const [stage, setStage] = useState<1 | 'gate' | 2 >(1); 
     const sectionRef = useRef<HTMLElement>(null);
     const isFirstRender = useRef(true); // Track initial mount
@@ -66,9 +176,6 @@ export const TestDrive = () => {
     const [items, setItems] = useState<JobItem[]>([]);
     
     const [generating, setGenerating] = useState(false);
-    const [generationTime, setGenerationTime] = useState(0);
-    const [finalTime, setFinalTime] = useState<string | null>(null);
-    const timerRef = useRef<number | null>(null);
 
     // SMS/Lead Form State
     const [leadName, setLeadName] = useState('');
@@ -76,7 +183,8 @@ export const TestDrive = () => {
     const [formMobile, setFormMobile] = useState('');
     const [formEmail, setFormEmail] = useState('');
     const [smsSending, setSmsSending] = useState(false);
-    const [resendStatus, setResendStatus] = useState('');
+    const [consent, setConsent] = useState(false);
+    const [submitError, setSubmitError] = useState('');
 
     // Derived Totals
     const calculateTotals = (currentItems: JobItem[]): QuoteTotals => {
@@ -139,23 +247,26 @@ export const TestDrive = () => {
 
     const handleGenerate = () => {
         setGenerating(true);
-        const startTime = Date.now();
-        timerRef.current = window.setInterval(() => {
-            setGenerationTime((Date.now() - startTime) / 1000);
-        }, 100);
 
         setTimeout(() => {
-            if (timerRef.current) clearInterval(timerRef.current);
-            setFinalTime(((Date.now() - startTime) / 1000).toFixed(1));
             setGenerating(false);
-            
-            // Go to Gate (Blurred Background + Form)
+
+            // Show the finished quote first; contact details are asked only to deliver it (audit B2.2 / B2.3)
             setStage('gate');
-        }, 1500);
+        }, 1200);
     };
 
     const handleGateSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!formMobile.trim()) {
+            setSubmitError('Add your mobile to get the demo, or just keep your quote above.');
+            return;
+        }
+        if (!consent) {
+            setSubmitError('Please tick the box so we can send your demo.');
+            return;
+        }
+        setSubmitError('');
         setSmsSending(true);
 
         const attrib = getStoredAttribution();
@@ -200,13 +311,13 @@ export const TestDrive = () => {
         };
 
         // Webhook URL (Cloudflare/Vite env baked at build time)
-        let webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL || '';
-        
-        console.log("Sending payload to:", webhookUrl, formData);
-    
-         if (!webhookUrl) {
-          console.error("Missing VITE_MAKE_WEBHOOK_URL");
-          setStage(2);
+        // Never log the webhook URL or payload (audit A4.4 / checklist 0.8).
+        // Prefer the Cloudflare Worker proxy (keeps the Make URL and secret off the page); fall back to the direct hook.
+        const webhookUrl = import.meta.env.VITE_TESTDRIVE_ENDPOINT || import.meta.env.VITE_MAKE_WEBHOOK_URL || '';
+        const failMsg = "That didn't go through. Please try again, or message me on WhatsApp.";
+
+        if (!webhookUrl) {
+          setSubmitError(failMsg);
           setSmsSending(false);
           return;
         }
@@ -217,26 +328,18 @@ export const TestDrive = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
           });
-        
-          if (response.ok) {
-            console.log("Webhook Success");
-          } else {
-            console.warn("Webhook returned status:", response.status);
+
+          // A failed submit must show a failure, never the success screen (audit B2.8).
+          if (!response.ok) {
+            setSubmitError(failMsg);
+            return;
           }
-        
-          // Don't block user — proceed either way
           setStage(2);
-        } catch (e) {
-          console.error("Webhook Failed:", e);
-          setStage(2);
+        } catch {
+          setSubmitError(failMsg);
         } finally {
           setSmsSending(false);
         }
-    };
-    
-    const handleResend = () => {
-        setResendStatus('Sending...');
-        setTimeout(() => setResendStatus('Sent!'), 1500);
     };
 
     const launchAcceptFlow = () => {
@@ -267,22 +370,9 @@ export const TestDrive = () => {
                                 <div className="text-center md:text-left">
                                     <div className="mb-8">
                                         <span className="inline-block bg-orange text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wider mb-2">INTERACTIVE DEMO</span>
-                                        <h2 className="text-[24px] md:text-[42px] font-black leading-[1.2] mb-4">Send a real quote in 30s.</h2>
-                                        <p className="text-base opacity-90 mb-5 leading-relaxed">Pick 1–4 items → we’ll text you a real client ‘Accept’ link + email the PDF.</p>
+                                        <h2 className="text-[24px] md:text-[42px] font-black leading-[1.2] mb-4">See your customer's quote in about a minute.</h2>
+                                        <p className="text-base opacity-90 mb-5 leading-relaxed">Pick 1–4 items, then we'll text you a real client 'Accept' link and email the PDF. It's a real demo, sent to your phone.</p>
                                     </div>
-
-                                    {generating && (
-                                        <div className="mt-4 mb-6 p-3 bg-white/10 rounded-xl grid grid-cols-2 gap-4">
-                                            <div>
-                                                <div className="text-[11px] font-semibold opacity-70 mb-1 uppercase">Old Way</div>
-                                                <div className="text-xl md:text-3xl font-mono font-black text-red-500">15:23</div>
-                                            </div>
-                                            <div>
-                                                <div className="text-[11px] font-semibold opacity-70 mb-1 uppercase">Flowio</div>
-                                                <div className="text-xl md:text-3xl font-mono font-black text-green">⚡ {generationTime.toFixed(1)}s</div>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
 
                                 {/* Mock Sheet Card */}
@@ -346,7 +436,7 @@ export const TestDrive = () => {
                                                     {!isPricebookLoading &&
                                                       pricebook.map((item) => (
                                                         <option key={item.sku} value={item.sku}>
-                                                          {item.sku} · {item.name} (${item.rate})
+                                                          {item.name} (${item.rate} ex GST)
                                                         </option>
                                                       ))}
                                                   </select>
@@ -378,10 +468,6 @@ export const TestDrive = () => {
                                                             {items.map((item, idx) => (
                                                                 <tr key={idx} className="block border-b border-border last:border-0 p-3">
                                                                     <td className="flex justify-between py-1">
-                                                                        <span className="font-semibold text-text-muted text-xs w-[40px]">SKU</span>
-                                                                        <span className="text-right">{item.sku}</span>
-                                                                    </td>
-                                                                    <td className="flex justify-between py-1">
                                                                         <span className="font-semibold text-text-muted text-xs w-[40px]">Item</span>
                                                                         <span className="text-right">{item.name}</span>
                                                                     </td>
@@ -392,6 +478,9 @@ export const TestDrive = () => {
                                                                     <td className="flex justify-between py-1 font-bold text-navy">
                                                                         <span className="font-semibold text-text-muted text-xs w-[40px]">Total</span>
                                                                         <span className="text-right">${(item.qty * item.rate).toFixed(2)}</span>
+                                                                    </td>
+                                                                    <td className="flex justify-end">
+                                                                        <button type="button" onClick={() => setItems(prev => prev.filter((_, i) => i !== idx))} className="min-h-[44px] px-2 text-xs font-semibold text-red-600 underline">Remove</button>
                                                                     </td>
                                                                 </tr>
                                                             ))}
@@ -411,7 +500,7 @@ export const TestDrive = () => {
                                             <button 
                                                 onClick={handleGenerate}
                                                 disabled={items.length === 0 || generating || isPricebookLoading}
-                                                className="w-full mt-5 bg-green text-white py-4 rounded-lg font-bold text-lg hover:bg-[#0B844A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg active:translate-y-0.5"
+                                                className="w-full mt-5 bg-[#047857] text-white py-4 rounded-lg font-bold text-lg hover:bg-[#065F46] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg active:translate-y-0.5"
                                             >
                                                 {generating ? '⚡ Generating...' : 'Generate My Quote →'}
                                             </button>
@@ -428,87 +517,101 @@ export const TestDrive = () => {
                             </div>
                         )}
 
-                        {/* STAGE: GATE (Form Overlay with Blurred Background) */}
+                        {/* STAGE: GATE. The quote appears as soon as they generate. Sending to themselves is optional:
+                            a mobile number and the consent tick are required to send; email is optional. Nothing is sent otherwise. */}
                         {stage === 'gate' && (
-                            <div className="relative animate-fade-in min-h-[500px] flex items-center justify-center">
-                                {/* FIXED OVERLAY FORM */}
-                                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                                    <div className="absolute inset-0" />
-                                    <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 text-navy w-full max-w-[480px] border border-border animate-fade-in-up relative z-10">
-                                        <div className="text-center mb-6">
-                                            <h3 className="text-2xl font-black text-navy mb-2">Almost there!</h3>
-                                            <p className="text-text-muted text-sm leading-relaxed">
-                                                Your quote is ready. Tell us where to send the live demo link so you can experience the mobile customer view.
-                                            </p>
-                                        </div>
+                            <div className="animate-fade-in grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-6 md:gap-10 items-start max-w-[1040px] mx-auto">
 
-                                        <form onSubmit={handleGateSubmit} className="flex flex-col gap-4">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="font-semibold text-xs block mb-1 text-navy">Name</label>
-                                                    <input 
-                                                        type="text" required placeholder="John" 
-                                                        className="w-full bg-bg-off border border-border p-3 rounded-lg text-sm focus:border-orange outline-none"
-                                                        value={leadName} onChange={(e) => setLeadName(e.target.value)}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="font-semibold text-xs block mb-1 text-navy">Trade</label>
-                                                    <select 
-                                                        required 
-                                                        className="w-full bg-bg-off border border-border p-3 rounded-lg text-sm focus:border-orange outline-none"
-                                                        value={leadTrade} onChange={(e) => setLeadTrade(e.target.value)}
-                                                    >
-                                                        <option value="">Select...</option>
-                                                        <option value="Electrician">Electrician</option>
-                                                        <option value="Plumber">Plumber</option>
-                                                        <option value="HVAC">HVAC</option>
-                                                        <option value="Handyman">Handyman</option>
-                                                        <option value="Other">Other</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="font-semibold text-xs block mb-1 text-navy">Mobile (for SMS demo)</label>
-                                                <input 
-                                                    type="tel" required 
-                                                    className="w-full bg-bg-off border border-border p-3 rounded-lg text-sm focus:border-orange outline-none"
-                                                    value={formMobile} onChange={(e) => setFormMobile(e.target.value)}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="font-semibold text-xs block mb-1 text-navy">Email (for PDF demo)</label>
-                                                <input 
-                                                    type="email" required 
-                                                    className="w-full bg-bg-off border border-border p-3 rounded-lg text-sm focus:border-orange outline-none"
-                                                    value={formEmail} onChange={(e) => setFormEmail(e.target.value)}
-                                                />
-                                            </div>
-
-                                            <button 
-                                                type="submit" disabled={smsSending}
-                                                className="bg-navy text-white font-bold py-3.5 rounded-xl mt-2 hover:bg-navy-light shadow-btn-navy transition-all flex justify-center items-center"
-                                            >
-                                                {smsSending ? 'Sending...' : 'Text Me My Quote →'}
-                                            </button>
-                                        </form>
-                                        <p className="text-[10px] text-text-muted text-center mt-4 opacity-70">
-                                            You'll receive a live quote by SMS + email in under 10 seconds.
-                                        </p>
+                                <div>
+                                    <div className="text-[11px] font-bold uppercase tracking-wider text-white/70 mb-2">Your quote, as your customer sees it</div>
+                                    <QuoteSheet items={items} totals={totals} customerName={leadName} />
+                                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+                                        <button type="button" onClick={() => { setStage(1); }} className="min-h-[44px] text-sm font-semibold text-white/80 underline">Change items</button>
                                     </div>
                                 </div>
 
-                                {/* BLURRED BACKGROUND CONTENT */}
-                                <div className="w-full blur-md opacity-50 select-none pointer-events-none">
-                                     <div className="flex flex-col md:flex-row items-center gap-4 bg-gradient-to-br from-[#ECFDF5] to-[#D1FAE5] p-6 md:p-8 rounded-2xl border-2 border-green text-navy mb-10 shadow-lg">
-                                        <div className="w-12 h-12 bg-green text-white rounded-full flex items-center justify-center text-2xl font-bold shrink-0">✓</div>
-                                        <div className="text-center md:text-left">
-                                            <h3 className="text-2xl font-extrabold mb-1">Quote Generated!</h3>
-                                            <p className="text-text-muted">That took <strong>{finalTime} seconds</strong>. Your Word doc takes 15 minutes.</p>
+                                <div className="bg-white rounded-md shadow-2xl p-5 md:p-6 text-navy border border-border animate-fade-in-up">
+                                    <h3 className="text-xl font-black leading-tight mb-1">Send this quote to yourself to experience what your client will see</h3>
+                                    <p className="text-text-muted text-sm leading-relaxed mb-4">
+                                        You get a text with an accept link, and the PDF by email if you add one. Or skip it. Your quote is yours to look at either way.
+                                    </p>
+
+                                    <form onSubmit={handleGateSubmit} className="flex flex-col gap-3">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="font-semibold text-xs block mb-1 text-navy">Name</label>
+                                                <input
+                                                    type="text" placeholder="John"
+                                                    className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                    value={leadName} onChange={(e) => setLeadName(e.target.value)}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="font-semibold text-xs block mb-1 text-navy">Trade</label>
+                                                <select
+                                                    className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                    value={leadTrade} onChange={(e) => setLeadTrade(e.target.value)}
+                                                >
+                                                    <option value="">Select...</option>
+                                                    <option value="Electrician">Electrician</option>
+                                                    <option value="Plumber">Plumber</option>
+                                                    <option value="HVAC">HVAC</option>
+                                                    <option value="Handyman">Handyman</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            </div>
                                         </div>
+                                        <div>
+                                            <label className="font-semibold text-xs block mb-1 text-navy">Mobile <span className="font-normal text-text-muted">(required to send)</span></label>
+                                            <input
+                                                type="tel" placeholder="04xx xxx xxx"
+                                                className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                value={formMobile} onChange={(e) => setFormMobile(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="font-semibold text-xs block mb-1 text-navy">Email <span className="font-normal text-text-muted">(optional, for the PDF)</span></label>
+                                            <input
+                                                type="email" placeholder="you@example.com.au"
+                                                className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                value={formEmail} onChange={(e) => setFormEmail(e.target.value)}
+                                            />
+                                        </div>
+
+                                        {/* Consent (audit A4.1). Privacy link points at the new /privacy page. */}
+                                        <label className="flex items-start gap-3 text-xs text-text-muted leading-snug cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="w-5 h-5 mt-0.5 shrink-0"
+                                                checked={consent}
+                                                onChange={(e) => setConsent(e.target.checked)}
+                                            />
+                                            <span>I agree to TradeAnchor sending me this demo by SMS (and email if I add one), and contacting me about Flowio. I can opt out at any time. My details are kept for 12 months after our last contact. <a href="/privacy" target="_blank" rel="noreferrer" className="underline">Privacy notice</a>.</span>
+                                        </label>
+
+                                        {submitError && (
+                                            <p className="text-red-600 text-sm font-medium" role="alert">
+                                                {submitError}
+                                                {' '}
+                                                {import.meta.env.VITE_WHATSAPP_LINK && (
+                                                    <a href={import.meta.env.VITE_WHATSAPP_LINK} target="_blank" rel="noreferrer" className="underline">WhatsApp me</a>
+                                                )}
+                                            </p>
+                                        )}
+
+                                        <button
+                                            type="submit" disabled={smsSending}
+                                            className="bg-navy text-white font-bold py-3.5 rounded-xl mt-1 hover:bg-navy-light shadow-btn-navy transition-all flex justify-center items-center disabled:opacity-60"
+                                        >
+                                            {smsSending ? 'Sending...' : 'Send it to my phone →'}
+                                        </button>
+                                    </form>
+                                    <p className="text-[11px] text-text-muted text-center mt-3">
+                                        Nothing is sent unless you add your mobile and tick the box.
+                                    </p>
+                                    <div className="mt-3 pt-3 border-t border-border text-center">
+                                        <button type="button" onClick={launchAcceptFlow} className="min-h-[44px] text-sm font-semibold text-navy underline">Preview the customer's screen here</button>
                                     </div>
-                                    {/* Simplified Placeholder for Preview */}
-                                    <div className="bg-white rounded-xl h-[400px] w-full max-w-[800px] mx-auto opacity-30"></div>
                                 </div>
                             </div>
                         )}
@@ -520,48 +623,23 @@ export const TestDrive = () => {
                                      <div className="w-8 h-8 bg-green/10 text-green rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-2">✓</div>
                                      <h2 className="text-2xl font-black text-navy mb-2">Sent. Check your phone.</h2>
                                      <p className="text-text-muted text-sm mb-4 leading-relaxed">
-                                        We've texted the real client <strong>'Accept Quote'</strong> link and emailed the PDF to <strong>{formEmail || 'you'}</strong>.
+                                        We've texted the real client <strong>'Accept Quote'</strong> link to your mobile.{formEmail ? <> The PDF is on its way to <strong>{formEmail}</strong> and usually lands within about a minute.</> : null}
                                      </p>
 
-                                     {/* QR Code */}
-                                     <div className="hidden md:inline-block bg-white border-2 border-dashed border-border rounded-xl p-2 mb-3 relative group cursor-default shadow-sm">
-                                        <div className="w-[75px] h-[75px] bg-navy relative overflow-hidden flex items-center justify-center">
-                                             <svg viewBox="0 0 100 100" fill="white" className="w-full h-full p-2 opacity-90">
-                                                <path d="M10,10 h30 v30 h-30 z M50,10 h30 v30 h-30 z M10,50 h30 v30 h-30 z M50,50 h10 v10 h-10 z M70,50 h10 v10 h-10 z M50,70 h10 v10 h-10 z M70,70 h10 v10 h-10 z" />
-                                                <rect x="20" y="20" width="10" height="10" fill="black"/>
-                                                <rect x="60" y="20" width="10" height="10" fill="black"/>
-                                                <rect x="20" y="60" width="10" height="10" fill="black"/>
-                                             </svg>
-                                        </div>
-                                        <div className="mt-2 text-[6px] font-bold text-text-muted uppercase tracking-wide leading-tight">
-                                            Scan with phone<br/>to open
-                                        </div>
-                                     </div>
-
                                      <div className="flex flex-col gap-3">
-                                        <button 
-                                            onClick={launchAcceptFlow} 
+                                        <button
+                                            onClick={launchAcceptFlow}
                                             className="w-full bg-navy text-white py-3 rounded-xl font-bold text-base hover:bg-navy-light shadow-btn-navy transition-all active:translate-y-0.5"
                                         >
-                                            Open the client link now →
+                                            Preview the customer's screen here →
                                         </button>
-                                        
-                                        <div className="flex justify-center gap-3 text-[10px] font-semibold text-text-muted mt-1">
-                                            <button 
-                                                onClick={handleResend}
-                                                className={`hover:text-orange underline ${resendStatus === 'Sent!' ? 'text-green' : ''}`}
-                                                disabled={resendStatus === 'Sent!'}
-                                            >
-                                                {resendStatus || "Didn't get SMS? Resend"}
-                                            </button>
-                                            <span>•</span>
-                                            <button onClick={launchAcceptFlow} className="hover:text-navy underline">
-                                                Open from email PDF
-                                            </button>
-                                        </div>
 
-                                        <p className="text-[10px] text-text-muted mt-3 border-t border-border pt-3 opacity-80">
-                                            No phone handy? Preview the client page here.
+                                        <p className="text-[11px] text-text-muted mt-1 border-t border-border pt-3">
+                                            Nothing yet? Check your spam folder, or{' '}
+                                            {import.meta.env.VITE_WHATSAPP_LINK ? (
+                                                <a href={import.meta.env.VITE_WHATSAPP_LINK} target="_blank" rel="noreferrer" className="underline hover:text-orange">message me on WhatsApp</a>
+                                            ) : 'message me'}
+                                            .
                                         </p>
                                      </div>
                                 </div>

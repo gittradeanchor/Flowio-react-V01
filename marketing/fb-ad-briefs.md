@@ -24,7 +24,7 @@
 - Hook (first 3 seconds): "Still doing quotes on your phone at 9pm?"
 - Body: Show the 1-tap quote generation → PDF → SMS → client receives
 - CTA: "Try the free demo"
-- Landing: https://tradeanchor.com.au#test-drive
+- Landing: https://flowio.tradeanchor.com.au#test-drive
 
 **Ad Copy Option 1:**
 ```
@@ -38,7 +38,7 @@ Flowio turns Google Sheets into a complete quoting system for tradies.
 ✅ No monthly fees — ever
 
 Try the free interactive demo (no sign-up needed):
-👉 tradeanchor.com.au
+👉 flowio.tradeanchor.com.au
 ```
 
 **Ad Copy Option 2:**
@@ -50,7 +50,7 @@ There's a better way.
 Flowio runs inside Google Sheets — software you already know.
 One-time setup. No subscriptions. Your data, forever.
 
-Try it free: tradeanchor.com.au
+Try it free: flowio.tradeanchor.com.au
 ```
 
 **Ad Copy Option 3:**
@@ -63,7 +63,7 @@ in lost billable time.
 Flowio cuts quoting to under 2 minutes. One tap. Done.
 
 See how it works (free demo, no sign-up):
-👉 tradeanchor.com.au
+👉 flowio.tradeanchor.com.au
 ```
 
 ---
@@ -97,7 +97,7 @@ Free personalised report sent to your inbox.
 
 **Thank You Screen:**
 - Message: "Check your email! Your Quoting Cost Audit is on its way."
-- CTA Button: "Try the Free Demo" → https://tradeanchor.com.au#test-drive
+- CTA Button: "Try the Free Demo" → https://flowio.tradeanchor.com.au#test-drive
 
 **Automation:** Lead Ad webhook → S6 scenario → Pipeline + Welcome email
 

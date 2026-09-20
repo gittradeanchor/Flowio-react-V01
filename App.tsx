@@ -13,6 +13,8 @@ import { ChatWidget } from './components/ChatWidget';
 import { BookingConfirmed } from './components/BookingConfirmed';
 import { QuotingAudit } from './components/QuotingAudit';
 import { SocialProofBar } from './components/SocialProofBar';
+import { Terms, Privacy, Refund } from './components/Legal';
+import { Pilot } from './components/Pilot';
 import { useAttribution } from './hooks/useAttribution';
 
 const App = () => {
@@ -32,6 +34,10 @@ const App = () => {
     
     if (path === "/booking-confirmed") return <BookingConfirmed />;
     if (path === "/onboarding/preinstall") return <Preinstall />;
+    if (path === "/terms") return <Terms />;
+    if (path === "/privacy") return <Privacy />;
+    if (path === "/refund") return <Refund />;
+    if (path === "/pilot") return <Pilot />;
 
 
     // RENDER: MAIN LANDING PAGE
@@ -88,12 +94,14 @@ const LandingPage = () => {
             
             <main>
                 <Hero />
-                <SocialProofBar />
-                <TechStack />
-                <Benefits />
                 <TestDrive />
+                <SocialProofBar />
+                {/* Parked (20 Sept 2026), one line each to restore:
+                    <TechStack />  — image shows a Stripe logo; deposits are not live. Re-cut the image first.
+                    <QuotingAudit /> — 2nd ask on the page (audit B5.1), no consent box, and its leads feed the Marketing
+                                       Engine whose templates still carry banned claims (checklist 0.9 / 0.10). */}
+                <Benefits />
                 <LogicSection />
-                <QuotingAudit />
                 <Pricing />
                 <FAQ />
             </main>

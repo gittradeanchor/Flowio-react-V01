@@ -53,7 +53,7 @@
       "mapper": {
         "to": ["{{1.email}}"],
         "subject": "G'day {{1.full_name}} - here's what you asked about",
-        "html": "<p>G'day {{1.full_name}},</p>\n<p>Thanks for your interest in Flowio! You clicked on our ad, so here's the quick rundown:</p>\n<p><strong>Flowio</strong> turns Google Sheets into a complete quoting + job management system for tradies. One tap to quote, auto-SMS to clients, online acceptance, calendar booking, and Stripe payments.</p>\n<p>No monthly fees. No learning curve. Done-for-you setup in 48 hours.</p>\n<p><strong>Want to see it in action?</strong></p>\n<p><a href='https://tradeanchor.com.au#test-drive'>Try the free interactive demo</a></p>\n<p>Or if you're ready to chat:</p>\n<p><a href='https://calendly.com/billing-tradeanchor/15min'>Book a 15-minute Fit Call</a></p>\n<p>Cheers,<br>Sean | TradeAnchor</p>"
+        "html": "<p>G'day {{1.full_name}},</p>\n<p>Thanks for your interest in Flowio! You clicked on our ad, so here's the quick rundown:</p>\n<p><strong>Flowio</strong> turns Google Sheets into a complete quoting + job management system for tradies. One tap to quote, auto-SMS to clients, online acceptance, calendar booking, and Stripe payments.</p>\n<p>No monthly fees. No learning curve. Done-for-you setup in 48 hours.</p>\n<p><strong>Want to see it in action?</strong></p>\n<p><a href='https://flowio.tradeanchor.com.au#test-drive'>Try the free interactive demo</a></p>\n<p>Or if you're ready to chat:</p>\n<p><a href='https://calendly.com/billing-tradeanchor/15min'>Book a 15-minute Fit Call</a></p>\n<p>Cheers,<br>Sean | TradeAnchor</p>"
       },
       "metadata": { "designer": { "x": 600, "y": 0 } }
     }

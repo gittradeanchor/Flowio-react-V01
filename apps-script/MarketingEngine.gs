@@ -26,10 +26,10 @@ const CONFIG = {
   SENDER_NAME: 'Sean | TradeAnchor',
 
   // URLs
-  SITE_URL: 'https://tradeanchor.com.au',
+  SITE_URL: 'https://flowio.tradeanchor.com.au',
   CALENDLY_URL: 'https://calendly.com/billing-tradeanchor/15min',
   WHATSAPP_URL: 'https://wa.me/61494186989',
-  TEST_DRIVE_URL: 'https://tradeanchor.com.au#test-drive',
+  TEST_DRIVE_URL: 'https://flowio.tradeanchor.com.au#test-drive',
 
   // ClickSend SMS (fill in Settings tab or hardcode here)
   CLICKSEND_USERNAME: '', // filled from Settings tab at runtime
@@ -135,8 +135,7 @@ function setupSheet() {
       ['ClickSend API Key', ''],
       ['Google Review Link', ''],
       ['Referral Bonus', '$200/$200'],
-      ['Lite Price', '$497'],
-      ['Full Price', '$1,997'],
+      ['Pilot Price', '$390 (inc GST)'],
       ['Payment Plan', '3x $699/mo'],
       ['SMS Enabled', 'false'],
     ];
@@ -680,86 +679,84 @@ function sendNurtureEmail_(name, email, trade, step) {
 }
 
 
+// ═══════════════════════════════════════════════════════════════
+// EMAIL TEMPLATES (rewritten 20 Sept 2026 to the founder's rules)
+// Rules: electricians only. Only claims allowed by 02_OFFER. No statistics, testimonials or case studies
+// until a pilot supplies them. No scarcity, no trial, no competitor names. Price = $390 inc GST pilot with
+// 30-day refund from install finish. Say what is not live. Every email identifies the sender and has an opt-out
+// (Spam Act 2003). Cold outreach trigger stays OFF until Gate 1 (checklist rule).
+// ═══════════════════════════════════════════════════════════════
+
+function emailShell_(innerHtml) {
+  return '<div style="font-family: \'Source Sans 3\', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #292524; font-size: 16px; line-height: 1.65;">' +
+    innerHtml +
+    emailFooter_() +
+    '</div>';
+}
+
+function emailFooter_() {
+  return '<p style="font-size: 13px; color: #57534E; margin-top: 28px; border-top: 1px solid #E4DCCF; padding-top: 12px;">' +
+    CONFIG.SENDER_NAME + ' · TradeAnchor · ABN 45 529 331 663 · Sydney NSW<br>' +
+    'Not for you? Reply "no" and I won\'t email you again.</p>';
+}
+
+function emailButton_(href, label) {
+  return '<a href="' + href + '" style="display: inline-block; background: #B4501A; color: #FFFFFF; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 700;">' + label + '</a>';
+}
+
+/**
+ * Nurture for ENGAGED leads only (ran a Test Drive, requested an audit or booked a call).
+ * 4 steps, spacing from CONFIG.NURTURE_SCHEDULE.
+ */
 function getNurtureTemplates_(name, trade) {
-  const firstName = name.split(' ')[0] || 'there';
-  const tradeLabel = trade || 'tradie';
+  const firstName = (name || '').split(' ')[0] || 'there';
 
   return [
-    // Step 0: Day 0 — Welcome + Value Nudge
+    // Step 0: thanks + the closing question
     {
-      subject: firstName + ', here\'s what your competitors are doing differently',
-      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-        <p>G'day ${firstName},</p>
-        <p>Thanks for checking out TradeAnchor! Quick question: how many quotes do you send per week?</p>
-        <p>Most ${tradeLabel}s we talk to spend 30-45 minutes per quote. That's 20+ hours a month on paperwork instead of billable work.</p>
-        <p>Flowio cuts that to under 2 minutes per quote. One tap, professional PDF, sent via SMS, tracked automatically. All inside Google Sheets.</p>
-        <p>
-          <a href="${CONFIG.TEST_DRIVE_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Try the Free Test Drive</a>
-          &nbsp;&nbsp;
-          <a href="${CONFIG.CALENDLY_URL}" style="color: #0F172A; font-weight: 700; text-decoration: underline;">Or book a quick chat</a>
-        </p>
-        <p>Cheers,<br>${CONFIG.SENDER_NAME}</p>
-      </div>`
+      subject: firstName + ', thanks for trying the demo',
+      html: emailShell_(
+        '<p>G\'day ' + firstName + ',</p>' +
+        '<p>Thanks for trying the Flowio demo. One question, and just hit reply: how many quotes did you send last month, and how many turned into jobs?</p>' +
+        '<p>That number tells me whether this is worth your time or not. If it isn\'t, I\'ll say so.</p>' +
+        '<p>' + emailButton_(CONFIG.CALENDLY_URL, 'Book a 15-minute call') + '</p>' +
+        '<p>' + CONFIG.SENDER_NAME + '</p>'
+      )
     },
 
-    // Step 1: Day 2 — Social Proof / Pain Agitation
+    // Step 1: what it is and what it isn't
     {
-      subject: 'Why 78% of tradies quit their job management software',
-      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-        <p>G'day ${firstName},</p>
-        <p>Here's something wild: 78% of tradies who sign up for job management software (ServiceM8, Jobber, Tradify) cancel within 12 months.</p>
-        <p>Why? Three reasons:</p>
-        <ul>
-          <li>Too complex (takes weeks to learn, half the features go unused)</li>
-          <li>Too expensive ($29-$349/month adds up fast)</li>
-          <li>You never own your data (cancel and it's gone)</li>
-        </ul>
-        <p>Flowio is different. It runs inside Google Sheets &mdash; software you already know. One-time setup. No monthly fees. Your data lives in YOUR Google account forever.</p>
-        <p><a href="${CONFIG.TEST_DRIVE_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">See it in action (2 min)</a></p>
-        <p>${CONFIG.SENDER_NAME}</p>
-      </div>`
+      subject: 'What Flowio does, and what it doesn\'t yet',
+      html: emailShell_(
+        '<p>G\'day ' + firstName + ',</p>' +
+        '<p>Here\'s the plain version. Flowio sets up your own Google Sheet so one tap sends a branded PDF quote to your customer by SMS and email with an accept link. Your customer accepts on their phone and asks for a time. You confirm it, and it goes in your Google Calendar.</p>' +
+        '<p>What it doesn\'t do yet: deposits, automatic rescheduling, or quoting from your phone. And the quoting engine runs on code I host, so you can\'t rebuild it yourself. Your Sheet, prices and history stay yours.</p>' +
+        '<p>' + emailButton_(CONFIG.TEST_DRIVE_URL, 'See your customer\'s side again') + '</p>' +
+        '<p>' + CONFIG.SENDER_NAME + '</p>'
+      )
     },
 
-    // Step 2: Day 4 — ROI Breakdown
+    // Step 2: the pilot in plain terms
     {
-      subject: 'The maths: how Flowio pays for itself in 7 weeks',
-      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-        <p>G'day ${firstName},</p>
-        <p>Let me break down the numbers for a typical ${tradeLabel}:</p>
-        <ul>
-          <li>Average ${tradeLabel} sends 15 quotes/week, spending ~30 min each</li>
-          <li>That's 390 hours/year on quoting alone</li>
-          <li>At $80/hour billable rate, that's $31,200 in lost productive time</li>
-        </ul>
-        <p>Flowio costs $1,997 one-time (or 3x $699/mo if you prefer to spread it out).</p>
-        <p>At just 5 extra billable hours recovered per week, it pays for itself in <strong>7 weeks</strong>. After that? Pure profit. No monthly fees eating into your margin.</p>
-        <p>And if you're not sure about the full system, we also have Flowio Lite at $497 &mdash; just the quoting module. Upgradeable anytime.</p>
-        <p><a href="${CONFIG.CALENDLY_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Let's run the numbers for YOUR business (15 min)</a></p>
-        <p>${CONFIG.SENDER_NAME}</p>
-      </div>`
+      subject: 'The pilot, in plain terms',
+      html: emailShell_(
+        '<p>G\'day ' + firstName + ',</p>' +
+        '<p>I\'m setting Flowio up for a small number of electricians as a pilot. It\'s $390 including GST, one-off, and I do the setup for you.</p>' +
+        '<p>You get 30 days from the day your install is finished to ask for your money back, no reason needed. In return I ask for your quoting numbers before and after, one 20-minute chat, and your OK to share the results (named or anonymous).</p>' +
+        '<p>' + emailButton_(CONFIG.CALENDLY_URL, 'Book a 15-minute call') + '</p>' +
+        '<p>' + CONFIG.SENDER_NAME + '</p>'
+      )
     },
 
-    // Step 3: Day 7 — Final Nudge + Urgency
+    // Step 3: last note
     {
-      subject: 'Last call: 2 install spots left this week',
-      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-        <p>G'day ${firstName},</p>
-        <p>Quick heads up &mdash; we've only got 2 DFY install spots left this week (each install takes 48 hours of setup + testing).</p>
-        <p>Here's everything you get with a Flowio Full install ($1,997 one-time):</p>
-        <ul>
-          <li>&#10004; Professional PDF quotes from Google Sheets (1-tap)</li>
-          <li>&#10004; Auto SMS to clients with quote link</li>
-          <li>&#10004; Client accepts online &rarr; auto calendar booking</li>
-          <li>&#10004; Stripe payment collection</li>
-          <li>&#10004; Xero invoice sync</li>
-          <li>&#10004; Automatic follow-ups for unpaid quotes</li>
-          <li>&#10004; Done-for-you setup in 48 hours</li>
-          <li>&#10004; Full refund if not live in 48 hours</li>
-        </ul>
-        <p>Or start with Flowio Lite ($497) &mdash; just the quoting engine, upgradeable for $1,500.</p>
-        <p><a href="${CONFIG.CALENDLY_URL}" style="display: inline-block; background: #F97316; color: white; padding: 14px 40px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 16px;">Grab Your Spot &rarr;</a></p>
-        <p>${CONFIG.SENDER_NAME}<br>Sydney, Australia</p>
-      </div>`
+      subject: 'Last note from me, ' + firstName,
+      html: emailShell_(
+        '<p>G\'day ' + firstName + ',</p>' +
+        '<p>Last note from me. If quoting isn\'t a headache right now, no problem at all.</p>' +
+        '<p>If it is, the demo takes about a minute: <a href="' + CONFIG.TEST_DRIVE_URL + '" style="color: #B4501A; font-weight: 700;">try it</a>, or <a href="' + CONFIG.CALENDLY_URL + '" style="color: #1C1917; font-weight: 700;">book a call</a>.</p>' +
+        '<p>' + CONFIG.SENDER_NAME + '</p>'
+      )
     }
   ];
 }
@@ -860,20 +857,15 @@ function runFollowUpEngine() {
 
 
 function sendFollowUpEmail_(name, email, trade) {
-  const firstName = name.split(' ')[0] || 'there';
-  const tradeLabel = trade || 'tradie';
+  const firstName = (name || '').split(' ')[0] || 'there';
 
-  const subject = firstName + ', quick case study from a Sydney ' + tradeLabel;
-  const html = `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-    <p>G'day ${firstName},</p>
-    <p>Wanted to share a quick win from a recent Flowio install:</p>
-    <p><strong>Before:</strong> 45 min per quote, chasing clients for days, losing track of jobs</p>
-    <p><strong>After:</strong> 2 min per quote, client accepts + pays online, automatic calendar booking</p>
-    <p>The tradie got his first 3 quotes out within an hour of setup. One was accepted same day.</p>
-    <p>If you've got 15 minutes, I'd love to show you how this could work for your ${tradeLabel} business:</p>
-    <p><a href="${CONFIG.CALENDLY_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Book a Quick Chat</a></p>
-    <p>${CONFIG.SENDER_NAME}</p>
-  </div>`;
+  const subject = firstName + ', any questions about Flowio?';
+  const html = emailShell_(
+    '<p>G\'day ' + firstName + ',</p>' +
+    '<p>Checking in in case you had questions about Flowio after the demo. Happy to answer them by email, or on a 15-minute call.</p>' +
+    '<p>' + emailButton_(CONFIG.CALENDLY_URL, 'Book a 15-minute call') + '</p>' +
+    '<p>' + CONFIG.SENDER_NAME + '</p>'
+  );
 
   try {
     GmailApp.sendEmail(email, subject, '', { htmlBody: html, name: CONFIG.SENDER_NAME });
@@ -1239,18 +1231,15 @@ function sendAdLeadWelcomeEmail_(name, email) {
   if (!email) return;
   const firstName = (name || 'there').split(' ')[0];
 
-  const subject = "G'day " + firstName + " - here's what you asked about";
-  const html = `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-    <p>G'day ${firstName},</p>
-    <p>Thanks for your interest in Flowio! Here's the quick rundown:</p>
-    <p><strong>Flowio</strong> turns Google Sheets into a complete quoting + job management system for tradies. One tap to quote, auto-SMS to clients, online acceptance, calendar booking, and Stripe payments.</p>
-    <p>No monthly fees. No learning curve. Done-for-you setup in 48 hours.</p>
-    <p><strong>Want to see it in action?</strong></p>
-    <p><a href="${CONFIG.TEST_DRIVE_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Try the free interactive demo</a></p>
-    <p>Or if you're ready to chat:</p>
-    <p><a href="${CONFIG.CALENDLY_URL}" style="color: #0F172A; font-weight: 700; text-decoration: underline;">Book a 15-minute Fit Call</a></p>
-    <p>${CONFIG.SENDER_NAME}</p>
-  </div>`;
+  const subject = "G'day " + firstName + ", here's what you asked about";
+  const html = emailShell_(
+    '<p>G\'day ' + firstName + ',</p>' +
+    '<p>Thanks for your interest in Flowio. It sets up your own Google Sheet so one tap sends a branded PDF quote to your customer by SMS and email, with an accept link. Your customer accepts on their phone and asks for a time; you confirm it and it goes in your calendar.</p>' +
+    '<p>Not live yet: deposits, automatic rescheduling, and quoting from your phone.</p>' +
+    '<p>' + emailButton_(CONFIG.TEST_DRIVE_URL, 'Try the demo (about a minute)') + '</p>' +
+    '<p>Or if you\'d rather talk: <a href="' + CONFIG.CALENDLY_URL + '" style="color: #1C1917; font-weight: 700;">book a 15-minute call</a>.</p>' +
+    '<p>' + CONFIG.SENDER_NAME + '</p>'
+  );
 
   try {
     GmailApp.sendEmail(email, subject, '', { htmlBody: html, name: CONFIG.SENDER_NAME });
@@ -1654,58 +1643,36 @@ function syncCallResultToPipeline_() {
  */
 function getColdOutreachTemplates_(name, trade, city) {
   const firstName = (name || 'there').split(' ')[0];
-  const tradeLabel = trade || 'tradie';
   const cityLabel = city || 'your area';
 
   return [
-    // Cold Step 0: Day 0 — Direct intro
+    // Cold step 0: short, one question, demo link (no pitch, no price)
     {
-      subject: firstName + ', quick question about your quoting process',
-      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-        <p>G'day ${firstName},</p>
-        <p>Found your ${tradeLabel} business in ${cityLabel} and had a quick question — how long does it take you to send a quote?</p>
-        <p>I built a tool called <strong>Flowio</strong> that lets tradies send professional PDF quotes in under 2 minutes, straight from Google Sheets. Client gets an SMS with an accept link, pays online, job gets booked to your calendar. All automatic.</p>
-        <p>No monthly fees — just a one-time setup starting from $497.</p>
-        <p>Worth a quick look?</p>
-        <p><a href="${CONFIG.TEST_DRIVE_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Try the 30-second demo</a></p>
-        <p>Cheers,<br>${CONFIG.SENDER_NAME}<br><span style="font-size: 13px; color: #94A3B8;">TradeAnchor | Sydney</span></p>
-      </div>`
+      subject: firstName + ', quick question about your quoting',
+      html: emailShell_(
+        '<p>G\'day ' + firstName + ',</p>' +
+        '<p>I make quoting easier for electricians in ' + cityLabel + ' who quote from a Google Sheet. Here\'s what your customer would get from you, in about a minute: <a href="' + CONFIG.TEST_DRIVE_URL + '" style="color: #B4501A; font-weight: 700;">try the demo</a>.</p>' +
+        '<p>How many quotes did you send last month, and how many turned into jobs?</p>' +
+        '<p>' + CONFIG.SENDER_NAME + '</p>'
+      )
     },
 
-    // Cold Step 1: Day 3 — Social proof nudge
+    // Cold step 1: day 3 bump
     {
-      subject: 'How ' + cityLabel + ' tradies are winning more jobs (without more admin)',
-      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-        <p>G'day ${firstName},</p>
-        <p>Following up on my last note. The tradies using Flowio tell us the same thing:</p>
-        <ul>
-          <li>"I quote in 2 minutes instead of 30"</li>
-          <li>"Clients pay the deposit before I even get off the phone"</li>
-          <li>"It runs in Google Sheets — nothing new to learn"</li>
-        </ul>
-        <p>Unlike ServiceM8 or Jobber, there's no monthly subscription. One-time setup, you own everything, runs in the tools you already use.</p>
-        <p>If you've got 15 min, happy to run through how it'd work for your ${tradeLabel} business:</p>
-        <p><a href="${CONFIG.CALENDLY_URL}" style="display: inline-block; background: #0F172A; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 700;">Book a Quick Chat</a></p>
-        <p>${CONFIG.SENDER_NAME}</p>
-      </div>`
+      subject: 'Re: quick question about your quoting',
+      html: emailShell_(
+        '<p>G\'day ' + firstName + ', quick follow-up in case this got buried. The demo is <a href="' + CONFIG.TEST_DRIVE_URL + '" style="color: #B4501A; font-weight: 700;">here</a>, or reply with a number and I\'ll tell you straight if it\'s worth your time.</p>' +
+        '<p>' + CONFIG.SENDER_NAME + '</p>'
+      )
     },
 
-    // Cold Step 2: Day 6 — Final, breakup-style
+    // Cold step 2: day 7 last note
     {
-      subject: 'No worries if not, ' + firstName,
-      html: `<div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #475569; font-size: 16px; line-height: 1.7;">
-        <p>G'day ${firstName},</p>
-        <p>Last note from me — no worries if the timing isn't right.</p>
-        <p>Quick summary in case you want to bookmark it for later:</p>
-        <ul>
-          <li>Flowio = quoting + booking + payments inside Google Sheets</li>
-          <li>Done-for-you setup in 48 hours, starting from $497</li>
-          <li>No monthly fees, full refund if not live in 48 hrs</li>
-        </ul>
-        <p>Whenever you're ready: <a href="${CONFIG.TEST_DRIVE_URL}" style="color: #F97316; font-weight: 700;">try the demo</a> or <a href="${CONFIG.CALENDLY_URL}" style="color: #0F172A; font-weight: 700;">book a chat</a>.</p>
-        <p>All the best with the business, ${firstName}!</p>
-        <p>Sean<br><span style="font-size: 13px; color: #94A3B8;">TradeAnchor | Sydney</span></p>
-      </div>`
+      subject: 'Last note, ' + firstName,
+      html: emailShell_(
+        '<p>G\'day ' + firstName + ', last note from me. If quoting isn\'t a headache right now, no problem at all. If it is, the demo above takes about a minute.</p>' +
+        '<p>' + CONFIG.SENDER_NAME + '</p>'
+      )
     }
   ];
 }
@@ -1848,8 +1815,8 @@ function updateDashboard() {
   };
 
   const settings = getSettings_();
-  const fullPrice = parseFloat(String(settings['Full Price'] || '1997').replace(/[^0-9.]/g, ''));
-  const litePrice = parseFloat(String(settings['Lite Price'] || '497').replace(/[^0-9.]/g, ''));
+  const fullPrice = parseFloat(String(settings['Pilot Price'] || '390').replace(/[^0-9.]/g, ''));
+  const litePrice = fullPrice; // single pilot price (tiers retired)
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
