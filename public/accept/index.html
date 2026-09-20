@@ -2,6 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <script>
+      // Old domain -> new home. Keeps path, query and hash so old accept, booking and demo links still land correctly.
+      (function () {
+        var h = location.hostname;
+        if (h === 'tradeanchor.com.au' || h === 'www.tradeanchor.com.au') {
+          location.replace('https://flowio.tradeanchor.com.au' + location.pathname + location.search + location.hash);
+        }
+      })();
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout</title>
     <style>

@@ -29,14 +29,13 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
         { label: 'Test Drive', href: '#test-drive' },
         { label: 'Pricing', href: '#offer' },
         { label: 'Get in Touch', href: import.meta.env.VITE_WHATSAPP_LINK, external: true },
-        { label: 'Terms', href: '#footer' },
     ];
 
     return (
         <>
             <header 
                 className={`fixed top-0 w-full bg-white/98 backdrop-blur-sm border-b border-border z-40 py-1.5 transition-transform duration-300 ${
-                    isVisible ? 'translate-y-[40px] md:translate-y-[36px]' : '-translate-y-full'
+                    isVisible ? 'translate-y-0' : '-translate-y-full'
                 }`}
             >
                 <div className="container mx-auto px-5 flex justify-between items-center max-w-[1100px]">
@@ -66,7 +65,7 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                             href={import.meta.env.VITE_CALENDLY_URL}
                             target="_blank"
                             rel="noreferrer"
-                            className="px-3 py-1.5 text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
+                            className="inline-flex items-center px-3 min-h-[44px] text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
                         >
                             Book a Fit Call
                         </a>

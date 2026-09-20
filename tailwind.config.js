@@ -1,4 +1,8 @@
 /** @type {import('tailwindcss').Config} */
+// Brand: "Copper & Ink" (proposal, 20 Sept 2026). Class names keep the old keys (navy, orange, bg-off) so no markup changes:
+//   navy   = ink   #1C1917      orange = copper #B4501A (hover #8F3F12)
+//   bg.off = paper #F6F1E9      border = warm hairline
+// Contrast (computed): white on copper 5.12:1, copper on paper 4.55:1, ink on paper 15.6:1, muted on paper 6.8:1.
 export default {
   content: [
     "./index.html",
@@ -7,34 +11,41 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['"Source Sans 3"', 'Inter', 'sans-serif'],
+        display: ['Archivo', '"Source Sans 3"', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
         navy: {
-          DEFAULT: '#0F172A',
-          light: '#1E293B',
+          DEFAULT: '#1C1917',
+          light: '#292524',
         },
         orange: {
-          DEFAULT: '#F97316',
-          hover: '#EA580C',
+          DEFAULT: '#B4501A',
+          hover: '#8F3F12',
         },
-        green: '#10B981',
-        border: '#E2E8F0',
+        green: '#2F6B3F',
+        border: '#E4DCCF',
         bg: {
           DEFAULT: '#FFFFFF',
-          off: '#F8FAFC',
+          off: '#F6F1E9',
         },
         text: {
-          main: '#1E293B',
-          muted: '#64748B',
+          main: '#292524',
+          muted: '#57534E',
         }
       },
+      borderRadius: {
+        lg: '4px',
+        xl: '6px',
+        '2xl': '8px',
+        '3xl': '10px',
+      },
       boxShadow: {
-        'btn-primary': '0 4px 0 #C2410B, 0 8px 20px -4px rgba(249, 115, 22, 0.5)',
-        'btn-primary-active': '0 2px 0 #C2410B',
-        'btn-navy': '0 4px 0 #020617, 0 4px 12px rgba(15, 23, 42, 0.3)',
-        'btn-white': '0 4px 0 #CBD5E1',
+        'btn-primary': '0 2px 0 #6F320F',
+        'btn-primary-active': '0 1px 0 #6F320F',
+        'btn-navy': '0 2px 0 #000000',
+        'btn-white': '0 2px 0 #D6CCBC',
       }
     },
   },

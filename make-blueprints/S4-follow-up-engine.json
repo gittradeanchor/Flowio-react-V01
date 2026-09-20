@@ -44,7 +44,7 @@
               "parameters": { "__IMTCONN__": 5806821 },
               "mapper": {
                 "to": "{{1.2}}",
-                "body": "Hey {{1.1}}, Sean from TradeAnchor here. Saw you checked out Flowio - want to see a 60-sec demo of how it works for {{1.4}}s? Here's the link: https://tradeanchor.com.au#test-drive",
+                "body": "Hey {{1.1}}, Sean from TradeAnchor here. Saw you checked out Flowio - want to see a 60-sec demo of how it works for {{1.4}}s? Here's the link: https://flowio.tradeanchor.com.au#test-drive",
                 "from": "TradeAnchor"
               },
               "metadata": { "designer": { "x": 600, "y": -200 } },

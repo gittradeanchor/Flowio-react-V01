@@ -69,7 +69,7 @@
               "mapper": {
                 "to": ["{{1.3}}"],
                 "subject": "{{1.1}}, here's what your competitors are doing differently",
-                "html": "<!-- DAY 0: Welcome + Value Nudge. See marketing/nurture-templates.md for full copy -->\n<p>G'day {{1.1}},</p>\n<p>Thanks for checking out TradeAnchor! Quick question: how many quotes do you send per week?</p>\n<p>Most sparkies we talk to spend 30-45 minutes per quote. That's 20+ hours a month on paperwork.</p>\n<p>Flowio cuts that to under 2 minutes per quote. One tap, professional PDF, sent via SMS, tracked automatically.</p>\n<p><a href='https://tradeanchor.com.au#test-drive'>Try the free Test Drive</a> | <a href='https://calendly.com/billing-tradeanchor/15min'>Book a 15-min chat</a></p>\n<p>Cheers,<br>Sean | TradeAnchor</p>"
+                "html": "<!-- DAY 0: Welcome + Value Nudge. See marketing/nurture-templates.md for full copy -->\n<p>G'day {{1.1}},</p>\n<p>Thanks for checking out TradeAnchor! Quick question: how many quotes do you send per week?</p>\n<p>Most sparkies we talk to spend 30-45 minutes per quote. That's 20+ hours a month on paperwork.</p>\n<p>Flowio cuts that to under 2 minutes per quote. One tap, professional PDF, sent via SMS, tracked automatically.</p>\n<p><a href='https://flowio.tradeanchor.com.au#test-drive'>Try the free Test Drive</a> | <a href='https://calendly.com/billing-tradeanchor/15min'>Book a 15-min chat</a></p>\n<p>Cheers,<br>Sean | TradeAnchor</p>"
               },
               "metadata": { "designer": { "x": 600, "y": -300 } },
               "filter": {
@@ -109,7 +109,7 @@
               "mapper": {
                 "to": ["{{1.3}}"],
                 "subject": "Why 78% of tradies quit their job management software",
-                "html": "<!-- DAY 2: Social Proof / Pain Agitation. See marketing/nurture-templates.md for full copy -->\n<p>G'day {{1.1}},</p>\n<p>Here's something wild: 78% of tradies who sign up for job management software (ServiceM8, Jobber, Tradify) cancel within 12 months.</p>\n<p>Why? Three reasons: too complex, too expensive, and they never actually own their data.</p>\n<p>Flowio is different. It runs inside Google Sheets &mdash; software you already know. One-time setup. No monthly fees. Your data lives in YOUR Google account forever.</p>\n<p><a href='https://tradeanchor.com.au#test-drive'>See it in action (2 min)</a></p>\n<p>Sean | TradeAnchor</p>"
+                "html": "<!-- DAY 2: Social Proof / Pain Agitation. See marketing/nurture-templates.md for full copy -->\n<p>G'day {{1.1}},</p>\n<p>Here's something wild: 78% of tradies who sign up for job management software (ServiceM8, Jobber, Tradify) cancel within 12 months.</p>\n<p>Why? Three reasons: too complex, too expensive, and they never actually own their data.</p>\n<p>Flowio is different. It runs inside Google Sheets &mdash; software you already know. One-time setup. No monthly fees. Your data lives in YOUR Google account forever.</p>\n<p><a href='https://flowio.tradeanchor.com.au#test-drive'>See it in action (2 min)</a></p>\n<p>Sean | TradeAnchor</p>"
               },
               "metadata": { "designer": { "x": 600, "y": -100 } },
               "filter": {
