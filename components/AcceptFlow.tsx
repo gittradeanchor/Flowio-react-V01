@@ -146,7 +146,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                                     {items.map((it, i) => (
                                         <tr key={i} className="border-b border-border">
                                             <td className="p-3">{it.name}<br/><span className="text-xs text-text-muted">Qty: {it.qty} @ ${it.rate}</span></td>
-                                            <td className="p-3 text-right font-mono">${(it.qty * it.rate).toFixed(2)}</td>
+                                            <td className="p-3 text-right tabular-nums">${(it.qty * it.rate).toFixed(2)}</td>
                                         </tr>
                                     ))}
                                 </tbody>

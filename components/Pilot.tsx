@@ -1,3 +1,4 @@
+import { Logo } from './Logo';
 import React from 'react';
 
 /**
@@ -21,14 +22,14 @@ export const Pilot = () => (
     <div className="min-h-screen bg-bg-off font-sans text-navy">
         <nav className="bg-white border-b border-border">
             <div className="max-w-[720px] mx-auto px-5 min-h-[52px] flex items-center">
-                <a href="/" className="text-xl font-black tracking-tighter text-navy no-underline">Trade<span className="text-orange">Anchor</span></a>
+                <a href="/" className="inline-flex items-center min-h-[44px] no-underline" aria-label="TradeAnchor home"><Logo size={30} /></a>
             </div>
         </nav>
         <main className="max-w-[720px] mx-auto px-5 py-8 pb-16">
             <h1 className="text-[30px] md:text-4xl font-black leading-tight">Your Flowio pilot: next steps</h1>
-            <p className="text-text-muted mt-2 text-[15px] leading-relaxed">Four steps, in this order. You pay after we've spoken, not before.</p>
+            <p className="text-text-muted mt-2 text-[15px] leading-relaxed">Four steps, in this order. Paying before we've spoken is fine. I ring you to confirm it's a fit, and if it isn't, you get your money back.</p>
 
-            <div className="bg-white border border-border rounded-md p-6 mt-6">
+            <div id="pay" className="bg-white border border-border rounded-md p-6 mt-6 scroll-mt-20">
                 <div className="flex items-baseline gap-3 flex-wrap">
                     <span className="text-4xl font-black tracking-tighter">$390</span>
                     <span className="text-xs font-bold bg-slate-100 border border-slate-200 px-2 py-1 rounded uppercase tracking-tight">One-time, inc GST</span>
@@ -49,7 +50,7 @@ export const Pilot = () => (
 
             <ol className="space-y-6 mt-8">
                 <Step n={1} title="Pay the pilot fee">Use the button above. Refund terms are in the <a className="underline" href="/refund">refund policy</a>.</Step>
-                <Step n={2} title="Confirm the terms">Reply "agreed" to the email we sent, or read them first in the <a className="underline" href="/terms">terms</a>. In return for the pilot price I ask for your quoting numbers before and after, one 20-minute chat at the end, and your OK to share results (named or anonymous).</Step>
+                <Step n={2} title="I ring you, and you confirm the terms">I call within one business day to confirm this is a fit and answer questions. Read the <a className="underline" href="/terms">terms</a>, and reply "agreed" to the email I send. In return for the pilot price I ask for your quoting numbers before and after, one 20-minute chat at the end, and your OK to share results (named or anonymous).</Step>
                 <Step n={3} title="Fill in the intake form">A short form: your business details, how you quote, and your price list. It arrives by email after you pay.</Step>
                 <Step n={4} title="I set it up, and we send your first real quote">I build it in your own Google account, then we send your first real quote together on the phone.</Step>
             </ol>

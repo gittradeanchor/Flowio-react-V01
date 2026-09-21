@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Logo } from './Logo';
 
 export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?: boolean, isSecondaryCta?: boolean }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,11 +40,7 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                 }`}
             >
                 <div className="container mx-auto px-5 flex justify-between items-center max-w-[1100px]">
-                    <a href="#" className="flex items-center gap-2.5 no-underline">
-                       <div className="text-xl md:text-2xl font-black text-navy tracking-tighter leading-none">
-                            Trade<span className="text-orange">Anchor</span>
-                       </div>
-                    </a>
+                    <a href="#" className="flex items-center min-h-[44px] no-underline" aria-label="TradeAnchor home"><Logo size={34} /></a>
 
                     {/* Desktop CTA */}
                     <a
@@ -51,9 +48,7 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                         target="_blank"
                         rel="noreferrer"
                         className={`hidden md:inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold rounded-xl active:translate-y-0.5 transition-all ${
-                            isSecondaryCta
-                                ? 'bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm'
-                                : 'bg-navy text-white shadow-btn-navy hover:shadow-lg'
+                            'bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm'
                         }`}
                     >
                         Book a Fit Call
@@ -61,16 +56,9 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
 
                     {/* Mobile Right Side Group */}
                     <div className="flex items-center gap-3 md:hidden">
-                        <a
-                            href={import.meta.env.VITE_CALENDLY_URL}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center px-3 min-h-[44px] text-xs font-bold bg-navy text-white rounded-lg shadow-sm whitespace-nowrap"
-                        >
-                            Book a Fit Call
-                        </a>
+                        
                         <button 
-                            className="p-1 text-navy focus:outline-none"
+                            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-navy focus:outline-none"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Toggle menu"
                         >

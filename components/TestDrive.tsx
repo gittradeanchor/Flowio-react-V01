@@ -13,8 +13,8 @@ const Q_INK = '#171A1D';
 const Q_SLATE = '#57534E';
 const Q_INFO = '#1C1917';
 const Q_RULE = '#E4DCCF';
-const qHead: React.CSSProperties = { fontFamily: "'Saira Condensed', 'Inter', sans-serif" };
-const qBody: React.CSSProperties = { fontFamily: "'Source Sans 3', 'Inter', sans-serif", color: Q_INK };
+const qHead: React.CSSProperties = { fontFamily: "'Archivo', 'Source Sans 3', sans-serif" };
+const qBody: React.CSSProperties = { fontFamily: "'Source Sans 3', system-ui, sans-serif", color: Q_INK };
 const qLabel: React.CSSProperties = { fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: Q_INFO };
 const qMoney = (n: number) => n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -27,10 +27,10 @@ const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals:
             <div className="hidden md:flex flex-col bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, minHeight: 720, padding: '44px 40px' }}>
                 <div className="flex justify-between items-end gap-6 pb-3" style={{ borderBottom: `4px solid ${Q_INFO}` }}>
                     <div>
-                        <div style={{ ...qHead, fontSize: 31, fontWeight: 700, lineHeight: 1.04, letterSpacing: '0.01em' }}>Your Business Name</div>
+                        <div style={{ ...qHead, fontSize: 24, fontWeight: 700, lineHeight: 1.04, letterSpacing: '-0.01em' }}>Your Business Name</div>
                         <div style={{ fontSize: 13, lineHeight: 1.5, color: Q_SLATE, marginTop: 6, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
                     </div>
-                    <div style={{ ...qHead, fontSize: 24, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
+                    <div style={{ ...qHead, fontSize: 19, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-6" style={{ padding: '18px 0 22px' }}>
@@ -67,7 +67,7 @@ const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals:
                     <div style={{ width: 282, fontVariantNumeric: 'tabular-nums' }}>
                         <div className="flex justify-between" style={{ fontSize: 14, padding: '6px 10px' }}><span style={{ color: Q_SLATE }}>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
                         <div className="flex justify-between" style={{ fontSize: 14, padding: '6px 10px', borderBottom: `1px solid ${Q_INFO}` }}><span style={{ color: Q_SLATE }}>GST</span><span>{qMoney(totals.gst)}</span></div>
-                        <div className="flex justify-between items-baseline" style={{ padding: '12px 10px 0' }}><span style={{ ...qHead, fontSize: 20, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 23, fontWeight: 700 }}>{qMoney(totals.total)}</span></div>
+                        <div className="flex justify-between items-baseline" style={{ padding: '12px 10px 0' }}><span style={{ ...qHead, fontSize: 17, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 23, fontWeight: 700 }}>{qMoney(totals.total)}</span></div>
                     </div>
                 </div>
 
@@ -86,10 +86,10 @@ const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals:
 
             {/* Phone layout (375px) */}
             <div className="md:hidden bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, padding: '22px 18px' }}>
-                <div style={{ ...qHead, fontSize: 27, fontWeight: 700, lineHeight: 1.04 }}>Your Business Name</div>
+                <div style={{ ...qHead, fontSize: 21, fontWeight: 700, lineHeight: 1.04 }}>Your Business Name</div>
                 <div style={{ fontSize: 12, lineHeight: 1.5, color: Q_SLATE, marginTop: 5, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
                 <div className="flex justify-between items-baseline gap-3" style={{ marginTop: 12, paddingTop: 10, borderTop: `4px solid ${Q_INFO}` }}>
-                    <span style={{ ...qHead, fontSize: 20, fontWeight: 700, color: Q_INFO }}>Quotation</span>
+                    <span style={{ ...qHead, fontSize: 17, fontWeight: 700, color: Q_INFO }}>Quotation</span>
                     <span style={{ fontSize: 12, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}>Q-0004 &nbsp;·&nbsp; {today}</span>
                 </div>
                 <div style={{ fontSize: 13, lineHeight: 1.55, color: Q_SLATE, marginTop: 10 }}>{forName}<br />Site address, Suburb NSW 2000</div>
@@ -107,7 +107,7 @@ const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals:
                 </div>
                 <div className="flex justify-between" style={{ fontSize: 13, paddingTop: 8, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}><span>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
                 <div className="flex justify-between" style={{ fontSize: 13, padding: '4px 0 8px', borderBottom: `1px solid ${Q_INFO}`, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}><span>GST</span><span>{qMoney(totals.gst)}</span></div>
-                <div className="flex justify-between items-baseline" style={{ paddingTop: 11 }}><span style={{ ...qHead, fontSize: 18, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{qMoney(totals.total)}</span></div>
+                <div className="flex justify-between items-baseline" style={{ paddingTop: 11 }}><span style={{ ...qHead, fontSize: 16, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{qMoney(totals.total)}</span></div>
                 <div style={{ fontSize: 12, lineHeight: 1.55, color: Q_SLATE, marginTop: 12 }}>Quote valid 30 days. Your payment terms and conditions print here, as you write them.</div>
             </div>
         </>
@@ -409,7 +409,7 @@ export const TestDrive = () => {
                                                     <span className="text-[11px] font-bold text-slate-400 uppercase">Demo</span>
                                                 </div>
                                                 <div className="font-bold text-navy text-sm">Sean Miller (Sydney)</div>
-                                                <div className="text-xs text-text-muted font-mono mt-0.5">04••• ••• •• · s•••@gmail.com</div>
+                                                <div className="text-xs text-text-muted tabular-nums mt-0.5">04••• ••• •• · s•••@gmail.com</div>
                                                 <div className="text-[10px] text-slate-400 mt-2 italic">Real client details collected next.</div>
                                             </div>
 
@@ -493,7 +493,7 @@ export const TestDrive = () => {
                                             <div className="mt-4 pt-3 border-t-2 border-border">
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-[13px] text-text-muted">Total (Inc GST)</span>
-                                                    <span className="font-mono text-xl font-extrabold text-navy">${totals.total.toFixed(2)}</span>
+                                                    <span className="tabular-nums text-xl font-extrabold text-navy">${totals.total.toFixed(2)}</span>
                                                 </div>
                                             </div>
 

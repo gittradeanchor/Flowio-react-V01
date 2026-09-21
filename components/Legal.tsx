@@ -1,3 +1,4 @@
+import { Logo } from './Logo';
 import React from 'react';
 
 /**
@@ -31,7 +32,7 @@ const Shell = ({ title, children }: { title: string; children: React.ReactNode }
     <div className="min-h-screen bg-bg-off font-sans text-navy">
         <nav className="bg-white border-b border-border">
             <div className="max-w-[760px] mx-auto px-5 min-h-[52px] flex items-center justify-between gap-4 flex-wrap">
-                <a href="/" className="text-xl font-black tracking-tighter text-navy no-underline">Trade<span className="text-orange">Anchor</span></a>
+                <a href="/" className="inline-flex items-center min-h-[44px] no-underline" aria-label="TradeAnchor home"><Logo size={30} /></a>
                 <div className="flex gap-4 text-[15px] font-semibold">
                     <a href="/terms" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Terms</a>
                     <a href="/privacy" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Privacy</a>

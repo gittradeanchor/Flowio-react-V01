@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+// Payment path appears only when the Stripe link exists (VITE_STRIPE_PILOT_LINK on Cloudflare Pages). No dead ends.
+const PAY_LINK: string = (import.meta as any).env?.VITE_STRIPE_PILOT_LINK || '';
+
 // Optimized Slider Component using Layered Approach for Native Feel
 const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: { label: string, value: number, min: number, max: number, unit: string, prefix?: string, onChange: (val: number) => void }) => {
     const percentage = ((value - min) / (max - min)) * 100;
@@ -172,7 +175,7 @@ export const Pricing = () => {
                             <button
                                 key={rate}
                                 onClick={() => setHourlyRate(rate)}
-                                className={`flex-1 py-2.5 rounded-lg font-bold text-sm border transition-all ${
+                                className={`flex-1 min-h-[44px] rounded-lg font-bold text-sm border transition-all ${
                                     hourlyRate === rate
                                     ? 'bg-navy border-navy text-white shadow-md transform scale-105'
                                     : 'bg-white border-border text-text-muted hover:border-navy/30 hover:bg-slate-50'
@@ -231,8 +234,14 @@ export const Pricing = () => {
                                 Book a Fit Call &rarr;
                             </a>
                             <p className="text-sm font-medium text-navy">
-                                15-minute phone call. No payment until we've talked.
+                                15-minute phone call. Nothing to pay on the call.
                             </p>
+                            {PAY_LINK && (
+                                <p className="text-sm text-text-muted mt-3">
+                                    Already sure?{' '}
+                                    <a href="/pilot#pay" className="inline-flex items-center min-h-[44px] font-bold text-navy underline underline-offset-4">Pay the $390 pilot now</a>
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -249,11 +258,16 @@ export const Pricing = () => {
                     <h2 className="text-2xl md:text-4xl font-black mb-5 leading-tight">Let's talk about your quoting.</h2>
                     <p className="text-lg opacity-80 mb-10 leading-relaxed max-w-xl mx-auto">A 15-minute call. I'll ask how many quotes you send and how many turn into jobs, and we'll see if this fits. No sales pressure.</p>
 
-                    <div className="flex justify-center gap-5 flex-wrap">
+                    <div className="flex justify-center gap-5 flex-wrap flex-col items-center">
                         <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="bg-white text-navy px-8 py-4 rounded-xl font-bold text-lg shadow-btn-white hover:bg-slate-100 transition-colors flex items-center gap-2">
                              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                              Book a Fit Call
                         </a>
+                        {PAY_LINK && (
+                            <a href="/pilot#pay" className="inline-flex items-center min-h-[44px] text-white/80 hover:text-white text-[15px] font-semibold underline underline-offset-4">
+                                Ready to start? Pay the $390 pilot
+                            </a>
+                        )}
                     </div>
                 </div>
             </div>
