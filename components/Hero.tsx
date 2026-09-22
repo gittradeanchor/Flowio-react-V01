@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Logo } from './Logo';
 
 
 export const Hero = () => {
@@ -12,7 +13,7 @@ export const Hero = () => {
             {/* Hero-only top bar with logo — desktop only: the header is always visible on mobile, so the logo would duplicate */}
             <div className="hidden md:block container mx-auto px-5 max-w-[1100px] mb-4 md:mb-7">
                 <div className="flex items-center justify-between">
-                    <img src="/tradeanchor-logo.png" alt="TradeAnchor" className="h-8 md:h-11" />
+                    <Logo size={44} />
                 </div>
             </div>
 

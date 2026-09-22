@@ -11,9 +11,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Source Sans 3"', 'Inter', 'sans-serif'],
+        sans: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
         display: ['Archivo', '"Source Sans 3"', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        mono: ['ui-monospace', 'Menlo', 'Consolas', 'monospace'],
       },
       colors: {
         navy: {

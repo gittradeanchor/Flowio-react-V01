@@ -146,7 +146,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                                     {items.map((it, i) => (
                                         <tr key={i} className="border-b border-border">
                                             <td className="p-3">{it.name}<br/><span className="text-xs text-text-muted">Qty: {it.qty} @ ${it.rate}</span></td>
-                                            <td className="p-3 text-right font-mono">${(it.qty * it.rate).toFixed(2)}</td>
+                                            <td className="p-3 text-right tabular-nums">${(it.qty * it.rate).toFixed(2)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -176,7 +176,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                     <div className="bg-white w-full max-w-[600px] rounded-t-[20px] md:rounded-[20px] p-6 md:p-12 max-h-[90vh] overflow-y-auto pb-28 md:pb-12 text-navy relative animate-fade-in-up" onClick={e => e.stopPropagation()}>
                         <button onClick={() => setStep(1)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-bg-off text-text-muted flex items-center justify-center text-xl hover:bg-slate-200">×</button>
                         
-                        <span className="inline-block bg-orange text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-wider mb-2">DEMO MODE</span>
+                        <span className="inline-block bg-orange text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider mb-2">DEMO MODE</span>
                         <h2 className="text-2xl font-black text-navy mb-2">Accept Quote #Q0004</h2>
                         <p className="text-text-muted text-sm mb-6">{customer.name || 'Sean Miller'} · Sydney, NSW</p>
 
@@ -216,16 +216,16 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
 
                         {/* Trust Signals — 2×2 grid */}
                         <div className="grid grid-cols-2 gap-2 mt-5">
-                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
                                 <span className="shrink-0">📱</span><span>No app or login needed</span>
                             </div>
-                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
                                 <span className="shrink-0">✅</span><span>30-day money-back guarantee</span>
                             </div>
-                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
                                 <span className="shrink-0">📋</span><span>ABN: 45 529 331 663</span>
                             </div>
-                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
+                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
                                 <span className="shrink-0">💼</span><span>Australian owned & operated</span>
                             </div>
                         </div>
@@ -275,13 +275,13 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                                         <div className={`w-8 h-8 ${x.c} rounded-lg flex items-center justify-center text-base shrink-0 mt-0.5`}>{x.i}</div>
                                         <div className="flex-1">
                                             <div className="font-bold text-navy text-[13px] mb-0.5">{x.t}</div>
-                                            <div className="text-[11px] text-text-muted leading-snug">{x.d}</div>
+                                            <div className="text-xs text-text-muted leading-snug">{x.d}</div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="mt-6 pt-4 border-t border-dashed border-border text-center text-[11px] text-text-muted animate-fade-in-up delay-[900ms]">
+                            <div className="mt-6 pt-4 border-t border-dashed border-border text-center text-xs text-text-muted animate-fade-in-up delay-[900ms]">
                                 Deposits and automatic rescheduling are not live yet.
                             </div>
                          </div>
