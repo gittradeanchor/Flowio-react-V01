@@ -26,7 +26,11 @@
     
     <script>
       // 1) Your GAS Web App URL
-      const GAS_BASE = "https://script.google.com/macros/s/AKfycbw7jJBkE_2lNUeDwW5lgfj63k5K_vI0MyEF2wbOhNGfiF9922_Wx3gF2osfAL2RsDm2/exec";
+      // Updated 23 Sept 2026: the founder redeployed demo_delivery_code.gs under a NEW deployment ID.
+      // This file has no build step — it's a static asset copied as-is — so it must be edited by hand
+      // every time the deployment ID changes. There is no other place in the site code that needs this URL:
+      // VITE_GSCRIPT_URL and VITE_GSCRIPT_PRICEBOOK_URL are separate, Cloudflare Pages-side variables.
+      const GAS_BASE = "https://script.google.com/macros/s/AKfycbwRJwWn-qfjRJ2twKG7Dv8b0oiyAf8E9GcaNsSbftxYZ0G0rCVfDbf-GTvhIr3WcO08/exec";
 
       // 2) Pass through the query params
       const qs = window.location.search || "";
