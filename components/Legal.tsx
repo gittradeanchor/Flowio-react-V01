@@ -33,7 +33,12 @@ const Shell = ({ title, children }: { title: string; children: React.ReactNode }
         <nav className="bg-white border-b border-border">
             <div className="max-w-[760px] mx-auto px-5 min-h-[52px] flex items-center justify-between gap-4 flex-wrap">
                 <a href="/" className="inline-flex items-center min-h-[44px] no-underline" aria-label="TradeAnchor home"><Logo size={30} /></a>
-                <div className="flex gap-4 text-[15px] font-semibold">
+                <div className="flex items-center gap-4 text-[15px] font-semibold flex-wrap">
+                    {/* Explicit, worded way back (22 Sept): a legal page is often opened directly from a search
+                        result or a shared link, with no memory of arriving from the site, so a logo alone
+                        wasn't a clear enough "you can leave" signal. */}
+                    <a href="/" className="min-h-[44px] flex items-center text-text-muted underline-offset-4 hover:underline">&larr; Back to TradeAnchor</a>
+                    <span className="text-border" aria-hidden="true">|</span>
                     <a href="/terms" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Terms</a>
                     <a href="/privacy" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Privacy</a>
                     <a href="/refund" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Refund</a>
@@ -42,7 +47,7 @@ const Shell = ({ title, children }: { title: string; children: React.ReactNode }
         </nav>
         <main className="max-w-[760px] mx-auto px-5 pb-16">
             <article className="bg-white border border-border rounded-md mt-6 p-6 md:p-8">
-                <div className="text-[11px] font-bold uppercase tracking-widest text-text-muted">Legal</div>
+                <div className="text-xs font-bold uppercase tracking-widest text-text-muted">Legal</div>
                 <h1 className="text-[32px] font-black leading-tight mt-2">{title}</h1>
                 <p className="text-sm text-text-muted mt-2">TradeAnchor, ABN 45 529 331 663. Sole trader, Sydney NSW. GST registered. Contact: <a className="underline" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Last updated {UPDATED}. Australian law, New South Wales.</p>
                 {children}

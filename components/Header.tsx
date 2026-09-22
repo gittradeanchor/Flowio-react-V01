@@ -29,7 +29,8 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
     const navItems = [
         { label: 'Test Drive', href: '#test-drive' },
         { label: 'Pricing', href: '#offer' },
-        { label: 'Get in Touch', href: import.meta.env.VITE_WHATSAPP_LINK, external: true },
+        // No target="_blank": a wa.me link needs a same-tab navigation to hand off to the WhatsApp app (see ChatWidget.tsx).
+        { label: 'Get in Touch', href: import.meta.env.VITE_WHATSAPP_LINK },
     ];
 
     return (
@@ -42,17 +43,25 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                 <div className="container mx-auto px-5 flex justify-between items-center max-w-[1100px]">
                     <a href="#" className="flex items-center min-h-[44px] no-underline" aria-label="TradeAnchor home"><Logo size={34} /></a>
 
-                    {/* Desktop CTA */}
-                    <a
-                        href={import.meta.env.VITE_CALENDLY_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={`hidden md:inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold rounded-xl active:translate-y-0.5 transition-all ${
-                            'bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm'
-                        }`}
-                    >
-                        Book a Fit Call
-                    </a>
+                    {/* Desktop: plain text links for wayfinding (not more buttons — the hero and pricing already carry
+                        the one primary action), then the one secondary CTA. A hamburger belongs on mobile, not desktop:
+                        these are cheaper to scan and don't need a click to reveal (fixes 22 Sept: desktop had no
+                        hamburger AND no links, so Test Drive/Pricing/WhatsApp were unreachable from the header). */}
+                    <div className="hidden md:flex items-center gap-8">
+                        <nav className="flex items-center gap-6 text-[15px] font-semibold text-navy">
+                            <a href="#test-drive" className="min-h-[44px] flex items-center hover:text-orange transition-colors">Test Drive</a>
+                            <a href="#offer" className="min-h-[44px] flex items-center hover:text-orange transition-colors">Pricing</a>
+                            <a href={import.meta.env.VITE_WHATSAPP_LINK} className="min-h-[44px] flex items-center hover:text-orange transition-colors">Get in Touch</a>
+                        </nav>
+                        <a
+                            href={import.meta.env.VITE_CALENDLY_URL}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold rounded-xl active:translate-y-0.5 transition-all bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm"
+                        >
+                            Book a Fit Call
+                        </a>
+                    </div>
 
                     {/* Mobile Right Side Group */}
                     <div className="flex items-center gap-3 md:hidden">
@@ -79,11 +88,9 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                 <div className="fixed inset-0 z-30 bg-white pt-28 px-5 md:hidden animate-fade-in">
                     <nav className="flex flex-col gap-6 text-center">
                         {navItems.map((item) => (
-                            <a 
+                            <a
                                 key={item.label}
                                 href={item.href}
-                                target={item.external ? "_blank" : undefined}
-                                rel={item.external ? "noreferrer" : undefined}
                                 onClick={() => setIsMenuOpen(false)}
                                 className="text-xl font-bold text-navy py-2 border-b border-border/50"
                             >

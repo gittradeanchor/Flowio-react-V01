@@ -33,57 +33,132 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
                     step={1}
                     value={value}
                     onChange={(e) => onChange(Number(e.target.value))}
-                    className="absolute w-full h-full opacity-100 bg-transparent appearance-none cursor-pointer z-10 touch-none focus:outline-none m-0 p-0"
+                    className="ta-slider absolute w-full h-full opacity-100 bg-transparent appearance-none cursor-pointer z-10 touch-none focus:outline-none m-0 p-0"
                 />
             </div>
-
-            {/* Custom Thumb Styling - Track is transparent so we see the div below */}
-            <style>{`
-                input[type=range]::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    height: 24px;
-                    width: 24px;
-                    border-radius: 50%;
-                    background: #ffffff;
-                    border: 2px solid #FB923C;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                    margin-top: -8px; /* (Track 8px - Thumb 24px) / 2 */
-                    cursor: grab;
-                }
-                input[type=range]:active::-webkit-slider-thumb {
-                    cursor: grabbing;
-                    transform: scale(1.1);
-                }
-                input[type=range]::-webkit-slider-runnable-track {
-                    width: 100%;
-                    height: 8px;
-                    background: transparent;
-                    border-radius: 9999px;
-                }
-
-                /* Firefox Support */
-                input[type=range]::-moz-range-thumb {
-                    height: 24px;
-                    width: 24px;
-                    border-radius: 50%;
-                    background: #ffffff;
-                    border: 2px solid #FB923C;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                    cursor: grab;
-                }
-                input[type=range]:active::-moz-range-thumb {
-                    cursor: grabbing;
-                    transform: scale(1.1);
-                }
-                input[type=range]::-moz-range-track {
-                    width: 100%;
-                    height: 8px;
-                    background: transparent;
-                }
-            `}</style>
         </div>
     );
 };
+
+// Both static (no dependency on Pricing's state), so they are safe as ordinary module-scope components.
+const Item = ({ children, live = true }: { children: React.ReactNode, live?: boolean }) => (
+    <li className={`flex gap-3 text-sm font-medium items-start ${live ? 'text-navy' : 'text-text-muted'}`}>
+        {live ? <CheckIcon /> : <DashIcon />}
+        <span className="leading-snug">{children}</span>
+    </li>
+);
+
+const PilotCard = () => (
+    <>
+        <div className="mb-6 mt-2">
+            <h3 className="text-lg font-black text-navy mb-2 uppercase tracking-wide opacity-80">Founding Pilot &middot; Done for you</h3>
+            <div className="flex flex-row items-baseline gap-3">
+                <span className="text-4xl md:text-5xl font-black text-navy tracking-tighter leading-none">$390</span>
+                <span className="text-xs font-bold text-navy bg-slate-100 px-2 py-1 rounded border border-slate-200 uppercase tracking-tight whitespace-nowrap transform -translate-y-1">
+                    One-time, inc GST
+                </span>
+            </div>
+        </div>
+
+        {/* Refund always sits with the price (audit A3.2) */}
+        <div className="mb-6 bg-green/10 text-green-800 p-3 rounded-xl text-sm font-bold text-center border border-green/20">
+            30-day money-back guarantee. No reason needed.
+        </div>
+
+        <ul className="space-y-3 mb-6">
+            <Item>I set up your Google Sheet quoting for you: your prices, logo and business details</Item>
+            <Item>Branded PDF quote sent by SMS and email with an accept link</Item>
+            <Item>Your customer accepts on their phone and asks for a time. You confirm it and it goes in your Google Calendar</Item>
+            <Item>Confirmation by SMS and email once you confirm</Item>
+            <Item>90 days of email support, business hours</Item>
+            <Item live={false}>Not live yet: deposit collection</Item>
+            <Item live={false}>Not live yet: automatic rescheduling (you ring the customer)</Item>
+        </ul>
+
+        <p className="text-xs text-text-muted leading-snug border-l-2 border-orange/30 pl-3">
+            In return for the pilot price: your quoting numbers before and after, one 20-minute chat at the end, and your OK to share the results (named or anonymous).
+        </p>
+    </>
+);
+
+// Hoisted out of Pricing() (fix, 22 Sept): it used to be defined INSIDE Pricing's render, so every slider
+// drag tick — a state update in the parent — created a brand-new component function and React tore down and
+// remounted this whole subtree, including the two <input type=range> elements, mid-drag. That's what "the
+// sliders don't slide" was: the DOM node under the user's finger kept getting replaced. State now comes in as
+// props instead of being read from a closure over Pricing's hooks.
+const ROICalculatorContent = ({
+    quotesPerWeek, setQuotesPerWeek, minutesSavedPerQuote, setMinutesSavedPerQuote, hourlyRate, setHourlyRate,
+    paybackText, hoursSavedPerMonth, valueSavedPerMonth,
+}: {
+    quotesPerWeek: number; setQuotesPerWeek: (n: number) => void;
+    minutesSavedPerQuote: number; setMinutesSavedPerQuote: (n: number) => void;
+    hourlyRate: number; setHourlyRate: (n: number) => void;
+    paybackText: string; hoursSavedPerMonth: number; valueSavedPerMonth: number;
+}) => (
+    <>
+        <h3 className="text-2xl font-black text-navy mb-6 leading-tight">What could this save you each month?</h3>
+
+        <div className="mb-8">
+            <CustomSlider label="Quotes / week" value={quotesPerWeek} min={1} max={50} unit="" onChange={setQuotesPerWeek} />
+            <CustomSlider
+                label="Minutes saved / quote"
+                value={minutesSavedPerQuote}
+                min={1}
+                max={60}
+                unit="min"
+                onChange={setMinutesSavedPerQuote}
+            />
+
+            <p className="text-xs text-text-muted mt-2 font-medium mb-6 pl-1 border-l-2 border-orange/30">
+                Minutes saved per quote includes: write quote + follow-up + booking.
+            </p>
+
+            <div className="mt-6">
+                 <label className="text-navy font-bold text-sm block mb-3">Your Hourly Rate</label>
+                 <div className="flex gap-3">
+                    {[90, 120, 150].map(rate => (
+                        <button
+                            key={rate}
+                            onClick={() => setHourlyRate(rate)}
+                            className={`flex-1 min-h-[44px] rounded-lg font-bold text-sm border transition-all ${
+                                hourlyRate === rate
+                                ? 'bg-navy border-navy text-white shadow-md transform scale-105'
+                                : 'bg-white border-border text-text-muted hover:border-navy/30 hover:bg-slate-50'
+                            }`}
+                        >
+                            ${rate}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+
+        <div className="bg-orange/5 rounded-2xl p-5 border border-orange/10">
+            <div className="text-center mb-5">
+                 <div className="text-xs uppercase font-bold text-text-muted mb-1 tracking-wider">Payback on the $390 pilot</div>
+                 <div className="text-5xl font-black text-navy tracking-tight">{paybackText}</div>
+                 <div className="mt-2 inline-block bg-white border border-orange/20 rounded-full px-3 py-1 text-xs font-medium text-orange-600 shadow-sm">
+                    Based on the numbers you set above.
+                 </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-orange/10">
+                <div className="text-center">
+                    <div className="text-xs uppercase font-bold text-text-muted mb-1">Time Saved</div>
+                    <div className="text-xl font-black text-orange">{hoursSavedPerMonth.toFixed(0)} hrs/mo</div>
+                </div>
+                <div className="text-center border-l border-orange/10">
+                    <div className="text-xs uppercase font-bold text-text-muted mb-1">Value Saved</div>
+                    <div className="text-xl font-black text-orange">${valueSavedPerMonth.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                </div>
+            </div>
+        </div>
+
+        <p className="text-xs text-text-muted mt-4 text-center italic opacity-60">
+            An estimate from your own inputs, not a promise. Assumes 4.33 weeks/month.
+        </p>
+    </>
+);
 
 const CheckIcon = () => (
     <svg className="w-5 h-5 md:w-6 md:h-6 text-green shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/></svg>
@@ -108,112 +183,6 @@ export const Pricing = () => {
     const weeksToPayback = valueSavedPerMonth > 0 ? PILOT_PRICE / (valueSavedPerMonth / 4.33) : 0;
     const roundedWeeks = Math.round(weeksToPayback);
     const paybackText = weeksToPayback < 1 ? "< 1 week" : `${roundedWeeks} ${roundedWeeks === 1 ? 'week' : 'weeks'}`;
-
-    const Item = ({ children, live = true }: { children: React.ReactNode, live?: boolean }) => (
-        <li className={`flex gap-3 text-sm font-medium items-start ${live ? 'text-navy' : 'text-text-muted'}`}>
-            {live ? <CheckIcon /> : <DashIcon />}
-            <span className="leading-snug">{children}</span>
-        </li>
-    );
-
-    const PilotCard = () => (
-        <>
-            <div className="mb-6 mt-2">
-                <h3 className="text-lg font-black text-navy mb-2 uppercase tracking-wide opacity-80">Founding Pilot &middot; Done for you</h3>
-                <div className="flex flex-row items-baseline gap-3">
-                    <span className="text-4xl md:text-5xl font-black text-navy tracking-tighter leading-none">$390</span>
-                    <span className="text-xs font-bold text-navy bg-slate-100 px-2 py-1 rounded border border-slate-200 uppercase tracking-tight whitespace-nowrap transform -translate-y-1">
-                        One-time, inc GST
-                    </span>
-                </div>
-            </div>
-
-            {/* Refund always sits with the price (audit A3.2) */}
-            <div className="mb-6 bg-green/10 text-green-800 p-3 rounded-xl text-sm font-bold text-center border border-green/20">
-                30-day money-back guarantee. No reason needed.
-            </div>
-
-            <ul className="space-y-3 mb-6">
-                <Item>I set up your Google Sheet quoting for you: your prices, logo and business details</Item>
-                <Item>Branded PDF quote sent by SMS and email with an accept link</Item>
-                <Item>Your customer accepts on their phone and asks for a time. You confirm it and it goes in your Google Calendar</Item>
-                <Item>Confirmation by SMS and email once you confirm</Item>
-                <Item>90 days of email support, business hours</Item>
-                <Item live={false}>Not live yet: deposit collection</Item>
-                <Item live={false}>Not live yet: automatic rescheduling (you ring the customer)</Item>
-            </ul>
-
-            <p className="text-xs text-text-muted leading-snug border-l-2 border-orange/30 pl-3">
-                In return for the pilot price: your quoting numbers before and after, one 20-minute chat at the end, and your OK to share the results (named or anonymous).
-            </p>
-        </>
-    );
-
-    const ROICalculatorContent = () => (
-        <>
-            <h3 className="text-2xl font-black text-navy mb-6 leading-tight">What could this save you each month?</h3>
-
-            <div className="mb-8">
-                <CustomSlider label="Quotes / week" value={quotesPerWeek} min={1} max={50} unit="" onChange={setQuotesPerWeek} />
-                <CustomSlider
-                    label="Minutes saved / quote"
-                    value={minutesSavedPerQuote}
-                    min={1}
-                    max={60}
-                    unit="min"
-                    onChange={setMinutesSavedPerQuote}
-                />
-
-                <p className="text-xs text-text-muted mt-2 font-medium mb-6 pl-1 border-l-2 border-orange/30">
-                    Minutes saved per quote includes: write quote + follow-up + booking.
-                </p>
-
-                <div className="mt-6">
-                     <label className="text-navy font-bold text-sm block mb-3">Your Hourly Rate</label>
-                     <div className="flex gap-3">
-                        {[90, 120, 150].map(rate => (
-                            <button
-                                key={rate}
-                                onClick={() => setHourlyRate(rate)}
-                                className={`flex-1 min-h-[44px] rounded-lg font-bold text-sm border transition-all ${
-                                    hourlyRate === rate
-                                    ? 'bg-navy border-navy text-white shadow-md transform scale-105'
-                                    : 'bg-white border-border text-text-muted hover:border-navy/30 hover:bg-slate-50'
-                                }`}
-                            >
-                                ${rate}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className="bg-orange/5 rounded-2xl p-5 border border-orange/10">
-                <div className="text-center mb-5">
-                     <div className="text-xs uppercase font-bold text-text-muted mb-1 tracking-wider">Payback on the $390 pilot</div>
-                     <div className="text-5xl font-black text-navy tracking-tight">{paybackText}</div>
-                     <div className="mt-2 inline-block bg-white border border-orange/20 rounded-full px-3 py-1 text-[10px] font-medium text-orange-600 shadow-sm">
-                        Based on the numbers you set above.
-                     </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-orange/10">
-                    <div className="text-center">
-                        <div className="text-xs uppercase font-bold text-text-muted mb-1">Time Saved</div>
-                        <div className="text-xl font-black text-orange">{hoursSavedPerMonth.toFixed(0)} hrs/mo</div>
-                    </div>
-                    <div className="text-center border-l border-orange/10">
-                        <div className="text-xs uppercase font-bold text-text-muted mb-1">Value Saved</div>
-                        <div className="text-xl font-black text-orange">${valueSavedPerMonth.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
-                    </div>
-                </div>
-            </div>
-
-            <p className="text-xs text-text-muted mt-4 text-center italic opacity-60">
-                An estimate from your own inputs, not a promise. Assumes 4.33 weeks/month.
-            </p>
-        </>
-    );
 
     return (
         <section id="offer" className="py-12 md:py-20 bg-bg-off">
@@ -247,7 +216,12 @@ export const Pricing = () => {
 
                     {/* ROI calculator */}
                     <div className="md:order-1 md:w-1/2 bg-white rounded-3xl shadow-lg overflow-hidden border border-border p-6 md:p-8 flex flex-col justify-center">
-                        <ROICalculatorContent />
+                        <ROICalculatorContent
+                            quotesPerWeek={quotesPerWeek} setQuotesPerWeek={setQuotesPerWeek}
+                            minutesSavedPerQuote={minutesSavedPerQuote} setMinutesSavedPerQuote={setMinutesSavedPerQuote}
+                            hourlyRate={hourlyRate} setHourlyRate={setHourlyRate}
+                            paybackText={paybackText} hoursSavedPerMonth={hoursSavedPerMonth} valueSavedPerMonth={valueSavedPerMonth}
+                        />
                     </div>
                 </div>
             </div>

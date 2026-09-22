@@ -22,10 +22,12 @@ export const ChatWidget = ({ isHidden = false }: { isHidden?: boolean }) => {
     const show = isVisible && !isHidden;
 
     return (
-        <a 
+        <a
             href={import.meta.env.VITE_WHATSAPP_LINK}
-            target="_blank" 
-            rel="noreferrer"
+            // No target="_blank": a wa.me link needs a same-tab, top-level navigation for iOS/Android to hand off
+            // to the installed WhatsApp app. Opened in a new tab, several mobile browsers load the web fallback
+            // instead and the app never opens (reported 21 Sept). Same-tab still works fine on desktop: it lands
+            // on web.whatsapp.com in this tab.
             className={`fixed bottom-5 right-5 md:bottom-10 md:right-10 w-[60px] h-[60px] bg-[#25d366] text-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:scale-110 transition-all duration-300 z-50 ${show ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}
             aria-label="Chat on WhatsApp"
         >

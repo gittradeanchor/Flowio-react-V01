@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { JOB_DATA as FALLBACK_JOB_DATA } from '../constants';
 import { JobItem, QuoteTotals } from '../types';
 import { AcceptFlow } from './AcceptFlow';
 import { getStoredAttribution, getOrCreateLeadId } from '../hooks/useAttribution';
 
 // ---------------------------------------------------------------------------
-// QuoteSheet: a demo quote laid out like the Claude Design quote document
-// (A4 sheet on desktop, 375px phone layout on mobile). Business fields are placeholders.
+// QuoteSheet: the same real quote document at every width (scaled to fit via ScaledDocument below),
+// laid out like the Claude Design quote document. Business fields are placeholders.
 // Kept to structures a Google Doc can reproduce (tables, rules, one accent colour).
 // ---------------------------------------------------------------------------
 const Q_INK = '#171A1D';
@@ -18,44 +18,82 @@ const qBody: React.CSSProperties = { fontFamily: "'Source Sans 3', system-ui, sa
 const qLabel: React.CSSProperties = { fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: Q_INFO };
 const qMoney = (n: number) => n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+// Australian mobile only (matches the Cloudflare Worker's server-side check, cloudflare-worker/testdrive-proxy.js).
+// Was: any non-empty string passed, so a digit dropped from a real mobile still sent the demo SMS to
+// whatever number that left — a stranger's phone, at TradeAnchor's cost and under TradeAnchor's name.
+const isValidAuMobile = (raw: string) => /^(\+?61|0)4\d{8}$/.test(raw.replace(/[\s()-]/g, ''));
+
+// Fixed design width the document below is laid out at. A phone doesn't get a smaller, simplified layout —
+// it gets the same document, shrunk to fit, the way a PDF viewer or Google Docs mobile shows a real page.
+// (Was: a separate condensed "mobile" version with no meta block, header rule or signature line — flagged
+// 22 Sept as looking like an app screen, not a realistic quote.)
+const QUOTE_DOC_WIDTH = 340;
+
+const ScaledDocument = ({ children }: { children: React.ReactNode }) => {
+    const outerRef = useRef<HTMLDivElement>(null);
+    const innerRef = useRef<HTMLDivElement>(null);
+    const [scale, setScale] = useState(1);
+    const [naturalHeight, setNaturalHeight] = useState(0);
+
+    useLayoutEffect(() => {
+        const measure = () => {
+            if (!outerRef.current || !innerRef.current) return;
+            setScale(outerRef.current.offsetWidth / QUOTE_DOC_WIDTH);
+            setNaturalHeight(innerRef.current.offsetHeight);
+        };
+        measure();
+        const ro = new ResizeObserver(measure);
+        if (outerRef.current) ro.observe(outerRef.current);
+        if (innerRef.current) ro.observe(innerRef.current);
+        return () => ro.disconnect();
+    }, [children]);
+
+    return (
+        <div ref={outerRef} style={{ width: '100%', height: naturalHeight ? naturalHeight * scale : undefined, overflow: 'hidden' }}>
+            <div ref={innerRef} style={{ width: QUOTE_DOC_WIDTH, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+                {children}
+            </div>
+        </div>
+    );
+};
+
 const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals: QuoteTotals; customerName: string }) => {
     const today = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
     const forName = customerName || 'Your customer';
     return (
-        <>
-            {/* A4 sheet (tablet and desktop) */}
-            <div className="hidden md:flex flex-col bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, minHeight: 720, padding: '44px 40px' }}>
+        <ScaledDocument>
+            <div className="flex flex-col bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, padding: '36px 32px' }}>
                 <div className="flex justify-between items-end gap-6 pb-3" style={{ borderBottom: `4px solid ${Q_INFO}` }}>
                     <div>
-                        <div style={{ ...qHead, fontSize: 24, fontWeight: 700, lineHeight: 1.04, letterSpacing: '-0.01em' }}>Your Business Name</div>
+                        <div style={{ ...qHead, fontSize: 22, fontWeight: 700, lineHeight: 1.04, letterSpacing: '-0.01em' }}>Your Business Name</div>
                         <div style={{ fontSize: 13, lineHeight: 1.5, color: Q_SLATE, marginTop: 6, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
                     </div>
-                    <div style={{ ...qHead, fontSize: 19, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
+                    <div style={{ ...qHead, fontSize: 18, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-6" style={{ padding: '18px 0 22px' }}>
+                <div className="grid grid-cols-3 gap-5" style={{ padding: '16px 0 20px' }}>
                     <div>
                         <div style={qLabel}>Prepared for</div>
-                        <div style={{ fontSize: 14, lineHeight: 1.55, marginTop: 5 }}>{forName}<br />Site address<br />Suburb NSW 2000</div>
+                        <div style={{ fontSize: 13, lineHeight: 1.5, marginTop: 5 }}>{forName}<br />Site address<br />Suburb NSW 2000</div>
                     </div>
                     <div>
                         <div style={qLabel}>Site</div>
-                        <div style={{ fontSize: 14, lineHeight: 1.55, marginTop: 5 }}>As above<br />Access, business hours</div>
+                        <div style={{ fontSize: 13, lineHeight: 1.5, marginTop: 5 }}>As above<br />Access, business hours</div>
                     </div>
                     <div>
                         <div style={qLabel}>Reference</div>
-                        <div style={{ fontSize: 14, lineHeight: 1.55, marginTop: 5, fontVariantNumeric: 'tabular-nums' }}>Q-0004 (demo)<br />{today}<br />Valid 30 days</div>
+                        <div style={{ fontSize: 13, lineHeight: 1.5, marginTop: 5, fontVariantNumeric: 'tabular-nums' }}>Q-0004 (demo)<br />{today}<br />Valid 30 days</div>
                     </div>
                 </div>
 
-                <div className="grid text-white" style={{ gridTemplateColumns: '1fr 46px 88px 96px', background: Q_INFO, padding: '7px 0' }}>
+                <div className="grid text-white" style={{ gridTemplateColumns: '1fr 40px 76px 84px', background: Q_INFO, padding: '7px 0' }}>
                     <div style={{ ...qLabel, color: '#fff', paddingLeft: 10 }}>Description</div>
                     <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Qty</div>
                     <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Rate</div>
                     <div style={{ ...qLabel, color: '#fff', textAlign: 'right', paddingRight: 10 }}>Amount</div>
                 </div>
                 {items.map((item, idx) => (
-                    <div key={idx} className="grid" style={{ gridTemplateColumns: '1fr 46px 88px 96px', padding: '11px 0', borderBottom: `1px solid ${Q_RULE}`, fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>
+                    <div key={idx} className="grid" style={{ gridTemplateColumns: '1fr 40px 76px 84px', padding: '11px 0', borderBottom: `1px solid ${Q_RULE}`, fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>
                         <div style={{ paddingLeft: 10, paddingRight: 8 }}>{item.name}</div>
                         <div style={{ textAlign: 'right' }}>{item.qty}</div>
                         <div style={{ textAlign: 'right' }}>{qMoney(Number(item.rate))}</div>
@@ -63,54 +101,27 @@ const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals:
                     </div>
                 ))}
 
-                <div className="flex justify-end" style={{ marginTop: 18 }}>
-                    <div style={{ width: 282, fontVariantNumeric: 'tabular-nums' }}>
-                        <div className="flex justify-between" style={{ fontSize: 14, padding: '6px 10px' }}><span style={{ color: Q_SLATE }}>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
-                        <div className="flex justify-between" style={{ fontSize: 14, padding: '6px 10px', borderBottom: `1px solid ${Q_INFO}` }}><span style={{ color: Q_SLATE }}>GST</span><span>{qMoney(totals.gst)}</span></div>
-                        <div className="flex justify-between items-baseline" style={{ padding: '12px 10px 0' }}><span style={{ ...qHead, fontSize: 17, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 23, fontWeight: 700 }}>{qMoney(totals.total)}</span></div>
+                <div className="flex justify-end" style={{ marginTop: 16 }}>
+                    <div style={{ width: 250, fontVariantNumeric: 'tabular-nums' }}>
+                        <div className="flex justify-between" style={{ fontSize: 13, padding: '6px 10px' }}><span style={{ color: Q_SLATE }}>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
+                        <div className="flex justify-between" style={{ fontSize: 13, padding: '6px 10px', borderBottom: `1px solid ${Q_INFO}` }}><span style={{ color: Q_SLATE }}>GST</span><span>{qMoney(totals.gst)}</span></div>
+                        <div className="flex justify-between items-baseline" style={{ padding: '12px 10px 0' }}><span style={{ ...qHead, fontSize: 16, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 21, fontWeight: 700 }}>{qMoney(totals.total)}</span></div>
                     </div>
                 </div>
 
-                <div className="grid mt-auto" style={{ gridTemplateColumns: '1fr 175px', gap: 32, paddingTop: 20, marginTop: 36, borderTop: `4px solid ${Q_INFO}` }}>
+                <div className="grid" style={{ gridTemplateColumns: '1fr 160px', gap: 28, paddingTop: 18, marginTop: 28, borderTop: `4px solid ${Q_INFO}` }}>
                     <div>
                         <div style={qLabel}>Terms</div>
-                        <div style={{ fontSize: 12, lineHeight: 1.55, marginTop: 5 }}>Quote valid 30 days from the date above. Your payment terms and conditions print here, as you write them.</div>
+                        <div style={{ fontSize: 12, lineHeight: 1.5, marginTop: 5 }}>Quote valid 30 days from the date above. Your payment terms and conditions print here, as you write them.</div>
                     </div>
                     <div>
                         <div style={qLabel}>Accept</div>
-                        <div style={{ height: 38, borderBottom: `1px solid ${Q_INK}`, marginTop: 14 }} />
+                        <div style={{ height: 34, borderBottom: `1px solid ${Q_INK}`, marginTop: 12 }} />
                         <div style={{ fontSize: 11, color: Q_SLATE, marginTop: 5 }}>Signature and date</div>
                     </div>
                 </div>
             </div>
-
-            {/* Phone layout (375px) */}
-            <div className="md:hidden bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, padding: '22px 18px' }}>
-                <div style={{ ...qHead, fontSize: 21, fontWeight: 700, lineHeight: 1.04 }}>Your Business Name</div>
-                <div style={{ fontSize: 12, lineHeight: 1.5, color: Q_SLATE, marginTop: 5, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
-                <div className="flex justify-between items-baseline gap-3" style={{ marginTop: 12, paddingTop: 10, borderTop: `4px solid ${Q_INFO}` }}>
-                    <span style={{ ...qHead, fontSize: 17, fontWeight: 700, color: Q_INFO }}>Quotation</span>
-                    <span style={{ fontSize: 12, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}>Q-0004 &nbsp;·&nbsp; {today}</span>
-                </div>
-                <div style={{ fontSize: 13, lineHeight: 1.55, color: Q_SLATE, marginTop: 10 }}>{forName}<br />Site address, Suburb NSW 2000</div>
-                <div style={{ marginTop: 14 }}>
-                    <div style={{ background: Q_INFO, color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 8px' }}>Items</div>
-                    {items.map((item, idx) => (
-                        <div key={idx} style={{ padding: '10px 0', borderBottom: `1px solid ${Q_RULE}` }}>
-                            <div style={{ fontSize: 15, lineHeight: 1.4 }}>{item.name}</div>
-                            <div className="flex justify-between" style={{ marginTop: 4, fontSize: 13, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}>
-                                <span>{item.qty} &times; {qMoney(Number(item.rate))}</span>
-                                <span style={{ fontWeight: 700, color: Q_INK }}>{qMoney(item.qty * item.rate)}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div className="flex justify-between" style={{ fontSize: 13, paddingTop: 8, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}><span>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
-                <div className="flex justify-between" style={{ fontSize: 13, padding: '4px 0 8px', borderBottom: `1px solid ${Q_INFO}`, color: Q_SLATE, fontVariantNumeric: 'tabular-nums' }}><span>GST</span><span>{qMoney(totals.gst)}</span></div>
-                <div className="flex justify-between items-baseline" style={{ paddingTop: 11 }}><span style={{ ...qHead, fontSize: 16, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{qMoney(totals.total)}</span></div>
-                <div style={{ fontSize: 12, lineHeight: 1.55, color: Q_SLATE, marginTop: 12 }}>Quote valid 30 days. Your payment terms and conditions print here, as you write them.</div>
-            </div>
-        </>
+        </ScaledDocument>
     );
 };
 
@@ -262,6 +273,10 @@ export const TestDrive = () => {
             setSubmitError('Add your mobile to get the demo, or just keep your quote above.');
             return;
         }
+        if (!isValidAuMobile(formMobile)) {
+            setSubmitError("That doesn't look like a full Australian mobile number (04xx xxx xxx). Check the digits and try again.");
+            return;
+        }
         if (!consent) {
             setSubmitError('Please tick the box so we can send your demo.');
             return;
@@ -378,9 +393,9 @@ export const TestDrive = () => {
                                 {/* Mock Sheet Card */}
                                 <div className="w-full">
                                     {/* Progress Strip */}
-                                    <div className="flex items-center gap-3 mb-4 text-[10px] md:text-xs font-bold uppercase tracking-wider text-white/50">
+                                    <div className="flex items-center gap-3 mb-4 text-xs font-bold uppercase tracking-wider text-white/50">
                                         <span className="text-orange flex items-center gap-1.5">
-                                            <span className="w-5 h-5 rounded-full bg-orange text-white flex items-center justify-center text-[10px]">1</span>
+                                            <span className="w-5 h-5 rounded-full bg-orange text-white flex items-center justify-center text-xs">1</span>
                                             Pick Items
                                         </span>
                                         <span className="w-4 h-px bg-white/20"></span>
@@ -399,23 +414,23 @@ export const TestDrive = () => {
                                             {/* Context Bar */}
                                             <div className="bg-bg-off p-2.5 rounded-lg text-[13px] text-text-muted mb-4 border border-border flex items-center justify-between">
                                                 <span><strong>Quote #Q0004</strong></span>
-                                                <span className="bg-orange/10 text-orange px-2 py-0.5 rounded text-[10px] font-bold uppercase">Draft</span>
+                                                <span className="bg-orange/10 text-orange px-2 py-0.5 rounded text-xs font-bold uppercase">Draft</span>
                                             </div>
                                             
                                             {/* Demo Client Summary */}
                                             <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-5">
                                                 <div className="flex justify-between items-start mb-1">
-                                                    <span className="text-[11px] font-bold text-text-muted uppercase">Client</span>
-                                                    <span className="text-[11px] font-bold text-slate-400 uppercase">Demo</span>
+                                                    <span className="text-xs font-bold text-text-muted uppercase">Client</span>
+                                                    <span className="text-xs font-bold text-slate-400 uppercase">Demo</span>
                                                 </div>
                                                 <div className="font-bold text-navy text-sm">Sean Miller (Sydney)</div>
                                                 <div className="text-xs text-text-muted tabular-nums mt-0.5">04••• ••• •• · s•••@gmail.com</div>
-                                                <div className="text-[10px] text-slate-400 mt-2 italic">Real client details collected next.</div>
+                                                <div className="text-xs text-slate-400 mt-2 italic">Real client details collected next.</div>
                                             </div>
 
                                             {/* SKU Selector */}
                                             <div className="mb-4">
-                                                <label className="text-[11px] font-bold text-text-muted uppercase block mb-1.5">Add Items From Price List:</label>
+                                                <label className="text-xs font-bold text-text-muted uppercase block mb-1.5">Add Items From Price List:</label>
 
                                                 <div className="relative">
                                                   <select
@@ -442,7 +457,7 @@ export const TestDrive = () => {
                                                   </select>
                                                 
                                                   {isPricebookLoading && (
-                                                    <div className="flex items-center gap-2 mt-2 px-1 text-[11px] text-orange font-bold">
+                                                    <div className="flex items-center gap-2 mt-2 px-1 text-xs text-orange font-bold">
                                                       <svg className="animate-spin h-3 w-3 text-orange" viewBox="0 0 24 24">
                                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -453,7 +468,7 @@ export const TestDrive = () => {
                                                 </div>
 
                                                 
-                                                <p className="text-[11px] text-text-muted mt-1.5 ml-1">
+                                                <p className="text-xs text-text-muted mt-1.5 ml-1">
                                                     Pick up to 4 common items. Total updates automatically.
                                                 </p>
                                             </div>
@@ -505,10 +520,10 @@ export const TestDrive = () => {
                                                 {generating ? '⚡ Generating...' : 'Generate My Quote →'}
                                             </button>
                                             
-                                            <p className="text-center text-[11px] font-semibold text-text-muted mt-3">
+                                            <p className="text-center text-xs font-semibold text-text-muted mt-3">
                                                 Add items, tap Generate — see the full quote-to-booking flow.
                                             </p>
-                                            <p className="text-center text-[10px] text-orange font-medium mt-1.5 opacity-80">
+                                            <p className="text-center text-xs text-orange font-medium mt-1.5 opacity-80">
                                                 Next: We'll text this quote to your phone with a live accept link →
                                             </p>
                                         </div>
@@ -523,7 +538,7 @@ export const TestDrive = () => {
                             <div className="animate-fade-in grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-6 md:gap-10 items-start max-w-[1040px] mx-auto">
 
                                 <div>
-                                    <div className="text-[11px] font-bold uppercase tracking-wider text-white/70 mb-2">Your quote, as your customer sees it</div>
+                                    <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2">Your quote, as your customer sees it</div>
                                     <QuoteSheet items={items} totals={totals} customerName={leadName} />
                                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
                                         <button type="button" onClick={() => { setStage(1); }} className="min-h-[44px] text-sm font-semibold text-white/80 underline">Change items</button>
@@ -594,7 +609,7 @@ export const TestDrive = () => {
                                                 {submitError}
                                                 {' '}
                                                 {import.meta.env.VITE_WHATSAPP_LINK && (
-                                                    <a href={import.meta.env.VITE_WHATSAPP_LINK} target="_blank" rel="noreferrer" className="underline">WhatsApp me</a>
+                                                    <a href={import.meta.env.VITE_WHATSAPP_LINK} className="underline">WhatsApp me</a>
                                                 )}
                                             </p>
                                         )}
@@ -606,7 +621,7 @@ export const TestDrive = () => {
                                             {smsSending ? 'Sending...' : 'Send it to my phone →'}
                                         </button>
                                     </form>
-                                    <p className="text-[11px] text-text-muted text-center mt-3">
+                                    <p className="text-xs text-text-muted text-center mt-3">
                                         Nothing is sent unless you add your mobile and tick the box.
                                     </p>
                                     <div className="mt-3 pt-3 border-t border-border text-center">
@@ -634,7 +649,7 @@ export const TestDrive = () => {
                                             Preview the customer's screen here →
                                         </button>
 
-                                        <p className="text-[11px] text-text-muted mt-1 border-t border-border pt-3">
+                                        <p className="text-xs text-text-muted mt-1 border-t border-border pt-3">
                                             Nothing yet? Check your spam folder, or{' '}
                                             {import.meta.env.VITE_WHATSAPP_LINK ? (
                                                 <a href={import.meta.env.VITE_WHATSAPP_LINK} target="_blank" rel="noreferrer" className="underline hover:text-orange">message me on WhatsApp</a>

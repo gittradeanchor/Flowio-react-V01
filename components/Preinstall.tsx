@@ -315,7 +315,7 @@ export default function Preinstall() {
           </div>
 
           <div className="min-w-[160px] text-right">
-            <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Essentials</div>
+            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Essentials</div>
             <div className="flex items-center justify-end gap-3 mt-1">
               <div className="text-lg font-extrabold" style={{ color: BRAND }}>
                 {essentialsPct}%
