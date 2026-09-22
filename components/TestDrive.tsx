@@ -652,7 +652,7 @@ export const TestDrive = () => {
                                         <p className="text-xs text-text-muted mt-1 border-t border-border pt-3">
                                             Nothing yet? Check your spam folder, or{' '}
                                             {import.meta.env.VITE_WHATSAPP_LINK ? (
-                                                <a href={import.meta.env.VITE_WHATSAPP_LINK} target="_blank" rel="noreferrer" className="underline hover:text-orange">message me on WhatsApp</a>
+                                                <a href={import.meta.env.VITE_WHATSAPP_LINK} className="underline hover:text-orange">message me on WhatsApp</a>
                                             ) : 'message me'}
                                             .
                                         </p>
