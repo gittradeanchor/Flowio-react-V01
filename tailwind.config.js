@@ -3,6 +3,10 @@
 //   navy   = ink   #1C1917      orange = copper #B4501A (hover #8F3F12)
 //   bg.off = paper #F6F1E9      border = warm hairline
 // Contrast (computed): white on copper 5.12:1, copper on paper 4.55:1, ink on paper 15.6:1, muted on paper 6.8:1.
+// border.strong (added, 23 Sept): the hairline border (#E4DCCF, 1.36:1 on white) is fine for dividers, but too
+// faint for an unselected form field to read as a field. border.strong (#8A7F72) is 3.92:1 on white / 3.48:1 on
+// paper, clearing the 3:1 WCAG 1.4.11 floor for a UI component boundary. Use on form fields only; keep border
+// for cards and dividers.
 export default {
   content: [
     "./index.html",
@@ -25,7 +29,10 @@ export default {
           hover: '#8F3F12',
         },
         green: '#2F6B3F',
-        border: '#E4DCCF',
+        border: {
+          DEFAULT: '#E4DCCF',
+          strong: '#8A7F72',
+        },
         bg: {
           DEFAULT: '#FFFFFF',
           off: '#F6F1E9',

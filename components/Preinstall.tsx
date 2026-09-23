@@ -379,7 +379,7 @@ export default function Preinstall() {
                   autoComplete="email"
                   value={form.workspace_admin_email}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="admin@yourdomain.com"
                 />
               </div>
@@ -393,7 +393,7 @@ export default function Preinstall() {
                   type="text"
                   value={form.business_name}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="Your Business Pty Ltd"
                 />
               </div>
@@ -408,7 +408,7 @@ export default function Preinstall() {
                   inputMode="tel"
                   value={form.primary_mobile}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="04xx xxx xxx"
                 />
               </div>
@@ -422,7 +422,7 @@ export default function Preinstall() {
                   type="text"
                   value={form.call_answerer}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="Sam (7am–5pm)"
                 />
               </div>
@@ -435,7 +435,7 @@ export default function Preinstall() {
                   name="trade"
                   value={form.trade}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                 >
                   <option value="">Select…</option>
                   <option>Electrician</option>
@@ -510,7 +510,7 @@ export default function Preinstall() {
                     type="url"
                     value={form.pricebook_sheet_link}
                     onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                     placeholder="https://docs.google.com/spreadsheets/d/..."
                   />
                 </label>
@@ -529,7 +529,7 @@ export default function Preinstall() {
                   rows={6}
                   value={form.pricebook_text}
                   onChange={updateText}
-                  className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
+                  className="mt-3 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none"
                   placeholder={`ELEC-001, Call-out (incl GST), 120, 1\nELEC-002, Power point supply+install, 165, 1\nGEN-002, Labour (per hour), 110, 2`}
                 />
               </div>
@@ -560,22 +560,22 @@ export default function Preinstall() {
               <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">ABN</label>
-                  <input name="abn" type="text" value={form.abn} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none" />
+                  <input name="abn" type="text" value={form.abn} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div>
                   <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Business Address</label>
-                  <input name="business_address" type="text" value={form.business_address} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none" />
+                  <input name="business_address" type="text" value={form.business_address} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div>
                   <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Service Area</label>
-                  <input name="service_area" type="text" value={form.service_area} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none" />
+                  <input name="service_area" type="text" value={form.service_area} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div>
                   <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Business Hours</label>
-                  <input name="business_hours" type="text" value={form.business_hours} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none" />
+                  <input name="business_hours" type="text" value={form.business_hours} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div className="md:col-span-2">
@@ -585,7 +585,7 @@ export default function Preinstall() {
                     type="url"
                     value={form.quote_template_link}
                     onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                     placeholder="https://drive.google.com/… or https://dropbox.com/…"
                   />
                 </div>
@@ -597,7 +597,7 @@ export default function Preinstall() {
                     type="url"
                     value={form.logo_link}
                     onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                     placeholder="https://drive.google.com/…"
                   />
                 </div>
@@ -624,27 +624,27 @@ export default function Preinstall() {
                   <div className={`mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 ${form.deposit_enabled ? "" : "opacity-50 pointer-events-none"}`}>
                     <div>
                       <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Amount / %</label>
-                      <input name="deposit_amount" type="text" value={form.deposit_amount} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. 20% or $200" />
+                      <input name="deposit_amount" type="text" value={form.deposit_amount} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. 20% or $200" />
                     </div>
                     <div>
                       <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">When Charged</label>
-                      <input name="deposit_when" type="text" value={form.deposit_when} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. on booking" />
+                      <input name="deposit_when" type="text" value={form.deposit_when} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. on booking" />
                     </div>
                     <div className="md:col-span-2">
                       <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Refund / Cancellation</label>
-                      <textarea name="deposit_policy" rows={3} value={form.deposit_policy} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. Refundable with 24h notice. Otherwise $80 admin fee." />
+                      <textarea name="deposit_policy" rows={3} value={form.deposit_policy} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. Refundable with 24h notice. Otherwise $80 admin fee." />
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Calendar Name</label>
-                  <input name="calendar_name" type="text" value={form.calendar_name} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none" placeholder="Jobs" />
+                  <input name="calendar_name" type="text" value={form.calendar_name} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" placeholder="Jobs" />
                 </div>
 
                 <div>
                   <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Booking Restrictions</label>
-                  <input name="booking_restrictions" type="text" value={form.booking_restrictions} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-bg-off px-3 py-2 text-sm focus:outline-none" placeholder="No bookings after 4:30pm" />
+                  <input name="booking_restrictions" type="text" value={form.booking_restrictions} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" placeholder="No bookings after 4:30pm" />
                 </div>
               </div>
             </details>
