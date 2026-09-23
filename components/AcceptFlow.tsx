@@ -110,10 +110,10 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                         <div className="p-6 md:p-10 min-h-[400px] text-sm">
                             <div className="flex flex-col md:flex-row justify-between gap-6 border-b-2 border-border pb-6 mb-6">
                                 <div>
-                                    <div className="text-xl font-extrabold text-navy mb-2">TradeAnchor</div>
-                                    <div className="text-text-muted text-xs">Email: support@tradeanchor.com.au<br/>ABN: 45 529 331 663</div>
+                                    <div className="text-xl font-extrabold text-navy mb-2">Your Business Name</div>
+                                    <div className="text-text-muted text-xs">ABN 00 000 000 000 &middot; Licence 000000C</div>
                                 </div>
-                                <div className="w-16 h-16 bg-navy text-white rounded-xl flex items-center justify-center text-3xl">⚓</div>
+                                <div className="w-16 h-16 bg-bg-off border-2 border-border text-text-muted rounded-xl flex items-center justify-center text-xs font-bold text-center leading-tight">Your<br/>Logo</div>
                             </div>
 
                             <div className="mb-8">
@@ -163,7 +163,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                             </div>
                             
                             <div className="mt-8 pt-6 border-t border-border text-xs text-text-muted">
-                                <strong>Terms and Conditions</strong><br/>14 days validity.
+                                <strong>Terms and Conditions</strong><br/>Valid 30 days.
                             </div>
                         </div>
                     </div>
@@ -214,20 +214,9 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
 
                         <button onClick={handleConfirmBooking} className="w-full bg-navy text-white py-4 rounded-xl font-bold text-base hover:bg-navy-light shadow-btn-navy">Confirm & Book (Demo)</button>
 
-                        {/* Trust Signals — 2×2 grid */}
-                        <div className="grid grid-cols-2 gap-2 mt-5">
-                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
-                                <span className="shrink-0">📱</span><span>No app or login needed</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
-                                <span className="shrink-0">✅</span><span>30-day money-back guarantee</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
-                                <span className="shrink-0">📋</span><span>ABN: 45 529 331 663</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2 border border-border/50">
-                                <span className="shrink-0">💼</span><span>Australian owned & operated</span>
-                            </div>
+                        {/* Trust line: the electrician's own details, not TradeAnchor's (Owner comments.md: "will my customer see your name?" should be no). No emoji — design system rule. */}
+                        <div className="text-center text-xs text-text-muted bg-bg-off rounded-lg px-3 py-2.5 border border-border/50 mt-5">
+                            Your business name &middot; Your ABN &middot; Your licence no.
                         </div>
                     </div>
                 </div>

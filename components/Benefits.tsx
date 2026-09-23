@@ -52,7 +52,7 @@ export const Benefits = () => {
                 
                 <div className="text-center mb-16 md:mb-20">
                     <h2 className="text-[32px] md:text-5xl font-black text-navy mb-6 tracking-tight leading-[1.1]">
-                        Built for electricians who hate computers.
+                        Built for electricians who already quote in a Sheet.
                     </h2>
                     <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto font-medium">No new app to learn. Send the quote, your customer accepts on their phone, you confirm the time and the job lands in your calendar, all from the Google Sheet you already use.</p>
                 </div>

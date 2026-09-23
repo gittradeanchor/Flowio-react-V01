@@ -46,26 +46,12 @@ const FAQS = [
     }
 ];
 
-export const FAQ = () => {
+// Split out 23 Sept 2026 (Owner comments.md: "move the founder block to just above pricing").
+// FAQ itself stays where it was; only the founder bio moved — see App.tsx render order.
+export const FounderBlock = () => {
     return (
-        <section id="faq" className="py-16 md:py-24 bg-white">
+        <section className="py-10 md:py-14 bg-white">
             <div className="container mx-auto px-5 max-w-[800px]">
-                <div className="text-center mb-10">
-                    <h2 className="text-[32px] font-black text-navy">Common Questions</h2>
-                </div>
-
-                <div className="flex flex-col gap-4 mb-20">
-                    {FAQS.map((item) => (
-                        <details key={item.id} id={item.id} className="group border border-border rounded-lg overflow-hidden">
-                            <summary className="bg-bg-off text-navy font-bold p-4 cursor-pointer list-none flex justify-between items-center group-open:bg-navy group-open:text-white transition-colors">
-                                {item.q}
-                                <span className="text-xl group-open:rotate-180 transition-transform">▼</span>
-                            </summary>
-                            <p className="p-4 text-text-muted leading-relaxed border-t border-border">{item.a}</p>
-                        </details>
-                    ))}
-                </div>
-
                 <div className="bg-bg-off border-t border-border py-12 px-6 md:px-12 rounded-3xl">
                     <div className="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-8 items-center text-center md:text-left">
                         {/* Founder Image */}
@@ -87,6 +73,30 @@ export const FAQ = () => {
                             <p className="text-text-muted leading-relaxed">I'm a systems engineer based in Sydney. I don't hand you a login and wish you luck. I set up your price list, connect your Google Calendar, and walk you through your first real quote on the phone. If it's not for you, you get your money back.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+export const FAQ = () => {
+    return (
+        <section id="faq" className="py-16 md:py-24 bg-white">
+            <div className="container mx-auto px-5 max-w-[800px]">
+                <div className="text-center mb-10">
+                    <h2 className="text-[32px] font-black text-navy">Common Questions</h2>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                    {FAQS.map((item) => (
+                        <details key={item.id} id={item.id} className="group border border-border rounded-lg overflow-hidden">
+                            <summary className="bg-bg-off text-navy font-bold p-4 cursor-pointer list-none flex justify-between items-center group-open:bg-navy group-open:text-white transition-colors">
+                                {item.q}
+                                <span className="text-xl group-open:rotate-180 transition-transform">▼</span>
+                            </summary>
+                            <p className="p-4 text-text-muted leading-relaxed border-t border-border">{item.a}</p>
+                        </details>
+                    ))}
                 </div>
             </div>
         </section>
