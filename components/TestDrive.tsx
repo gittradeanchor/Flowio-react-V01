@@ -29,6 +29,12 @@ const isValidAuMobile = (raw: string) => /^(\+?61|0)4\d{8}$/.test(raw.replace(/[
 // 22 Sept as looking like an app screen, not a realistic quote.)
 const QUOTE_DOC_WIDTH = 340;
 
+// Fixed 23 Sept 2026: this used to scale the document UP to fill 100% of whatever column it sat
+// in — on desktop that column is ~570px against a 340px design, so every font rendered ~1.7x its
+// real size ("the quote is the size of my head"). A real document doesn't get bigger on a wider
+// screen; it just has more empty margin around it, like a PDF viewer or opening an A4 page. Scale
+// is now capped at 1 (never enlarged) and the rendered box is centred instead of stretched — it
+// still shrinks correctly on narrow phones, it just never grows past its natural size.
 const ScaledDocument = ({ children }: { children: React.ReactNode }) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
@@ -38,7 +44,8 @@ const ScaledDocument = ({ children }: { children: React.ReactNode }) => {
     useLayoutEffect(() => {
         const measure = () => {
             if (!outerRef.current || !innerRef.current) return;
-            setScale(outerRef.current.offsetWidth / QUOTE_DOC_WIDTH);
+            const available = outerRef.current.offsetWidth;
+            setScale(Math.min(1, available / QUOTE_DOC_WIDTH));
             setNaturalHeight(innerRef.current.offsetHeight);
         };
         measure();
@@ -48,10 +55,15 @@ const ScaledDocument = ({ children }: { children: React.ReactNode }) => {
         return () => ro.disconnect();
     }, [children]);
 
+    const renderedWidth = QUOTE_DOC_WIDTH * scale;
+    const renderedHeight = naturalHeight * scale;
+
     return (
-        <div ref={outerRef} style={{ width: '100%', height: naturalHeight ? naturalHeight * scale : undefined, overflow: 'hidden' }}>
-            <div ref={innerRef} style={{ width: QUOTE_DOC_WIDTH, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-                {children}
+        <div ref={outerRef} style={{ width: '100%' }}>
+            <div style={{ width: renderedWidth || undefined, height: renderedHeight || undefined, margin: '0 auto', overflow: 'hidden' }}>
+                <div ref={innerRef} style={{ width: QUOTE_DOC_WIDTH, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+                    {children}
+                </div>
             </div>
         </div>
     );
@@ -86,18 +98,22 @@ const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals:
                     </div>
                 </div>
 
-                <div className="grid text-white" style={{ gridTemplateColumns: '1fr 40px 76px 84px', background: Q_INFO, padding: '7px 0' }}>
-                    <div style={{ ...qLabel, color: '#fff', paddingLeft: 10 }}>Description</div>
-                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Qty</div>
-                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Rate</div>
-                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right', paddingRight: 10 }}>Amount</div>
+                {/* Column widths: was 1fr/40/76/84 - "Amount" at 0.1em tracking was wider than its 84px
+                    track and bled past the card edge (found by screenshot, 23 Sept). Narrowed Qty/Rate
+                    (short numeric content, safe), widened Amount, and added minWidth:0 on every cell so
+                    a fixed-width grid track can never be forced wider than its content again. */}
+                <div className="grid text-white" style={{ gridTemplateColumns: '1fr 34px 74px 94px', background: Q_INFO, padding: '7px 0' }}>
+                    <div style={{ ...qLabel, color: '#fff', paddingLeft: 10, letterSpacing: '0.04em' }}>Description</div>
+                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right', minWidth: 0, overflow: 'hidden' }}>Qty</div>
+                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right', minWidth: 0, overflow: 'hidden', letterSpacing: '0.04em' }}>Rate</div>
+                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right', paddingRight: 10, minWidth: 0, overflow: 'hidden', letterSpacing: '0.04em' }}>Amount</div>
                 </div>
                 {items.map((item, idx) => (
-                    <div key={idx} className="grid" style={{ gridTemplateColumns: '1fr 40px 76px 84px', padding: '11px 0', borderBottom: `1px solid ${Q_RULE}`, fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>
-                        <div style={{ paddingLeft: 10, paddingRight: 8 }}>{item.name}</div>
-                        <div style={{ textAlign: 'right' }}>{item.qty}</div>
-                        <div style={{ textAlign: 'right' }}>{qMoney(Number(item.rate))}</div>
-                        <div style={{ textAlign: 'right', fontWeight: 700, paddingRight: 10 }}>{qMoney(item.qty * item.rate)}</div>
+                    <div key={idx} className="grid" style={{ gridTemplateColumns: '1fr 34px 74px 94px', padding: '11px 0', borderBottom: `1px solid ${Q_RULE}`, fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>
+                        <div style={{ paddingLeft: 10, paddingRight: 8, minWidth: 0 }}>{item.name}</div>
+                        <div style={{ textAlign: 'right', minWidth: 0 }}>{item.qty}</div>
+                        <div style={{ textAlign: 'right', minWidth: 0 }}>{qMoney(Number(item.rate))}</div>
+                        <div style={{ textAlign: 'right', fontWeight: 700, paddingRight: 10, minWidth: 0 }}>{qMoney(item.qty * item.rate)}</div>
                     </div>
                 ))}
 
