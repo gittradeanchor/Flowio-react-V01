@@ -57,15 +57,19 @@ const ScaledDocument = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals: QuoteTotals; customerName: string }) => {
+const QuoteSheet = ({ items, totals, businessName }: { items: JobItem[]; totals: QuoteTotals; businessName: string }) => {
     const today = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
-    const forName = customerName || 'Your customer';
+    // "Prepared for" is always a placeholder - this demo never collects a real end-customer name,
+    // only the tradie's own business name (see businessName below). Was wrongly reusing the same
+    // field for both (Owner comments.md Tier 2 #10).
+    const forName = 'Your customer';
+    const forBusiness = businessName || 'Your Business Name';
     return (
         <ScaledDocument>
             <div className="flex flex-col bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, padding: '36px 32px' }}>
                 <div className="flex justify-between items-end gap-6 pb-3" style={{ borderBottom: `4px solid ${Q_INFO}` }}>
                     <div>
-                        <div style={{ ...qHead, fontSize: 22, fontWeight: 700, lineHeight: 1.04, letterSpacing: '-0.01em' }}>Your Business Name</div>
+                        <div style={{ ...qHead, fontSize: 22, fontWeight: 700, lineHeight: 1.04, letterSpacing: '-0.01em' }}>{forBusiness}</div>
                         <div style={{ fontSize: 13, lineHeight: 1.5, color: Q_SLATE, marginTop: 6, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
                     </div>
                     <div style={{ ...qHead, fontSize: 18, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
@@ -114,10 +118,12 @@ const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals:
                         <div style={qLabel}>Terms</div>
                         <div style={{ fontSize: 12, lineHeight: 1.5, marginTop: 5 }}>Quote valid 30 days from the date above. Your payment terms and conditions print here, as you write them.</div>
                     </div>
-                    <div>
-                        <div style={qLabel}>Accept</div>
-                        <div style={{ height: 34, borderBottom: `1px solid ${Q_INK}`, marginTop: 12 }} />
-                        <div style={{ fontSize: 11, color: Q_SLATE, marginTop: 5 }}>Signature and date</div>
+                    <div style={{ textAlign: 'center' }}>
+                        {/* Owner comments.md: "the accept button on the preview quote is not there" —
+                            this was a paper signature line, but the real product has no wet signature,
+                            the customer taps a link. Matches the PDF v3 template's own button now. */}
+                        <div style={{ background: '#B4501A', color: '#fff', borderRadius: 4, padding: '10px 6px', fontSize: 13, fontWeight: 700, marginTop: 12 }}>Accept quote &rarr;</div>
+                        <div style={{ fontSize: 10, color: Q_SLATE, marginTop: 5 }}>Tap to accept online &middot; no signature needed</div>
                     </div>
                 </div>
             </div>
@@ -539,7 +545,7 @@ export const TestDrive = () => {
 
                                 <div>
                                     <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2">Your quote, as your customer sees it</div>
-                                    <QuoteSheet items={items} totals={totals} customerName={leadName} />
+                                    <QuoteSheet items={items} totals={totals} businessName={leadName} />
                                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
                                         <button type="button" onClick={() => { setStage(1); }} className="min-h-[44px] text-sm font-semibold text-white/80 underline">Change items</button>
                                     </div>
@@ -554,9 +560,13 @@ export const TestDrive = () => {
                                     <form onSubmit={handleGateSubmit} className="flex flex-col gap-3">
                                         <div className="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label className="font-semibold text-xs block mb-1 text-navy">Name</label>
+                                                {/* Was "Name" - Owner comments.md Tier 2 #10: the demo quote,
+                                                    email and accept page all said "TradeAnchor", telling a
+                                                    sparky his customers would see our brand, not his. Same
+                                                    field, same length, now collects the business name instead. */}
+                                                <label className="font-semibold text-xs block mb-1 text-navy">Business name</label>
                                                 <input
-                                                    type="text" placeholder="John"
+                                                    type="text" placeholder="Kavan Electrical"
                                                     className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
                                                     value={leadName} onChange={(e) => setLeadName(e.target.value)}
                                                 />
@@ -642,6 +652,18 @@ export const TestDrive = () => {
                                      </p>
 
                                      <div className="flex flex-col gap-3">
+                                        {/* Owner comments.md: "This person just gave me their mobile and
+                                            consent... the best-qualified lead the page produces. It has no
+                                            booking button." Copper, since this is a real conversion moment. */}
+                                        {import.meta.env.VITE_CALENDLY_URL && (
+                                            <a
+                                                href={import.meta.env.VITE_CALENDLY_URL}
+                                                target="_blank" rel="noreferrer"
+                                                className="block w-full text-center bg-orange text-white py-3 rounded-xl font-bold text-base hover:bg-orange-hover shadow-btn-primary transition-all active:translate-y-0.5"
+                                            >
+                                                Book a 15-minute fit call &rarr;
+                                            </a>
+                                        )}
                                         <button
                                             onClick={launchAcceptFlow}
                                             className="w-full bg-navy text-white py-3 rounded-xl font-bold text-base hover:bg-navy-light shadow-btn-navy transition-all active:translate-y-0.5"
