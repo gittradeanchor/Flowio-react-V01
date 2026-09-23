@@ -18,7 +18,7 @@ const CustomSlider = ({ label, value, min, max, unit, prefix = '', onChange }: {
 
             <div className="relative w-full h-6 flex items-center select-none">
                 {/* Visual Track Layer (Background) - Pointer Events None to prevent interference */}
-                <div className="absolute left-0 right-0 h-2 bg-gray-200 rounded-full overflow-hidden pointer-events-none">
+                <div className="absolute left-0 right-0 h-2 bg-border rounded-full overflow-hidden pointer-events-none">
                     <div
                         className="h-full bg-orange"
                         style={{ width: `${percentage}%` }}
