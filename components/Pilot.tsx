@@ -32,7 +32,7 @@ export const Pilot = () => (
             <div id="pay" className="bg-white border border-border rounded-md p-6 mt-6 scroll-mt-20">
                 <div className="flex items-baseline gap-3 flex-wrap">
                     <span className="text-4xl font-black tracking-tighter">$390</span>
-                    <span className="text-xs font-bold bg-slate-100 border border-slate-200 px-2 py-1 rounded uppercase tracking-tight">One-time, inc GST</span>
+                    <span className="text-xs font-bold bg-bg-off border border-border px-2 py-1 rounded uppercase tracking-tight">One-time, inc GST</span>
                 </div>
                 <p className="mt-3 text-sm font-bold bg-green/10 text-green-800 border border-green/20 rounded-md p-3">30-day money-back guarantee, from the day your install is finished. No reason needed.</p>
 

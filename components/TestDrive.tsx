@@ -418,14 +418,14 @@ export const TestDrive = () => {
                                             </div>
                                             
                                             {/* Demo Client Summary */}
-                                            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-5">
+                                            <div className="bg-bg-off border border-border rounded-lg p-3 mb-5">
                                                 <div className="flex justify-between items-start mb-1">
                                                     <span className="text-xs font-bold text-text-muted uppercase">Client</span>
-                                                    <span className="text-xs font-bold text-slate-400 uppercase">Demo</span>
+                                                    <span className="text-xs font-bold text-text-muted uppercase">Demo</span>
                                                 </div>
                                                 <div className="font-bold text-navy text-sm">Sean Miller (Sydney)</div>
                                                 <div className="text-xs text-text-muted tabular-nums mt-0.5">04••• ••• •• · s•••@gmail.com</div>
-                                                <div className="text-xs text-slate-400 mt-2 italic">Real client details collected next.</div>
+                                                <div className="text-xs text-text-muted mt-2 italic">Real client details collected next.</div>
                                             </div>
 
                                             {/* SKU Selector */}

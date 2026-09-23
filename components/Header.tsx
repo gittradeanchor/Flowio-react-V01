@@ -57,7 +57,7 @@ export const Header = ({ isHidden = false, isSecondaryCta = false }: { isHidden?
                             href={import.meta.env.VITE_CALENDLY_URL}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold rounded-xl active:translate-y-0.5 transition-all bg-white text-navy border-2 border-navy hover:bg-slate-50 shadow-sm"
+                            className="inline-flex items-center justify-center gap-2.5 px-10 py-2.5 text-[15px] font-bold rounded-xl active:translate-y-0.5 transition-all bg-white text-navy border-2 border-navy hover:bg-bg-off shadow-sm"
                         >
                             Book a Fit Call
                         </a>

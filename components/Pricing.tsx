@@ -54,7 +54,7 @@ const PilotCard = () => (
             <h3 className="text-lg font-black text-navy mb-2 uppercase tracking-wide opacity-80">Founding Pilot &middot; Done for you</h3>
             <div className="flex flex-row items-baseline gap-3">
                 <span className="text-4xl md:text-5xl font-black text-navy tracking-tighter leading-none">$390</span>
-                <span className="text-xs font-bold text-navy bg-slate-100 px-2 py-1 rounded border border-slate-200 uppercase tracking-tight whitespace-nowrap transform -translate-y-1">
+                <span className="text-xs font-bold text-navy bg-bg-off px-2 py-1 rounded border border-border uppercase tracking-tight whitespace-nowrap transform -translate-y-1">
                     One-time, inc GST
                 </span>
             </div>
@@ -123,7 +123,7 @@ const ROICalculatorContent = ({
                             className={`flex-1 min-h-[44px] rounded-lg font-bold text-sm border transition-all ${
                                 hourlyRate === rate
                                 ? 'bg-navy border-navy text-white shadow-md transform scale-105'
-                                : 'bg-white border-border text-text-muted hover:border-navy/30 hover:bg-slate-50'
+                                : 'bg-white border-border text-text-muted hover:border-navy/30 hover:bg-bg-off'
                             }`}
                         >
                             ${rate}
@@ -165,7 +165,7 @@ const CheckIcon = () => (
 );
 
 const DashIcon = () => (
-    <svg className="w-5 h-5 md:w-6 md:h-6 text-slate-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20 12H4"/></svg>
+    <svg className="w-5 h-5 md:w-6 md:h-6 text-text-muted/50 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20 12H4"/></svg>
 );
 
 // Rewritten 20 Sept 2026 to the locked pilot offer (02_OFFER, D05): $390 + refund together, only live features,
@@ -233,7 +233,7 @@ export const Pricing = () => {
                     <p className="text-lg opacity-80 mb-10 leading-relaxed max-w-xl mx-auto">A 15-minute call. I'll ask how many quotes you send and how many turn into jobs, and we'll see if this fits. No sales pressure.</p>
 
                     <div className="flex justify-center gap-5 flex-wrap flex-col items-center">
-                        <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="bg-white text-navy px-8 py-4 rounded-xl font-bold text-lg shadow-btn-white hover:bg-slate-100 transition-colors flex items-center gap-2">
+                        <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="bg-white text-navy px-8 py-4 rounded-xl font-bold text-lg shadow-btn-white hover:bg-bg-off transition-colors flex items-center gap-2">
                              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                              Book a Fit Call
                         </a>
