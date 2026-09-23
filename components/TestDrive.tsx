@@ -418,14 +418,14 @@ export const TestDrive = () => {
                                             </div>
                                             
                                             {/* Demo Client Summary */}
-                                            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-5">
+                                            <div className="bg-bg-off border border-border rounded-lg p-3 mb-5">
                                                 <div className="flex justify-between items-start mb-1">
                                                     <span className="text-xs font-bold text-text-muted uppercase">Client</span>
-                                                    <span className="text-xs font-bold text-slate-400 uppercase">Demo</span>
+                                                    <span className="text-xs font-bold text-text-muted uppercase">Demo</span>
                                                 </div>
                                                 <div className="font-bold text-navy text-sm">Sean Miller (Sydney)</div>
                                                 <div className="text-xs text-text-muted tabular-nums mt-0.5">04••• ••• •• · s•••@gmail.com</div>
-                                                <div className="text-xs text-slate-400 mt-2 italic">Real client details collected next.</div>
+                                                <div className="text-xs text-text-muted mt-2 italic">Real client details collected next.</div>
                                             </div>
 
                                             {/* SKU Selector */}
@@ -436,7 +436,7 @@ export const TestDrive = () => {
                                                   <select
                                                     onChange={handleAddItem}
                                                     disabled={isPricebookLoading}
-                                                    className={`w-full p-3 border-2 border-border rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer transition-opacity ${
+                                                    className={`w-full p-3 border-2 border-border-strong rounded-md text-base bg-white focus:border-orange outline-none cursor-pointer transition-opacity ${
                                                       isPricebookLoading ? 'opacity-60' : 'opacity-100'
                                                     }`}
                                                   >
@@ -557,14 +557,14 @@ export const TestDrive = () => {
                                                 <label className="font-semibold text-xs block mb-1 text-navy">Name</label>
                                                 <input
                                                     type="text" placeholder="John"
-                                                    className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                    className="w-full bg-bg-off border border-border-strong p-3 rounded-lg text-base focus:border-orange outline-none"
                                                     value={leadName} onChange={(e) => setLeadName(e.target.value)}
                                                 />
                                             </div>
                                             <div>
                                                 <label className="font-semibold text-xs block mb-1 text-navy">Trade</label>
                                                 <select
-                                                    className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                    className="w-full bg-bg-off border border-border-strong p-3 rounded-lg text-base focus:border-orange outline-none"
                                                     value={leadTrade} onChange={(e) => setLeadTrade(e.target.value)}
                                                 >
                                                     <option value="">Select...</option>
@@ -580,7 +580,7 @@ export const TestDrive = () => {
                                             <label className="font-semibold text-xs block mb-1 text-navy">Mobile <span className="font-normal text-text-muted">(required to send)</span></label>
                                             <input
                                                 type="tel" placeholder="04xx xxx xxx"
-                                                className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                className="w-full bg-bg-off border border-border-strong p-3 rounded-lg text-base focus:border-orange outline-none"
                                                 value={formMobile} onChange={(e) => setFormMobile(e.target.value)}
                                             />
                                         </div>
@@ -588,7 +588,7 @@ export const TestDrive = () => {
                                             <label className="font-semibold text-xs block mb-1 text-navy">Email <span className="font-normal text-text-muted">(optional, for the PDF)</span></label>
                                             <input
                                                 type="email" placeholder="you@example.com.au"
-                                                className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
+                                                className="w-full bg-bg-off border border-border-strong p-3 rounded-lg text-base focus:border-orange outline-none"
                                                 value={formEmail} onChange={(e) => setFormEmail(e.target.value)}
                                             />
                                         </div>

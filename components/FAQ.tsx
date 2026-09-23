@@ -69,7 +69,7 @@ export const FAQ = () => {
                 <div className="bg-bg-off border-t border-border py-12 px-6 md:px-12 rounded-3xl">
                     <div className="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-8 items-center text-center md:text-left">
                         {/* Founder Image */}
-                        <div className="w-[100px] h-[100px] rounded-full bg-slate-300 border-4 border-white shadow-lg mx-auto md:mx-0 overflow-hidden relative group">
+                        <div className="w-[100px] h-[100px] rounded-full bg-text-muted border-4 border-white shadow-lg mx-auto md:mx-0 overflow-hidden relative group">
                             <img
                                 src="/images/Founder.png"
                                 alt="Sean, founder of TradeAnchor"

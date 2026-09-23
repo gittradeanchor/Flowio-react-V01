@@ -54,7 +54,7 @@ h1, h2, h3 { font-family: 'Archivo', 'Source Sans 3', sans-serif; letter-spacing
 input[type=range].ta-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     height: 24px; width: 24px; border-radius: 50%;
-    background: #ffffff; border: 2px solid #FB923C;
+    background: #ffffff; border: 2px solid #B4501A; /* copper, was old-orange #FB923C (2.26:1 on white, below the 3:1 WCAG 1.4.11 floor for a UI control; copper is 5.12:1) */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     margin-top: -8px; /* (track 8px - thumb 24px) / 2 */
     cursor: grab;
@@ -63,7 +63,7 @@ input[type=range].ta-slider:active::-webkit-slider-thumb { cursor: grabbing; tra
 input[type=range].ta-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; background: transparent; border-radius: 9999px; }
 input[type=range].ta-slider::-moz-range-thumb {
     height: 24px; width: 24px; border-radius: 50%;
-    background: #ffffff; border: 2px solid #FB923C;
+    background: #ffffff; border: 2px solid #B4501A;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     cursor: grab;
 }

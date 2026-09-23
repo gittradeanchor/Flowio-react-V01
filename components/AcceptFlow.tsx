@@ -174,7 +174,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
             {step === 2 && (
                 <div className="fixed inset-0 bg-navy/95 backdrop-blur-sm z-[2000] flex items-end md:items-center justify-center p-4" onClick={() => setStep(1)}>
                     <div className="bg-white w-full max-w-[600px] rounded-t-[20px] md:rounded-[20px] p-6 md:p-12 max-h-[90vh] overflow-y-auto pb-28 md:pb-12 text-navy relative animate-fade-in-up" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => setStep(1)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-bg-off text-text-muted flex items-center justify-center text-xl hover:bg-slate-200">×</button>
+                        <button onClick={() => setStep(1)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-bg-off text-text-muted flex items-center justify-center text-xl hover:bg-border">×</button>
                         
                         <span className="inline-block bg-orange text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider mb-2">DEMO MODE</span>
                         <h2 className="text-2xl font-black text-navy mb-2">Accept Quote #Q0004</h2>
@@ -249,7 +249,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                             <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center p-8">
                                 <div className="w-12 h-12 border-4 border-orange border-t-transparent rounded-full animate-spin mb-6"></div>
                                 <div className="text-xl font-bold text-navy mb-4">{loadingText}</div>
-                                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden max-w-[200px]">
+                                <div className="w-full h-2 bg-bg-off rounded-full overflow-hidden max-w-[200px]">
                                     <div className="h-full bg-orange transition-all duration-300 ease-out" style={{ width: `${progress}%` }}></div>
                                 </div>
                                 <div className="mt-4 text-xs text-text-muted bg-bg-off px-3 py-1 rounded-full border border-border">This will only take 5 seconds</div>

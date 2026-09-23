@@ -267,18 +267,18 @@ export default function Preinstall() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ background: BG, fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}>
-        <div className="w-full max-w-xl bg-white rounded-2xl border border-gray-200 shadow-[0_12px_40px_rgba(17,24,39,0.10)] p-8 text-center">
+        <div className="w-full max-w-xl bg-white rounded-2xl border border-border shadow-[0_12px_40px_rgba(17,24,39,0.10)] p-8 text-center">
           <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center text-white text-2xl font-black" style={{ background: BRAND }}>
             ✓
           </div>
-          <h1 className="mt-4 text-2xl font-extrabold text-gray-900">All good — received.</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="mt-4 text-2xl font-extrabold text-navy">All good — received.</h1>
+          <p className="mt-2 text-sm text-text-muted">
             Your pre-install info is sent to TradeAnchor. We’ll use it to prep your Flowio install inside your Google Workspace.
           </p>
 
-          <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4 text-left">
-            <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wider">What happens next</div>
-            <ul className="mt-2 text-sm text-gray-700 list-disc pl-5 space-y-1">
+          <div className="mt-6 rounded-xl border border-border bg-bg-off p-4 text-left">
+            <div className="text-xs font-extrabold text-text-muted uppercase tracking-wider">What happens next</div>
+            <ul className="mt-2 text-sm text-text-main list-disc pl-5 space-y-1">
               <li>We review your pricebook + setup choices</li>
               <li>We build your install pack</li>
               <li>We confirm the install time</li>
@@ -294,7 +294,7 @@ export default function Preinstall() {
             Done
           </button>
 
-          <p className="mt-3 text-xs text-gray-500">
+          <p className="mt-3 text-xs text-text-muted">
             If this tab doesn’t close, you can just leave it.
           </p>
         </div>
@@ -305,22 +305,22 @@ export default function Preinstall() {
   return (
     <div className="min-h-screen" style={{ background: BG, fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}>
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-border">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900">Flowio Pre-Install Checklist</h1>
-            <p className="text-xs sm:text-sm text-gray-500">
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-navy">Flowio Pre-Install Checklist</h1>
+            <p className="text-xs sm:text-sm text-text-muted">
               Fill this once. We install Flowio in your Google Workspace so you can start quoting the same day.
             </p>
           </div>
 
           <div className="min-w-[160px] text-right">
-            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Essentials</div>
+            <div className="text-xs text-text-muted font-bold uppercase tracking-wider">Essentials</div>
             <div className="flex items-center justify-end gap-3 mt-1">
               <div className="text-lg font-extrabold" style={{ color: BRAND }}>
                 {essentialsPct}%
               </div>
-              <div className="w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="w-28 h-2 bg-border rounded-full overflow-hidden">
                 <div className="h-full transition-all duration-300" style={{ width: `${essentialsPct}%`, background: BRAND }} />
               </div>
             </div>
@@ -333,8 +333,8 @@ export default function Preinstall() {
         <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)]">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-lg font-extrabold text-gray-900">What this does (10 seconds)</h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <h2 className="text-lg font-extrabold text-navy">What this does (10 seconds)</h2>
+              <p className="text-sm text-text-muted mt-1">
                 You give us the basics. We install Flowio inside YOUR Google Workspace so you can send a quote → customer accepts → job gets booked.
               </p>
             </div>
@@ -342,7 +342,7 @@ export default function Preinstall() {
               <button
                 type="button"
                 onClick={clearAll}
-                className="px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 font-semibold text-sm"
+                className="px-4 py-2 rounded-lg border border-border bg-white hover:bg-bg-off font-semibold text-sm"
               >
                 Clear
               </button>
@@ -362,15 +362,15 @@ export default function Preinstall() {
           <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)] border-l-4" style={{ borderLeftColor: BRAND }}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Essentials (required)</h3>
-                <p className="text-sm text-gray-600">If you fill only this section, we can proceed.</p>
+                <h3 className="text-lg font-extrabold text-navy">Essentials (required)</h3>
+                <p className="text-sm text-text-muted">If you fill only this section, we can proceed.</p>
               </div>
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">~ 2 minutes</span>
+              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">~ 2 minutes</span>
             </div>
 
             <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">
                   <span className="text-red-500">*</span> Google Workspace Admin Email
                 </label>
                 <input
@@ -379,13 +379,13 @@ export default function Preinstall() {
                   autoComplete="email"
                   value={form.workspace_admin_email}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="admin@yourdomain.com"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">
                   <span className="text-red-500">*</span> Business Name
                 </label>
                 <input
@@ -393,13 +393,13 @@ export default function Preinstall() {
                   type="text"
                   value={form.business_name}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="Your Business Pty Ltd"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">
                   <span className="text-red-500">*</span> Primary Mobile (SMS)
                 </label>
                 <input
@@ -408,13 +408,13 @@ export default function Preinstall() {
                   inputMode="tel"
                   value={form.primary_mobile}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="04xx xxx xxx"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">
                   <span className="text-red-500">*</span> Who Answers Calls?
                 </label>
                 <input
@@ -422,20 +422,20 @@ export default function Preinstall() {
                   type="text"
                   value={form.call_answerer}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                   placeholder="Sam (7am–5pm)"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">
                   <span className="text-red-500">*</span> Trade
                 </label>
                 <select
                   name="trade"
                   value={form.trade}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                 >
                   <option value="">Select…</option>
                   <option>Electrician</option>
@@ -446,7 +446,7 @@ export default function Preinstall() {
                 </select>
               </div>
 
-              <div className="md:col-span-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <div className="md:col-span-2 rounded-lg border border-border bg-bg-off p-3">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     name="confirm_access"
@@ -457,7 +457,7 @@ export default function Preinstall() {
                     style={{ accentColor: BRAND }}
                   />
                   <div>
-                    <div className="font-extrabold text-gray-900 text-sm">
+                    <div className="font-extrabold text-navy text-sm">
                       <span className="text-red-500">*</span> I can access Google Sheets, Drive, Calendar (and Gmail if used).
                     </div>
                   </div>
@@ -465,7 +465,7 @@ export default function Preinstall() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">
                   <span className="text-red-500">*</span> Consent
                 </label>
                 <div className="mt-1 rounded-lg text-white p-4" style={{ background: BRAND }}>
@@ -489,38 +489,38 @@ export default function Preinstall() {
           </section>
 
           {/* PRICEBOOK */}
-          <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)] border-l-4 border-gray-600">
+          <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)] border-l-4 border-navy">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Pricebook (required)</h3>
-                <p className="text-sm text-gray-600">Paste items or drop a share link.</p>
+                <h3 className="text-lg font-extrabold text-navy">Pricebook (required)</h3>
+                <p className="text-sm text-text-muted">Paste items or drop a share link.</p>
               </div>
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">~ 3 minutes</span>
+              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">~ 3 minutes</span>
             </div>
 
             <div className="mt-5 grid grid-cols-1 gap-4">
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="font-extrabold text-gray-900 text-sm">Option A — Share link</div>
-                <p className="text-xs text-gray-600 mt-1">Google Sheet / Drive / Dropbox. Make sure it’s accessible.</p>
+              <div className="rounded-lg border border-border bg-bg-off p-4">
+                <div className="font-extrabold text-navy text-sm">Option A — Share link</div>
+                <p className="text-xs text-text-muted mt-1">Google Sheet / Drive / Dropbox. Make sure it’s accessible.</p>
 
                 <label className="mt-3 block">
-                  <span className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Pricebook link</span>
+                  <span className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Pricebook link</span>
                   <input
                     name="pricebook_sheet_link"
                     type="url"
                     value={form.pricebook_sheet_link}
                     onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                     placeholder="https://docs.google.com/spreadsheets/d/..."
                   />
                 </label>
               </div>
 
-              <div className="text-center text-xs font-extrabold text-gray-400">— OR —</div>
+              <div className="text-center text-xs font-extrabold text-text-muted">— OR —</div>
 
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="font-extrabold text-gray-900 text-sm">Option B — Paste items</div>
-                <p className="text-xs text-gray-600 mt-1">
+              <div className="rounded-lg border border-border bg-bg-off p-4">
+                <div className="font-extrabold text-navy text-sm">Option B — Paste items</div>
+                <p className="text-xs text-text-muted mt-1">
                   One per line. Format: <span className="font-mono">SKU, Name, Price, Default Qty (optional)</span>
                 </p>
 
@@ -529,7 +529,7 @@ export default function Preinstall() {
                   rows={6}
                   value={form.pricebook_text}
                   onChange={updateText}
-                  className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
+                  className="mt-3 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none"
                   placeholder={`ELEC-001, Call-out (incl GST), 120, 1\nELEC-002, Power point supply+install, 165, 1\nGEN-002, Labour (per hour), 110, 2`}
                 />
               </div>
@@ -548,8 +548,8 @@ export default function Preinstall() {
               <summary className="cursor-pointer select-none">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-extrabold text-gray-900">Optional (helps us install faster)</h3>
-                    <p className="text-sm text-gray-600">If you skip this, we’ll confirm on the phone.</p>
+                    <h3 className="text-lg font-extrabold text-navy">Optional (helps us install faster)</h3>
+                    <p className="text-sm text-text-muted">If you skip this, we’ll confirm on the phone.</p>
                   </div>
                   <span className="text-sm font-extrabold" style={{ color: BRAND }}>
                     Expand
@@ -559,54 +559,54 @@ export default function Preinstall() {
 
               <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">ABN</label>
-                  <input name="abn" type="text" value={form.abn} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">ABN</label>
+                  <input name="abn" type="text" value={form.abn} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Business Address</label>
-                  <input name="business_address" type="text" value={form.business_address} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Business Address</label>
+                  <input name="business_address" type="text" value={form.business_address} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Service Area</label>
-                  <input name="service_area" type="text" value={form.service_area} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Service Area</label>
+                  <input name="service_area" type="text" value={form.service_area} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Business Hours</label>
-                  <input name="business_hours" type="text" value={form.business_hours} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Business Hours</label>
+                  <input name="business_hours" type="text" value={form.business_hours} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Current Quote Template (link)</label>
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Current Quote Template (link)</label>
                   <input
                     name="quote_template_link"
                     type="url"
                     value={form.quote_template_link}
                     onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                     placeholder="https://drive.google.com/… or https://dropbox.com/…"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Logo (link)</label>
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Logo (link)</label>
                   <input
                     name="logo_link"
                     type="url"
                     value={form.logo_link}
                     onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none"
                     placeholder="https://drive.google.com/…"
                   />
                 </div>
 
-                <div className="md:col-span-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="md:col-span-2 rounded-lg border border-border bg-bg-off p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <div className="font-extrabold text-gray-900 text-sm">Deposits (optional)</div>
-                      <p className="text-xs text-gray-600 mt-1">If you’re unsure, leave OFF for now.</p>
+                      <div className="font-extrabold text-navy text-sm">Deposits (optional)</div>
+                      <p className="text-xs text-text-muted mt-1">If you’re unsure, leave OFF for now.</p>
                     </div>
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
@@ -617,34 +617,34 @@ export default function Preinstall() {
                         className="h-5 w-5"
                         style={{ accentColor: BRAND }}
                       />
-                      <span className="font-extrabold text-sm text-gray-900">Enable</span>
+                      <span className="font-extrabold text-sm text-navy">Enable</span>
                     </label>
                   </div>
 
                   <div className={`mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 ${form.deposit_enabled ? "" : "opacity-50 pointer-events-none"}`}>
                     <div>
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Amount / %</label>
-                      <input name="deposit_amount" type="text" value={form.deposit_amount} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. 20% or $200" />
+                      <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Amount / %</label>
+                      <input name="deposit_amount" type="text" value={form.deposit_amount} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. 20% or $200" />
                     </div>
                     <div>
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">When Charged</label>
-                      <input name="deposit_when" type="text" value={form.deposit_when} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. on booking" />
+                      <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">When Charged</label>
+                      <input name="deposit_when" type="text" value={form.deposit_when} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. on booking" />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Refund / Cancellation</label>
-                      <textarea name="deposit_policy" rows={3} value={form.deposit_policy} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. Refundable with 24h notice. Otherwise $80 admin fee." />
+                      <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Refund / Cancellation</label>
+                      <textarea name="deposit_policy" rows={3} value={form.deposit_policy} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. Refundable with 24h notice. Otherwise $80 admin fee." />
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Calendar Name</label>
-                  <input name="calendar_name" type="text" value={form.calendar_name} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" placeholder="Jobs" />
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Calendar Name</label>
+                  <input name="calendar_name" type="text" value={form.calendar_name} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" placeholder="Jobs" />
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Booking Restrictions</label>
-                  <input name="booking_restrictions" type="text" value={form.booking_restrictions} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" placeholder="No bookings after 4:30pm" />
+                  <label className="text-xs font-extrabold text-text-muted uppercase tracking-wider">Booking Restrictions</label>
+                  <input name="booking_restrictions" type="text" value={form.booking_restrictions} onChange={updateText} className="mt-1 w-full rounded-lg border border-border-strong bg-bg-off px-3 py-2 text-sm focus:outline-none" placeholder="No bookings after 4:30pm" />
                 </div>
               </div>
             </details>
@@ -654,8 +654,8 @@ export default function Preinstall() {
           <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)]">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Submit</h3>
-                <p className="text-sm text-gray-600">This sends your info straight to TradeAnchor.</p>
+                <h3 className="text-lg font-extrabold text-navy">Submit</h3>
+                <p className="text-sm text-text-muted">This sends your info straight to TradeAnchor.</p>
               </div>
 
               <button
@@ -676,7 +676,7 @@ export default function Preinstall() {
           </section>
         </form>
 
-        <footer className="py-6 text-center text-xs text-gray-500">
+        <footer className="py-6 text-center text-xs text-text-muted">
           Flowio installs are limited to 3 per week. We’ll confirm your slot after the phone check.
         </footer>
       </main>
