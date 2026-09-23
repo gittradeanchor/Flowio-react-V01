@@ -199,8 +199,8 @@ export const Pricing = () => {
                             <PilotCard />
                         </div>
                         <div className="p-6 bg-white border-t border-border text-center">
-                            <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="flex items-center justify-center w-full md:max-w-md mx-auto py-4 bg-navy hover:bg-navy-light text-white rounded-xl shadow-btn-navy hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)] hover:-translate-y-0.5 transition-all duration-200 font-bold text-lg uppercase tracking-wide mb-3">
-                                Book a Fit Call &rarr;
+                            <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="flex items-center justify-center w-full md:max-w-md mx-auto py-4 bg-orange hover:bg-orange-hover text-white rounded-xl shadow-btn-primary hover:shadow-[0_6px_20px_rgba(180,80,26,0.28)] hover:-translate-y-0.5 transition-all duration-200 font-bold text-lg mb-3">
+                                Book a fit call &rarr;
                             </a>
                             <p className="text-sm font-medium text-navy">
                                 15-minute phone call. Nothing to pay on the call.

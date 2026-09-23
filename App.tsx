@@ -6,7 +6,7 @@ import { Benefits } from './components/Benefits';
 import { TestDrive } from './components/TestDrive';
 import { LogicSection } from './components/LogicSection';
 import { Pricing } from './components/Pricing';
-import { FAQ } from './components/FAQ';
+import { FAQ, FounderBlock } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { ChatWidget } from './components/ChatWidget';
@@ -102,6 +102,7 @@ const LandingPage = () => {
                                        Engine whose templates still carry banned claims (checklist 0.9 / 0.10). */}
                 <Benefits />
                 <LogicSection />
+                <FounderBlock />
                 <Pricing />
                 <FAQ />
             </main>

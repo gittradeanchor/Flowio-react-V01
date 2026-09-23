@@ -616,7 +616,7 @@ export const TestDrive = () => {
 
                                         <button
                                             type="submit" disabled={smsSending}
-                                            className="bg-navy text-white font-bold py-3.5 rounded-xl mt-1 hover:bg-navy-light shadow-btn-navy transition-all flex justify-center items-center disabled:opacity-60"
+                                            className="bg-orange text-white font-bold py-3.5 rounded-xl mt-1 hover:bg-orange-hover shadow-btn-primary transition-all flex justify-center items-center disabled:opacity-60"
                                         >
                                             {smsSending ? 'Sending...' : 'Send it to my phone →'}
                                         </button>
