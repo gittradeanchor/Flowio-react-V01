@@ -27,7 +27,12 @@ const isValidAuMobile = (raw: string) => /^(\+?61|0)4\d{8}$/.test(raw.replace(/[
 // it gets the same document, shrunk to fit, the way a PDF viewer or Google Docs mobile shows a real page.
 // (Was: a separate condensed "mobile" version with no meta block, header rule or signature line — flagged
 // 22 Sept as looking like an app screen, not a realistic quote.)
-const QUOTE_DOC_WIDTH = 340;
+// 24 Sept: was 340 — technically no longer "oversized", but at a real on-screen size that reads as a
+// cramped receipt, not "opening an A4 page" (Owner comments.md, re-raised after the sizing fix). 560px
+// with an actual A4 aspect ratio (210:297) below is a realistic on-screen document width — comparable to
+// how Google Docs/Word show a page preview — while still capping at 1x natural size (never enlarged
+// further) and still shrinking correctly to fit a narrow phone.
+const QUOTE_DOC_WIDTH = 560;
 
 const ScaledDocument = ({ children }: { children: React.ReactNode }) => {
     const outerRef = useRef<HTMLDivElement>(null);
@@ -57,67 +62,77 @@ const ScaledDocument = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-const QuoteSheet = ({ items, totals, customerName }: { items: JobItem[]; totals: QuoteTotals; customerName: string }) => {
+const QuoteSheet = ({ items, totals, businessName }: { items: JobItem[]; totals: QuoteTotals; businessName: string }) => {
     const today = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
-    const forName = customerName || 'Your customer';
+    // "Prepared for" is always a placeholder - this demo never collects a real end-customer name,
+    // only the tradie's own business name (see businessName below). Was wrongly reusing the same
+    // field for both (Owner comments.md Tier 2 #10).
+    const forName = 'Your customer';
+    const forBusiness = businessName || 'Your Business Name';
     return (
         <ScaledDocument>
-            <div className="flex flex-col bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, padding: '36px 32px' }}>
-                <div className="flex justify-between items-end gap-6 pb-3" style={{ borderBottom: `4px solid ${Q_INFO}` }}>
+            {/* aspectRatio 210/297 = A4. Real margins (not a cramped card) so it reads as a page, not a
+                receipt — a short quote leaves genuine empty space below, the way a printed one-pager does. */}
+            <div className="flex flex-col bg-white border border-[#D8CFC0] shadow-2xl" style={{ ...qBody, padding: '56px 48px', aspectRatio: '210 / 297' }}>
+                <div className="flex justify-between items-end gap-6 pb-4" style={{ borderBottom: `4px solid ${Q_INFO}` }}>
                     <div>
-                        <div style={{ ...qHead, fontSize: 22, fontWeight: 700, lineHeight: 1.04, letterSpacing: '-0.01em' }}>Your Business Name</div>
-                        <div style={{ fontSize: 13, lineHeight: 1.5, color: Q_SLATE, marginTop: 6, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
+                        <div style={{ ...qHead, fontSize: 27, fontWeight: 700, lineHeight: 1.08, letterSpacing: '-0.01em' }}>{forBusiness}</div>
+                        <div style={{ fontSize: 14, lineHeight: 1.5, color: Q_SLATE, marginTop: 8, fontVariantNumeric: 'tabular-nums' }}>ABN 00 000 000 000 &nbsp;·&nbsp; Licence 000000C &nbsp;·&nbsp; 04xx xxx xxx</div>
                     </div>
-                    <div style={{ ...qHead, fontSize: 18, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
+                    <div style={{ ...qHead, fontSize: 21, fontWeight: 700, color: Q_INFO, whiteSpace: 'nowrap' }}>Quotation</div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-5" style={{ padding: '16px 0 20px' }}>
+                <div className="grid grid-cols-3 gap-6" style={{ padding: '24px 0 28px' }}>
                     <div>
                         <div style={qLabel}>Prepared for</div>
-                        <div style={{ fontSize: 13, lineHeight: 1.5, marginTop: 5 }}>{forName}<br />Site address<br />Suburb NSW 2000</div>
+                        <div style={{ fontSize: 14, lineHeight: 1.6, marginTop: 7 }}>{forName}<br />Site address<br />Suburb NSW 2000</div>
                     </div>
                     <div>
                         <div style={qLabel}>Site</div>
-                        <div style={{ fontSize: 13, lineHeight: 1.5, marginTop: 5 }}>As above<br />Access, business hours</div>
+                        <div style={{ fontSize: 14, lineHeight: 1.6, marginTop: 7 }}>As above<br />Access, business hours</div>
                     </div>
                     <div>
                         <div style={qLabel}>Reference</div>
-                        <div style={{ fontSize: 13, lineHeight: 1.5, marginTop: 5, fontVariantNumeric: 'tabular-nums' }}>Q-0004 (demo)<br />{today}<br />Valid 30 days</div>
+                        <div style={{ fontSize: 14, lineHeight: 1.6, marginTop: 7, fontVariantNumeric: 'tabular-nums' }}>Q-0004 (demo)<br />{today}<br />Valid 30 days</div>
                     </div>
                 </div>
 
-                <div className="grid text-white" style={{ gridTemplateColumns: '1fr 40px 76px 84px', background: Q_INFO, padding: '7px 0' }}>
-                    <div style={{ ...qLabel, color: '#fff', paddingLeft: 10 }}>Description</div>
+                <div className="grid text-white" style={{ gridTemplateColumns: '1fr 60px 110px 130px', background: Q_INFO, padding: '11px 0' }}>
+                    <div style={{ ...qLabel, color: '#fff', paddingLeft: 14 }}>Description</div>
                     <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Qty</div>
                     <div style={{ ...qLabel, color: '#fff', textAlign: 'right' }}>Rate</div>
-                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right', paddingRight: 10 }}>Amount</div>
+                    <div style={{ ...qLabel, color: '#fff', textAlign: 'right', paddingRight: 14 }}>Amount</div>
                 </div>
                 {items.map((item, idx) => (
-                    <div key={idx} className="grid" style={{ gridTemplateColumns: '1fr 40px 76px 84px', padding: '11px 0', borderBottom: `1px solid ${Q_RULE}`, fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>
-                        <div style={{ paddingLeft: 10, paddingRight: 8 }}>{item.name}</div>
-                        <div style={{ textAlign: 'right' }}>{item.qty}</div>
-                        <div style={{ textAlign: 'right' }}>{qMoney(Number(item.rate))}</div>
-                        <div style={{ textAlign: 'right', fontWeight: 700, paddingRight: 10 }}>{qMoney(item.qty * item.rate)}</div>
+                    <div key={idx} className="grid" style={{ gridTemplateColumns: '1fr 60px 110px 130px', padding: '15px 0', borderBottom: `1px solid ${Q_RULE}`, fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>
+                        <div style={{ paddingLeft: 14, paddingRight: 10, minWidth: 0 }}>{item.name}</div>
+                        <div style={{ textAlign: 'right', minWidth: 0 }}>{item.qty}</div>
+                        <div style={{ textAlign: 'right', minWidth: 0 }}>{qMoney(Number(item.rate))}</div>
+                        <div style={{ textAlign: 'right', fontWeight: 700, paddingRight: 14, minWidth: 0 }}>{qMoney(item.qty * item.rate)}</div>
                     </div>
                 ))}
 
-                <div className="flex justify-end" style={{ marginTop: 16 }}>
-                    <div style={{ width: 250, fontVariantNumeric: 'tabular-nums' }}>
-                        <div className="flex justify-between" style={{ fontSize: 13, padding: '6px 10px' }}><span style={{ color: Q_SLATE }}>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
-                        <div className="flex justify-between" style={{ fontSize: 13, padding: '6px 10px', borderBottom: `1px solid ${Q_INFO}` }}><span style={{ color: Q_SLATE }}>GST</span><span>{qMoney(totals.gst)}</span></div>
-                        <div className="flex justify-between items-baseline" style={{ padding: '12px 10px 0' }}><span style={{ ...qHead, fontSize: 16, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 21, fontWeight: 700 }}>{qMoney(totals.total)}</span></div>
+                <div className="flex justify-end" style={{ marginTop: 22 }}>
+                    <div style={{ width: 320, fontVariantNumeric: 'tabular-nums' }}>
+                        <div className="flex justify-between" style={{ fontSize: 14, padding: '8px 14px' }}><span style={{ color: Q_SLATE }}>Subtotal</span><span>{qMoney(totals.subtotal)}</span></div>
+                        <div className="flex justify-between" style={{ fontSize: 14, padding: '8px 14px', borderBottom: `1px solid ${Q_INFO}` }}><span style={{ color: Q_SLATE }}>GST</span><span>{qMoney(totals.gst)}</span></div>
+                        <div className="flex justify-between items-baseline" style={{ padding: '16px 14px 0' }}><span style={{ ...qHead, fontSize: 19, fontWeight: 700 }}>Total incl GST</span><span style={{ fontSize: 26, fontWeight: 700 }}>{qMoney(totals.total)}</span></div>
                     </div>
                 </div>
 
-                <div className="grid" style={{ gridTemplateColumns: '1fr 160px', gap: 28, paddingTop: 18, marginTop: 28, borderTop: `4px solid ${Q_INFO}` }}>
+                {/* mt-auto pushes this to the bottom of the A4-proportioned page instead of floating
+                    right under the totals, so a short quote still fills the page the way a real one does. */}
+                <div className="grid" style={{ gridTemplateColumns: '1fr 210px', gap: 36, paddingTop: 24, marginTop: 'auto', borderTop: `4px solid ${Q_INFO}` }}>
                     <div>
                         <div style={qLabel}>Terms</div>
-                        <div style={{ fontSize: 12, lineHeight: 1.5, marginTop: 5 }}>Quote valid 30 days from the date above. Your payment terms and conditions print here, as you write them.</div>
+                        <div style={{ fontSize: 13, lineHeight: 1.6, marginTop: 7 }}>Quote valid 30 days from the date above. Your payment terms and conditions print here, as you write them.</div>
                     </div>
-                    <div>
-                        <div style={qLabel}>Accept</div>
-                        <div style={{ height: 34, borderBottom: `1px solid ${Q_INK}`, marginTop: 12 }} />
-                        <div style={{ fontSize: 11, color: Q_SLATE, marginTop: 5 }}>Signature and date</div>
+                    <div style={{ textAlign: 'center' }}>
+                        {/* Owner comments.md: "the accept button on the preview quote is not there" —
+                            this was a paper signature line, but the real product has no wet signature,
+                            the customer taps a link. Matches the PDF v3 template's own button now. */}
+                        <div style={{ background: '#B4501A', color: '#fff', borderRadius: 4, padding: '13px 8px', fontSize: 15, fontWeight: 700, marginTop: 14 }}>Accept quote &rarr;</div>
+                        <div style={{ fontSize: 11, color: Q_SLATE, marginTop: 7 }}>Tap to accept online &middot; no signature needed</div>
                     </div>
                 </div>
             </div>
@@ -539,7 +554,7 @@ export const TestDrive = () => {
 
                                 <div>
                                     <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2">Your quote, as your customer sees it</div>
-                                    <QuoteSheet items={items} totals={totals} customerName={leadName} />
+                                    <QuoteSheet items={items} totals={totals} businessName={leadName} />
                                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
                                         <button type="button" onClick={() => { setStage(1); }} className="min-h-[44px] text-sm font-semibold text-white/80 underline">Change items</button>
                                     </div>
@@ -554,9 +569,13 @@ export const TestDrive = () => {
                                     <form onSubmit={handleGateSubmit} className="flex flex-col gap-3">
                                         <div className="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label className="font-semibold text-xs block mb-1 text-navy">Name</label>
+                                                {/* Was "Name" - Owner comments.md Tier 2 #10: the demo quote,
+                                                    email and accept page all said "TradeAnchor", telling a
+                                                    sparky his customers would see our brand, not his. Same
+                                                    field, same length, now collects the business name instead. */}
+                                                <label className="font-semibold text-xs block mb-1 text-navy">Business name</label>
                                                 <input
-                                                    type="text" placeholder="John"
+                                                    type="text" placeholder="Kavan Electrical"
                                                     className="w-full bg-bg-off border border-border p-3 rounded-lg text-base focus:border-orange outline-none"
                                                     value={leadName} onChange={(e) => setLeadName(e.target.value)}
                                                 />
@@ -642,6 +661,18 @@ export const TestDrive = () => {
                                      </p>
 
                                      <div className="flex flex-col gap-3">
+                                        {/* Owner comments.md: "This person just gave me their mobile and
+                                            consent... the best-qualified lead the page produces. It has no
+                                            booking button." Copper, since this is a real conversion moment. */}
+                                        {import.meta.env.VITE_CALENDLY_URL && (
+                                            <a
+                                                href={import.meta.env.VITE_CALENDLY_URL}
+                                                target="_blank" rel="noreferrer"
+                                                className="block w-full text-center bg-orange text-white py-3 rounded-xl font-bold text-base hover:bg-orange-hover shadow-btn-primary transition-all active:translate-y-0.5"
+                                            >
+                                                Book a 15-minute fit call &rarr;
+                                            </a>
+                                        )}
                                         <button
                                             onClick={launchAcceptFlow}
                                             className="w-full bg-navy text-white py-3 rounded-xl font-bold text-base hover:bg-navy-light shadow-btn-navy transition-all active:translate-y-0.5"

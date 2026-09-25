@@ -110,7 +110,10 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                         <div className="p-6 md:p-10 min-h-[400px] text-sm">
                             <div className="flex flex-col md:flex-row justify-between gap-6 border-b-2 border-border pb-6 mb-6">
                                 <div>
-                                    <div className="text-xl font-extrabold text-navy mb-2">Your Business Name</div>
+                                    {/* customer.name is the Test Drive form's "Business name" field now
+                                        (Owner comments.md Tier 2 #10) - it belongs here, not in "Bill To"
+                                        below, which is a placeholder for the (uncollected) end customer. */}
+                                    <div className="text-xl font-extrabold text-navy mb-2">{customer.name || 'Your Business Name'}</div>
                                     <div className="text-text-muted text-xs">ABN 00 000 000 000 &middot; Licence 000000C</div>
                                 </div>
                                 <div className="w-16 h-16 bg-bg-off border-2 border-border text-text-muted rounded-xl flex items-center justify-center text-xs font-bold text-center leading-tight">Your<br/>Logo</div>
@@ -119,8 +122,8 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                             <div className="mb-8">
                                 <h3 className="text-xs font-bold text-text-muted uppercase mb-2">Bill To:</h3>
                                 <div className="text-base font-semibold">
-                                    {customer.name || 'Sean Miller'}<br/>
-                                    {customer.email || 'sean@example.com'}<br/>
+                                    Your customer<br/>
+                                    {customer.email || 'customer@example.com'}<br/>
                                     {customer.phone || '04XX XXX XXX'}<br/>
                                     Sydney, NSW
                                 </div>
