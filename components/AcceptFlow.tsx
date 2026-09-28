@@ -240,7 +240,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                          {/* LOADING STATE */}
                          {animStep === 0 && (
                             <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center p-8">
-                                <div className="mb-6"><LoadingOrb size={72} shadow /></div>
+                                <div className="mb-6"><LoadingOrb size={64} state="connecting" /></div>
                                 <div className="text-xl font-bold text-navy mb-4">{loadingText}</div>
                                 <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden max-w-[200px]">
                                     <div className="h-full bg-orange transition-all duration-300 ease-out" style={{ width: `${progress}%` }}></div>
