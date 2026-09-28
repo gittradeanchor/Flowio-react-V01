@@ -3,6 +3,7 @@ import { JOB_DATA as FALLBACK_JOB_DATA } from '../constants';
 import { JobItem, QuoteTotals } from '../types';
 import { AcceptFlow } from './AcceptFlow';
 import { getStoredAttribution, getOrCreateLeadId } from '../hooks/useAttribution';
+import { LoadingOrb } from './LoadingOrb';
 
 // ---------------------------------------------------------------------------
 // QuoteSheet: the same real quote document at every width (scaled to fit via ScaledDocument below),
@@ -473,10 +474,7 @@ export const TestDrive = () => {
                                                 
                                                   {isPricebookLoading && (
                                                     <div className="flex items-center gap-2 mt-2 px-1 text-xs text-orange font-bold">
-                                                      <svg className="animate-spin h-3 w-3 text-orange" viewBox="0 0 24 24">
-                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                      </svg>
+                                                      <LoadingOrb size={16} />
                                                       Loading price list...
                                                     </div>
                                                   )}
@@ -527,12 +525,12 @@ export const TestDrive = () => {
                                                 </div>
                                             </div>
 
-                                            <button 
+                                            <button
                                                 onClick={handleGenerate}
                                                 disabled={items.length === 0 || generating || isPricebookLoading}
-                                                className="w-full mt-5 bg-[#047857] text-white py-4 rounded-lg font-bold text-lg hover:bg-[#065F46] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg active:translate-y-0.5"
+                                                className={`w-full mt-5 bg-[#047857] text-white py-4 rounded-lg font-bold text-lg hover:bg-[#065F46] disabled:cursor-not-allowed transition-colors shadow-lg active:translate-y-0.5 flex items-center justify-center gap-2 ${generating ? '' : 'disabled:opacity-50'}`}
                                             >
-                                                {generating ? '⚡ Generating...' : 'Generate My Quote →'}
+                                                {generating ? <><LoadingOrb size={22} /> Generating...</> : 'Generate My Quote →'}
                                             </button>
                                             
                                             <p className="text-center text-xs font-semibold text-text-muted mt-3">
@@ -635,9 +633,9 @@ export const TestDrive = () => {
 
                                         <button
                                             type="submit" disabled={smsSending}
-                                            className="bg-orange text-white font-bold py-3.5 rounded-xl mt-1 hover:bg-orange-hover shadow-btn-primary transition-all flex justify-center items-center disabled:opacity-60"
+                                            className={`bg-orange text-white font-bold py-3.5 rounded-xl mt-1 hover:bg-orange-hover shadow-btn-primary transition-all flex justify-center items-center gap-2 ${smsSending ? '' : 'disabled:opacity-60'}`}
                                         >
-                                            {smsSending ? 'Sending...' : 'Send it to my phone →'}
+                                            {smsSending ? <><LoadingOrb size={22} /> Sending...</> : 'Send it to my phone →'}
                                         </button>
                                     </form>
                                     <p className="text-xs text-text-muted text-center mt-3">
