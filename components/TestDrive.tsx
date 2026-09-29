@@ -474,7 +474,7 @@ export const TestDrive = () => {
                                                 
                                                   {isPricebookLoading && (
                                                     <div className="flex items-center gap-2 mt-2 px-1 text-xs text-orange font-bold">
-                                                      <LoadingOrb size={16} />
+                                                      <LoadingOrb size={20} state="searching" />
                                                       Loading price list...
                                                     </div>
                                                   )}
@@ -530,7 +530,7 @@ export const TestDrive = () => {
                                                 disabled={items.length === 0 || generating || isPricebookLoading}
                                                 className={`w-full mt-5 bg-[#047857] text-white py-4 rounded-lg font-bold text-lg hover:bg-[#065F46] disabled:cursor-not-allowed transition-colors shadow-lg active:translate-y-0.5 flex items-center justify-center gap-2 ${generating ? '' : 'disabled:opacity-50'}`}
                                             >
-                                                {generating ? <><LoadingOrb size={22} /> Generating...</> : 'Generate My Quote →'}
+                                                {generating ? <><LoadingOrb size={20} onDark state="solving" /> Generating...</> : 'Generate My Quote →'}
                                             </button>
                                             
                                             <p className="text-center text-xs font-semibold text-text-muted mt-3">
@@ -635,7 +635,7 @@ export const TestDrive = () => {
                                             type="submit" disabled={smsSending}
                                             className={`bg-orange text-white font-bold py-3.5 rounded-xl mt-1 hover:bg-orange-hover shadow-btn-primary transition-all flex justify-center items-center gap-2 ${smsSending ? '' : 'disabled:opacity-60'}`}
                                         >
-                                            {smsSending ? <><LoadingOrb size={22} /> Sending...</> : 'Send it to my phone →'}
+                                            {smsSending ? <><LoadingOrb size={20} onDark state="connecting" /> Sending...</> : 'Send it to my phone →'}
                                         </button>
                                     </form>
                                     <p className="text-xs text-text-muted text-center mt-3">
