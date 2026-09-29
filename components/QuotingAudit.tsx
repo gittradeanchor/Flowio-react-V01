@@ -58,6 +58,10 @@ export const QuotingAudit = () => {
                 }),
             });
 
+            if ((window as any).fbq) {
+                (window as any).fbq('track', 'Lead', { content_name: 'audit' });
+            }
+
             setIsSubmitted(true);
         } catch {
             setError('Something went wrong. Please try again.');
