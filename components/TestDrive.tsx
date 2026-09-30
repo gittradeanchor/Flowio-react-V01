@@ -365,6 +365,14 @@ export const TestDrive = () => {
             setSubmitError(failMsg);
             return;
           }
+
+          // Meta Pixel Lead: only after the server confirms, never on click. eventID = requestId
+          // (the same id sent to demo_delivery_code.gs) is the 3rd-arg dedupe key Meta's Conversions
+          // API matches against, not an event param — see Meta's event-deduplication docs.
+          if ((window as any).fbq) {
+            (window as any).fbq('track', 'Lead', { content_name: 'test_drive' }, { eventID: requestId });
+          }
+
           setStage(2);
         } catch {
           setSubmitError(failMsg);

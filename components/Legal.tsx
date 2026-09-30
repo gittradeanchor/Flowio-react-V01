@@ -129,7 +129,8 @@ export const Privacy = () => (
         <P>Retention: {RETENTION}.</P>
 
         <H2>6. Who else can see it</H2>
-        <P>Nobody buys it and nobody rents it. It is handled by the services this site and the workflow run on: Google (Sheets, Drive, Calendar, Apps Script), Make (automation), ClickSend (text messages), Stripe (payments), Calendly (call booking) and Cloudflare (website delivery). Some of these process data outside Australia. Make, for example, runs in the United States.</P>
+        <P>Nobody buys it and nobody rents it. It is handled by the services this site and the workflow run on: Google (Sheets, Drive, Calendar, Apps Script), Make (automation), ClickSend (text messages), Stripe (payments), Calendly (call booking), Meta (Meta Pixel, advertising measurement — see below) and Cloudflare (website delivery). Some of these process data outside Australia. Make, for example, runs in the United States.</P>
+        <P>This site uses the Meta Pixel, which places a cookie in your browser and tells me, in aggregate, whether someone who saw an ad on Facebook or Instagram went on to try the demo, book a call, or request the audit — so I can tell whether that advertising is working. It does not give me your name, email or phone number by itself. You can block or clear this cookie in your browser at any time without breaking the site. This use is disclosed under the Australian Privacy Act 1988 (Cth).</P>
 
         <H2>7. Messages you receive from me</H2>
         <P>Marketing messages identify me and include a way to opt out. If you ask me to stop contacting you, I stop within five business days and keep only what I need to honour that request.</P>

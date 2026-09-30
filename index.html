@@ -17,6 +17,27 @@
     <meta name="theme-color" content="#1C1917">
     <title>TradeAnchor — Stop Doing Paperwork at 9PM</title>
     <meta name="description" content="Done-for-you quoting for Australian electricians, inside the Google Sheet you already use. Send a quote, your customer accepts on their phone, and you confirm the job into your calendar." />
+
+    <!-- Meta Pixel Code. ID comes from the VITE_META_PIXEL_ID Cloudflare env var (Vite's %VAR% HTML
+         replacement, same pattern as every other VITE_* value in this repo) — never hardcode the ID here.
+         Automatic Advanced Matching is a Business Manager-side setting, not something this snippet controls;
+         leave it off in Events Manager until Sean approves it and the privacy notice covers it. -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '%VITE_META_PIXEL_ID%');
+      fbq('track', 'PageView');
+    </script>
+    <!-- No <noscript> fallback pixel: this is a JS-rendered React app (the whole page is blank without
+         JS anyway), and Vite's HTML build treats %VAR% text inside an <img src> as a URI to decode,
+         which throws on this placeholder — not worth working around for the ~0 real no-JS visitors. -->
+    <!-- End Meta Pixel Code -->
   </head>
   <body class="bg-white text-text-main antialiased">
     <div id="root"></div>
