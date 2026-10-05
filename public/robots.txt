@@ -1,0 +1,53 @@
+# flowio.tradeanchor.com.au
+# Lead-gen landing page for TradeAnchor's Flowio product.
+#
+# Strategy, not just defaults:
+# - Let everyone (including AI assistants answering a live question on a
+#   visitor's behalf) find and read the marketing pages. That's a lead
+#   arriving through a new channel, same as a Google click.
+# - Keep every crawler out of anything that's personalized, one-time, or
+#   post-sale: no SEO value, and the quote-accept links carry a token tied
+#   to one specific customer's quote, so they shouldn't be crawlable at all.
+# - Separately, tell AI crawlers that only scrape to train a model (not to
+#   answer a specific person's question right now) to stay out entirely.
+#   No visitor, no lead, no traffic ever comes back from training data, so
+#   there's no upside in handing over pricing and copy for free. This is
+#   intentionally narrower than the big disallow block above it - do not
+#   merge the two lists.
+
+User-agent: *
+Allow: /
+Disallow: /accept
+Disallow: /accept/*
+Disallow: /pilot
+Disallow: /booking-confirmed
+Disallow: /onboarding/
+Disallow: /*?demo=accept*
+
+# Training-only crawlers: full disallow, every path.
+# NOTE: this is deliberately NOT "facebookexternalhit" (Meta's link-preview /
+# Pixel-debugger crawler, which must stay allowed - see 30 Sept Cloudflare
+# bot-fight-mode fix). "Meta-ExternalAgent" is Meta's separate AI-training
+# crawler, a different bot entirely.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+Sitemap: https://flowio.tradeanchor.com.au/sitemap.xml
