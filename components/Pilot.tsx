@@ -64,7 +64,7 @@ export const Pilot = () => (
                 </ul>
             </div>
 
-            <p className="text-sm text-text-muted mt-8">Questions? <a className="underline" href="mailto:hello@tradeanchor.com.au">hello@tradeanchor.com.au</a></p>
+            <p className="text-sm text-text-muted mt-8">Questions? <a className="underline" href="mailto:sean@getflowio.com">sean@getflowio.com</a></p>
         </main>
     </div>
 );

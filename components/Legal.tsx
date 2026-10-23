@@ -11,8 +11,8 @@ import React from 'react';
  */
 export const LEGAL_READY = true; // founder approved A8. NOTE: not yet read by a lawyer (checklist B17)
 
-const CONTACT_EMAIL = 'hello@tradeanchor.com.au';
-const REFUND_EMAIL = 'refunds@tradeanchor.com.au'; // confirmed by founder
+const CONTACT_EMAIL = 'sean@getflowio.com';
+const REFUND_EMAIL = 'refunds@getflowio.com'; // confirmed by founder; mailbox must exist on getflowio.com before this goes live
 const RETENTION = '12 months after our last contact, or sooner if you ask me to delete it'; // founder answer: 12 months (asked as a question, confirm)
 const UPDATED = '20 September 2026';
 
