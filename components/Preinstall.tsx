@@ -13,6 +13,8 @@ type FormState = {
   // Pricebook (required) 
   pricebook_sheet_link: string; // share link to sheet/drive/dropbox/etc
   pricebook_text: string; // paste items
+  gst_registered: string; // "yes" or "no": is the business registered for GST
+  prices_include_gst: string; // "no" (prices are before GST, the default) or "yes"
 
   // Optional business context
   abn: string;
@@ -55,6 +57,8 @@ const initialState: FormState = {
 
   pricebook_sheet_link: "",
   pricebook_text: "",
+  gst_registered: "yes",
+  prices_include_gst: "no",
 
   abn: "",
   business_address: "",
@@ -521,7 +525,7 @@ export default function Preinstall() {
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div className="font-extrabold text-gray-900 text-sm">Option B — Paste items</div>
                 <p className="text-xs text-gray-600 mt-1">
-                  One per line. Format: <span className="font-mono">SKU, Name, Price, Default Qty (optional)</span>
+                  One per line. Format: <span className="font-mono">SKU, Name, Price before GST</span>
                 </p>
 
                 <textarea
@@ -530,8 +534,25 @@ export default function Preinstall() {
                   value={form.pricebook_text}
                   onChange={updateText}
                   className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
-                  placeholder={`ELEC-001, Call-out (incl GST), 120, 1\nELEC-002, Power point supply+install, 165, 1\nGEN-002, Labour (per hour), 110, 2`}
+                  placeholder={`ELEC-001, Call-out, 120\nELEC-002, Power point supply+install, 165\nGEN-002, Labour (per hour), 110`}
                 />
+              </div>
+
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Registered for GST?</span>
+                  <select name="gst_registered" value={form.gst_registered} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">My prices are</span>
+                  <select name="prices_include_gst" value={form.prices_include_gst} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none">
+                    <option value="no">Before GST (ex GST)</option>
+                    <option value="yes">After GST (incl GST)</option>
+                  </select>
+                </label>
               </div>
 
               {pricebookError && (

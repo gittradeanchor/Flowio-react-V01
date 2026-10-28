@@ -14,3 +14,10 @@ The Make webhook URL is a public, unguessable address. Anyone who finds it can p
 
 ## Not covered
 Rate limiting. If someone hammers the endpoint, add a Cloudflare rate-limiting rule on `/api/testdrive*` (Security, WAF, Rate limiting).
+
+# Short quote link (about 10 minutes, you do this)
+1. Create a Worker, paste `short-link.js`, deploy.
+2. Add one plain variable on the Worker: `FLOWIO_ACCEPT_BASE` = the Flowio quote page address (the API gateway address ending in `/acceptance`). It is not a secret.
+3. Route it: Worker, Settings, Triggers, add route `flowio.tradeanchor.com.au/q/*`.
+4. On the Flowio service set `FLOWIO_SHORT_LINK_BASE` = `https://flowio.tradeanchor.com.au/q` (done by the Flowio build side). Until this is set, texts keep the long link.
+5. Test with a quote sent to your own mobile: the text carries `flowio.tradeanchor.com.au/q/xxxxxxxx` and opening it shows the quote.
