@@ -1,80 +1,83 @@
 import React, { useEffect, useMemo, useState } from "react";
 
+// Every answer on this form maps to a TradeAnchor licence profile field or a PriceBook line:
+//   workspace_admin_email -> Email, SupportEmail (and alert email unless alert_email is given)
+//   business_name -> CompanyName          abn -> ABN (required, 11 digits)
+//   business_address -> CompanyAddress    company_phone -> CompanyPhone (blank: primary mobile)
+//   primary_mobile -> TradieAlertMobile   alert_email -> TradieAlertEmail
+//   gst_mode -> GSTPercent, prices before or after GST, "GST separated" on quotes
+//   working_days -> WorkingDays           business_hours (start-end) -> WorkingHours
+//   logo_link -> CompanyLogoUrl           pricebook_text / pricebook_sheet_link -> PriceBook lines
+//   booking_notes -> BlockedBookingDates (set by hand after the phone check)
 type FormState = {
   workspace_admin_email: string;
   business_name: string;
+  abn: string;
   primary_mobile: string;
-  call_answerer: string;
   trade: string;
+
+  gst_mode: string; // "exclude" | "include" | "not_registered"
+  gst_registered: string; // derived: "yes" | "no"
+  prices_include_gst: string; // derived: "yes" | "no"
 
   confirm_access: boolean;
   consent: boolean;
+  consent_text: string;
 
-  // Pricebook (required) 
-  pricebook_sheet_link: string; // share link to sheet/drive/dropbox/etc
-  pricebook_text: string; // paste items
-  gst_registered: string; // "yes" or "no": is the business registered for GST
-  prices_include_gst: string; // "no" (prices are before GST, the default) or "yes"
+  pricebook_sheet_link: string;
+  pricebook_text: string;
 
-  // Optional business context
-  abn: string;
   business_address: string;
-  service_area: string;
-  business_hours: string;
-
-  // Optional links (replaces file uploads)
-  quote_template_link: string;
+  company_phone: string;
+  alert_email: string;
+  working_days: string; // "Mon,Tue,Wed,Thu,Fri"
+  working_start: string;
+  working_end: string;
+  business_hours: string; // derived "07:00-17:00"
   logo_link: string;
+  booking_notes: string;
 
-  // Deposit prefs (optional)
-  deposit_enabled: boolean;
-  deposit_amount: string;
-  deposit_when: string;
-  deposit_policy: string;
-
-  // Calendar prefs (optional)
-  calendar_name: string;
-  booking_restrictions: string;
-
-  // from URL
   token: string; // onboardingToken from ?t=
   pid: string;   // personId from ?pid=
 };
 
 const BRAND = "#4A7C59";
 const BG = "#FDFBF7";
-const DRAFT_KEY = "flowio_preinstall_draft_v2";
+const DRAFT_KEY = "tradeanchor_preinstall_draft_v3";
+const CONSENT_TEXT = "I consent to TradeAnchor sending SMS and email to my customers on my behalf for quotes and booking confirmations, and sending job alerts to me by SMS and email.";
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const TIMES = Array.from({ length: 31 }, (_, i) => {
+  const minutes = 5 * 60 + i * 30;
+  return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${minutes % 60 === 0 ? "00" : "30"}`;
+});
 
 const initialState: FormState = {
   workspace_admin_email: "",
   business_name: "",
+  abn: "",
   primary_mobile: "",
-  call_answerer: "",
   trade: "",
+
+  gst_mode: "",
+  gst_registered: "",
+  prices_include_gst: "",
 
   confirm_access: false,
   consent: false,
+  consent_text: CONSENT_TEXT,
 
   pricebook_sheet_link: "",
   pricebook_text: "",
-  gst_registered: "yes",
-  prices_include_gst: "no",
 
-  abn: "",
   business_address: "",
-  service_area: "",
-  business_hours: "",
-
-  quote_template_link: "",
+  company_phone: "",
+  alert_email: "",
+  working_days: "Mon,Tue,Wed,Thu,Fri",
+  working_start: "07:00",
+  working_end: "17:00",
+  business_hours: "07:00-17:00",
   logo_link: "",
-
-  deposit_enabled: false,
-  deposit_amount: "",
-  deposit_when: "",
-  deposit_policy: "",
-
-  calendar_name: "",
-  booking_restrictions: "",
+  booking_notes: "",
 
   token: "",
   pid: "",
@@ -82,6 +85,22 @@ const initialState: FormState = {
 
 function looksLikeEmail(s: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s || "").trim());
+}
+
+function abnDigits(s: string) {
+  return (s || "").replace(/\D+/g, "");
+}
+
+function looksLikeAuMobile(s: string) {
+  const digits = (s || "").replace(/[^0-9+]/g, "").replace(/^[+]?61/, "0");
+  return /^04\d{8}$/.test(digits);
+}
+
+function derivedGst(mode: string) {
+  if (mode === "include") return { gst_registered: "yes", prices_include_gst: "yes" };
+  if (mode === "not_registered") return { gst_registered: "no", prices_include_gst: "no" };
+  if (mode === "exclude") return { gst_registered: "yes", prices_include_gst: "no" };
+  return { gst_registered: "", prices_include_gst: "" };
 }
 
 export default function Preinstall() {
@@ -111,6 +130,7 @@ export default function Preinstall() {
         // preserve token/pid from URL (URL wins)
         token: prev.token || obj.token || "",
         pid: prev.pid || obj.pid || "",
+        consent_text: CONSENT_TEXT,
       }));
     } catch {
       // ignore
@@ -128,16 +148,18 @@ export default function Preinstall() {
     }
   }, [form, isSubmitted]);
 
-  const essentialTotal = 7;
+  const essentialTotal = 9;
   const essentialFilled = useMemo(() => {
     let filled = 0;
     if (form.workspace_admin_email.trim()) filled++;
     if (form.business_name.trim()) filled++;
+    if (abnDigits(form.abn).length === 11) filled++;
     if (form.primary_mobile.trim()) filled++;
-    if (form.call_answerer.trim()) filled++;
     if (form.trade.trim()) filled++;
+    if (form.gst_mode) filled++;
     if (form.confirm_access) filled++;
     if (form.consent) filled++;
+    if (form.pricebook_text.trim() || form.pricebook_sheet_link.trim()) filled++;
     return filled;
   }, [form]);
 
@@ -149,11 +171,18 @@ export default function Preinstall() {
     return hasText || hasLink;
   }, [form]);
 
+  const priceLabel = form.gst_mode === "include" ? "Price including GST" : form.gst_mode === "not_registered" ? "Price" : "Price before GST";
+
   function updateText(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     setSubmitError("");
     setPricebookError(false);
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [name]: value } as FormState;
+      if (name === "gst_mode") Object.assign(next, derivedGst(value));
+      if (name === "working_start" || name === "working_end") next.business_hours = `${next.working_start}-${next.working_end}`;
+      return next;
+    });
   }
 
   function updateCheckbox(e: React.ChangeEvent<HTMLInputElement>) {
@@ -161,6 +190,15 @@ export default function Preinstall() {
     setSubmitError("");
     setPricebookError(false);
     setForm((prev) => ({ ...prev, [name]: checked }));
+  }
+
+  function toggleDay(day: string) {
+    setSubmitError("");
+    setForm((prev) => {
+      const current = prev.working_days.split(",").filter(Boolean);
+      const next = current.includes(day) ? current.filter((d) => d !== day) : [...current, day];
+      return { ...prev, working_days: DAYS.filter((d) => next.includes(d)).join(",") };
+    });
   }
 
   function clearAll() {
@@ -182,19 +220,26 @@ export default function Preinstall() {
 
     // HARD REQUIREMENT: token must exist (unique per customer)
     if (!form.token.trim()) {
-      setSubmitError('Missing token. Please use the preinstall link we emailed you (it contains "?t=").');
+      setSubmitError('Missing token. Please use the setup link we sent you (it contains "?t=").');
       return;
     }
 
     // Essentials validation
     const missing: string[] = [];
-    if (!form.workspace_admin_email.trim() || !looksLikeEmail(form.workspace_admin_email)) missing.push("Google Workspace Admin Email");
-    if (!form.business_name.trim()) missing.push("Business Name");
-    if (!form.primary_mobile.trim()) missing.push("Primary Mobile");
-    if (!form.call_answerer.trim()) missing.push("Who Answers Calls");
+    if (!form.workspace_admin_email.trim() || !looksLikeEmail(form.workspace_admin_email)) missing.push("Google account email");
+    if (!form.business_name.trim()) missing.push("Business name");
+    if (abnDigits(form.abn).length !== 11) missing.push("ABN (11 digits)");
+    if (!looksLikeAuMobile(form.primary_mobile)) missing.push("Mobile (Australian, 04xx xxx xxx)");
     if (!form.trade.trim()) missing.push("Trade");
-    if (!form.confirm_access) missing.push("Confirm access checkbox");
-    if (!form.consent) missing.push("Consent checkbox");
+    if (!form.gst_mode) missing.push("GST");
+    if (!form.confirm_access) missing.push("Access tick");
+    if (!form.consent) missing.push("Consent tick");
+
+    if (missing.length) {
+      setSubmitError(`Please complete: ${missing.join(", ")}.`);
+      setPricebookError(false);
+      return;
+    }
 
     if (!pricebookProvided) {
       setPricebookError(true);
@@ -202,16 +247,20 @@ export default function Preinstall() {
       return;
     }
 
-    if (missing.length) {
-      setSubmitError("Missing required fields. Please complete the Essentials section (red star fields and checkboxes).");
-      setPricebookError(false);
+    const optionalProblems: string[] = [];
+    if (form.alert_email.trim() && !looksLikeEmail(form.alert_email)) optionalProblems.push("alert email");
+    if (form.company_phone.trim() && (form.company_phone.replace(/\D+/g, "").length < 8)) optionalProblems.push("business phone");
+    if (!form.working_days.trim()) optionalProblems.push("working days (tick at least one)");
+    if (form.working_start >= form.working_end) optionalProblems.push("working hours (start must be before finish)");
+    if (optionalProblems.length) {
+      setSubmitError(`Please check: ${optionalProblems.join(", ")}.`);
       return;
     }
 
     // POST to GAS
     const endpoint = (import.meta as any).env?.VITE_GSCRIPT_URL || "";
     if (!endpoint) {
-      setSubmitError("Missing VITE_GSCRIPT_URL in your site environment variables.");
+      setSubmitError("This form is not connected yet. Please tell us and we will fix it.");
       return;
     }
 
@@ -220,13 +269,14 @@ export default function Preinstall() {
     setPricebookError(false);
 
     try {
+      const submitted = { ...form, ...derivedGst(form.gst_mode), business_hours: `${form.working_start}-${form.working_end}`, consent_text: CONSENT_TEXT, consent_version: "2026-10-29" };
       const payload = {
         event: "preinstall_submitted",
         timestamp: new Date().toISOString(),
         token: form.token,
         pid: form.pid,
         essentialsPct,
-        form, // store full payload
+        form: submitted, // store full payload
       };
 
       // Use x-www-form-urlencoded to avoid CORS preflight/OPTIONS headaches
@@ -243,25 +293,23 @@ export default function Preinstall() {
       });
 
       const raw = await res.text();
-      console.log("GAS raw response:", raw);
-      
+
       let ok = false;
       try {
         ok = !!JSON.parse(raw)?.ok;
       } catch {
         // if it's not JSON, ok stays false
       }
-      
-      if (!ok) {
-        throw new Error(`GAS response not ok: ${raw}`);
-      }
 
+      if (!ok) {
+        throw new Error("The server did not accept it.");
+      }
 
       // Success
       localStorage.removeItem(DRAFT_KEY);
       setIsSubmitted(true);
     } catch (err: any) {
-      setSubmitError(`Submit failed. ${err?.message || "Unknown error"}`);
+      setSubmitError(`Submit failed. ${err?.message || "Unknown error"} Please try again, or reply to our message.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -275,17 +323,17 @@ export default function Preinstall() {
           <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center text-white text-2xl font-black" style={{ background: BRAND }}>
             ✓
           </div>
-          <h1 className="mt-4 text-2xl font-extrabold text-gray-900">All good — received.</h1>
+          <h1 className="mt-4 text-2xl font-extrabold text-gray-900">All good, received.</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Your pre-install info is sent to TradeAnchor. We’ll use it to prep your Flowio install inside your Google Workspace.
+            Your setup details are with TradeAnchor. We will use them to prepare your install inside your Google Workspace.
           </p>
 
           <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4 text-left">
             <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wider">What happens next</div>
             <ul className="mt-2 text-sm text-gray-700 list-disc pl-5 space-y-1">
-              <li>We review your pricebook + setup choices</li>
-              <li>We build your install pack</li>
-              <li>We confirm the install time</li>
+              <li>We check your details and price list</li>
+              <li>We call you for a quick check (about 10 minutes)</li>
+              <li>We confirm your install time</li>
             </ul>
           </div>
 
@@ -306,20 +354,23 @@ export default function Preinstall() {
     );
   }
 
+  const inputClass = "mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none";
+  const labelClass = "text-xs font-extrabold text-gray-600 uppercase tracking-wider";
+
   return (
     <div className="min-h-screen" style={{ background: BG, fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}>
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900">Flowio Pre-Install Checklist</h1>
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900">TradeAnchor Setup Form</h1>
             <p className="text-xs sm:text-sm text-gray-500">
-              Fill this once. We install Flowio in your Google Workspace so you can start quoting the same day.
+              Fill this once. We install TradeAnchor in your Google Workspace so you can start quoting the same day.
             </p>
           </div>
 
           <div className="min-w-[160px] text-right">
-            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Essentials</div>
+            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Required</div>
             <div className="flex items-center justify-end gap-3 mt-1">
               <div className="text-lg font-extrabold" style={{ color: BRAND }}>
                 {essentialsPct}%
@@ -339,7 +390,7 @@ export default function Preinstall() {
             <div>
               <h2 className="text-lg font-extrabold text-gray-900">What this does (10 seconds)</h2>
               <p className="text-sm text-gray-600 mt-1">
-                You give us the basics. We install Flowio inside YOUR Google Workspace so you can send a quote → customer accepts → job gets booked.
+                You give us the basics. We install TradeAnchor inside YOUR Google Workspace so you can send a quote → customer accepts → job gets booked.
               </p>
             </div>
             <div className="flex gap-2">
@@ -355,7 +406,7 @@ export default function Preinstall() {
 
           {!form.token && (
             <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-              Missing token in URL. Use the link we emailed you (it includes <b>?t=</b>).
+              Missing token in URL. Use the setup link we sent you (it includes <b>?t=</b>).
             </div>
           )}
         </section>
@@ -366,16 +417,16 @@ export default function Preinstall() {
           <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)] border-l-4" style={{ borderLeftColor: BRAND }}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Essentials (required)</h3>
-                <p className="text-sm text-gray-600">If you fill only this section, we can proceed.</p>
+                <h3 className="text-lg font-extrabold text-gray-900">Your business (required)</h3>
+                <p className="text-sm text-gray-600">These go straight onto your quotes and set up your account.</p>
               </div>
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">~ 2 minutes</span>
             </div>
 
             <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Google Workspace Admin Email
+                <label className={labelClass}>
+                  <span className="text-red-500">*</span> Google account email (the account that will own your TradeAnchor Sheet)
                 </label>
                 <input
                   name="workspace_admin_email"
@@ -383,64 +434,37 @@ export default function Preinstall() {
                   autoComplete="email"
                   value={form.workspace_admin_email}
                   onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                  placeholder="admin@yourdomain.com"
+                  className={inputClass}
+                  placeholder="you@yourbusiness.com.au or you@gmail.com"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Business Name
+                <label className={labelClass}>
+                  <span className="text-red-500">*</span> Business name
                 </label>
-                <input
-                  name="business_name"
-                  type="text"
-                  value={form.business_name}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                  placeholder="Your Business Pty Ltd"
-                />
+                <input name="business_name" type="text" value={form.business_name} onChange={updateText} className={inputClass} placeholder="Your Business Pty Ltd" />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Primary Mobile (SMS)
+                <label className={labelClass}>
+                  <span className="text-red-500">*</span> ABN
                 </label>
-                <input
-                  name="primary_mobile"
-                  type="tel"
-                  inputMode="tel"
-                  value={form.primary_mobile}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                  placeholder="04xx xxx xxx"
-                />
+                <input name="abn" type="text" inputMode="numeric" value={form.abn} onChange={updateText} className={inputClass} placeholder="11 digits, e.g. 12 345 678 901" />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
-                  <span className="text-red-500">*</span> Who Answers Calls?
+                <label className={labelClass}>
+                  <span className="text-red-500">*</span> Your mobile (we text you job alerts)
                 </label>
-                <input
-                  name="call_answerer"
-                  type="text"
-                  value={form.call_answerer}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                  placeholder="Sam (7am–5pm)"
-                />
+                <input name="primary_mobile" type="tel" inputMode="tel" value={form.primary_mobile} onChange={updateText} className={inputClass} placeholder="04xx xxx xxx" />
               </div>
 
               <div>
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className={labelClass}>
                   <span className="text-red-500">*</span> Trade
                 </label>
-                <select
-                  name="trade"
-                  value={form.trade}
-                  onChange={updateText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                >
+                <select name="trade" value={form.trade} onChange={updateText} className={inputClass}>
                   <option value="">Select…</option>
                   <option>Electrician</option>
                   <option>HVAC</option>
@@ -450,41 +474,37 @@ export default function Preinstall() {
                 </select>
               </div>
 
+              <div className="md:col-span-2">
+                <label className={labelClass}>
+                  <span className="text-red-500">*</span> GST
+                </label>
+                <select name="gst_mode" value={form.gst_mode} onChange={updateText} className={inputClass}>
+                  <option value="">Select…</option>
+                  <option value="exclude">I am registered for GST and my prices EXCLUDE GST (GST is added on the quote)</option>
+                  <option value="include">I am registered for GST and my prices INCLUDE GST</option>
+                  <option value="not_registered">I am not registered for GST</option>
+                </select>
+              </div>
+
               <div className="md:col-span-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
                 <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    name="confirm_access"
-                    type="checkbox"
-                    checked={form.confirm_access}
-                    onChange={updateCheckbox}
-                    className="mt-1 h-5 w-5"
-                    style={{ accentColor: BRAND }}
-                  />
+                  <input name="confirm_access" type="checkbox" checked={form.confirm_access} onChange={updateCheckbox} className="mt-1 h-5 w-5" style={{ accentColor: BRAND }} />
                   <div>
                     <div className="font-extrabold text-gray-900 text-sm">
-                      <span className="text-red-500">*</span> I can access Google Sheets, Drive, Calendar (and Gmail if used).
+                      <span className="text-red-500">*</span> I can sign in to Google Sheets, Drive and Calendar with the account above.
                     </div>
                   </div>
                 </label>
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">
+                <label className={labelClass}>
                   <span className="text-red-500">*</span> Consent
                 </label>
                 <div className="mt-1 rounded-lg text-white p-4" style={{ background: BRAND }}>
-                  <p className="text-sm italic opacity-95">
-                    “I consent to Flowio sending SMS/email to customers on my behalf for quotes, booking confirmations and reminders.”
-                  </p>
+                  <p className="text-sm italic opacity-95">“{CONSENT_TEXT}”</p>
                   <label className="mt-3 flex items-center gap-3 cursor-pointer rounded-lg p-3 hover:opacity-95" style={{ background: "rgba(255,255,255,0.12)" }}>
-                    <input
-                      name="consent"
-                      type="checkbox"
-                      checked={form.consent}
-                      onChange={updateCheckbox}
-                      className="h-5 w-5"
-                      style={{ accentColor: "white" }}
-                    />
+                    <input name="consent" type="checkbox" checked={form.consent} onChange={updateCheckbox} className="h-5 w-5" style={{ accentColor: "white" }} />
                     <span className="font-extrabold text-sm">Yes, I consent</span>
                   </label>
                 </div>
@@ -492,40 +512,21 @@ export default function Preinstall() {
             </div>
           </section>
 
-          {/* PRICEBOOK */}
+          {/* PRICE LIST */}
           <section className="p-6 bg-white rounded-[14px] shadow-[0_6px_20px_rgba(17,24,39,0.06)] border-l-4 border-gray-600">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-extrabold text-gray-900">Pricebook (required)</h3>
-                <p className="text-sm text-gray-600">Paste items or drop a share link.</p>
+                <h3 className="text-lg font-extrabold text-gray-900">Price list (required)</h3>
+                <p className="text-sm text-gray-600">Paste your items, or share a link. Pasting is fastest.</p>
               </div>
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">~ 3 minutes</span>
             </div>
 
             <div className="mt-5 grid grid-cols-1 gap-4">
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="font-extrabold text-gray-900 text-sm">Option A — Share link</div>
-                <p className="text-xs text-gray-600 mt-1">Google Sheet / Drive / Dropbox. Make sure it’s accessible.</p>
-
-                <label className="mt-3 block">
-                  <span className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Pricebook link</span>
-                  <input
-                    name="pricebook_sheet_link"
-                    type="url"
-                    value={form.pricebook_sheet_link}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="https://docs.google.com/spreadsheets/d/..."
-                  />
-                </label>
-              </div>
-
-              <div className="text-center text-xs font-extrabold text-gray-400">— OR —</div>
-
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="font-extrabold text-gray-900 text-sm">Option B — Paste items</div>
+                <div className="font-extrabold text-gray-900 text-sm">Option A: paste items</div>
                 <p className="text-xs text-gray-600 mt-1">
-                  One per line. Format: <span className="font-mono">SKU, Name, Price before GST</span>
+                  One per line. Format: <span className="font-mono">Code, Name, {priceLabel}</span>
                 </p>
 
                 <textarea
@@ -534,30 +535,24 @@ export default function Preinstall() {
                   value={form.pricebook_text}
                   onChange={updateText}
                   className="mt-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none"
-                  placeholder={`ELEC-001, Call-out, 120\nELEC-002, Power point supply+install, 165\nGEN-002, Labour (per hour), 110`}
+                  placeholder={`ELEC-001, Call-out, 120\nELEC-002, Power point supply and install, 165\nGEN-002, Labour (per hour), 110`}
                 />
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <label className="block">
-                  <span className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Registered for GST?</span>
-                  <select name="gst_registered" value={form.gst_registered} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none">
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </label>
-                <label className="block">
-                  <span className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">My prices are</span>
-                  <select name="prices_include_gst" value={form.prices_include_gst} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none">
-                    <option value="no">Before GST (ex GST)</option>
-                    <option value="yes">After GST (incl GST)</option>
-                  </select>
+              <div className="text-center text-xs font-extrabold text-gray-400">OR</div>
+
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="font-extrabold text-gray-900 text-sm">Option B: share a link</div>
+                <p className="text-xs text-gray-600 mt-1">Google Sheet, Drive or Dropbox link. Make sure anyone with the link can view it.</p>
+                <label className="mt-3 block">
+                  <span className={labelClass}>Price list link</span>
+                  <input name="pricebook_sheet_link" type="url" value={form.pricebook_sheet_link} onChange={updateText} className={inputClass} placeholder="https://docs.google.com/spreadsheets/d/..." />
                 </label>
               </div>
 
               {pricebookError && (
                 <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-                  Please provide a pricebook via link or pasted items.
+                  Please add your price list: paste items or share a link.
                 </div>
               )}
             </div>
@@ -570,7 +565,7 @@ export default function Preinstall() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-extrabold text-gray-900">Optional (helps us install faster)</h3>
-                    <p className="text-sm text-gray-600">If you skip this, we’ll confirm on the phone.</p>
+                    <p className="text-sm text-gray-600">Skip anything you like. We confirm the rest on the phone.</p>
                   </div>
                   <span className="text-sm font-extrabold" style={{ color: BRAND }}>
                     Expand
@@ -579,93 +574,65 @@ export default function Preinstall() {
               </summary>
 
               <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">ABN</label>
-                  <input name="abn" type="text" value={form.abn} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Business address (shown on quotes)</label>
+                  <input name="business_address" type="text" value={form.business_address} onChange={updateText} className={inputClass} placeholder="12 Example St, Suburb NSW 2000" />
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Business Address</label>
-                  <input name="business_address" type="text" value={form.business_address} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
+                  <label className={labelClass}>Business phone on quotes</label>
+                  <input name="company_phone" type="tel" inputMode="tel" value={form.company_phone} onChange={updateText} className={inputClass} placeholder="Leave blank to use your mobile" />
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Service Area</label>
-                  <input name="service_area" type="text" value={form.service_area} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
-                </div>
-
-                <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Business Hours</label>
-                  <input name="business_hours" type="text" value={form.business_hours} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" />
+                  <label className={labelClass}>Email for job alerts</label>
+                  <input name="alert_email" type="email" value={form.alert_email} onChange={updateText} className={inputClass} placeholder="Leave blank to use your Google account email" />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Current Quote Template (link)</label>
-                  <input
-                    name="quote_template_link"
-                    type="url"
-                    value={form.quote_template_link}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="https://drive.google.com/… or https://dropbox.com/…"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Logo (link)</label>
-                  <input
-                    name="logo_link"
-                    type="url"
-                    value={form.logo_link}
-                    onChange={updateText}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none"
-                    placeholder="https://drive.google.com/…"
-                  />
-                </div>
-
-                <div className="md:col-span-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="font-extrabold text-gray-900 text-sm">Deposits (optional)</div>
-                      <p className="text-xs text-gray-600 mt-1">If you’re unsure, leave OFF for now.</p>
-                    </div>
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        name="deposit_enabled"
-                        type="checkbox"
-                        checked={form.deposit_enabled}
-                        onChange={updateCheckbox}
-                        className="h-5 w-5"
-                        style={{ accentColor: BRAND }}
-                      />
-                      <span className="font-extrabold text-sm text-gray-900">Enable</span>
-                    </label>
-                  </div>
-
-                  <div className={`mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 ${form.deposit_enabled ? "" : "opacity-50 pointer-events-none"}`}>
-                    <div>
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Amount / %</label>
-                      <input name="deposit_amount" type="text" value={form.deposit_amount} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. 20% or $200" />
-                    </div>
-                    <div>
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">When Charged</label>
-                      <input name="deposit_when" type="text" value={form.deposit_when} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. on booking" />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Refund / Cancellation</label>
-                      <textarea name="deposit_policy" rows={3} value={form.deposit_policy} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none" placeholder="e.g. Refundable with 24h notice. Otherwise $80 admin fee." />
-                    </div>
+                  <label className={labelClass}>Days customers can book you</label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {DAYS.map((day) => {
+                      const on = form.working_days.split(",").includes(day);
+                      return (
+                        <button
+                          key={day}
+                          type="button"
+                          onClick={() => toggleDay(day)}
+                          aria-pressed={on}
+                          className="min-w-[56px] px-3 py-2 rounded-lg border text-sm font-extrabold"
+                          style={on ? { background: BRAND, color: "white", borderColor: BRAND } : { background: "white", color: "#374151", borderColor: "#d1d5db" }}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Calendar Name</label>
-                  <input name="calendar_name" type="text" value={form.calendar_name} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" placeholder="Jobs" />
+                  <label className={labelClass}>Customers can book from</label>
+                  <select name="working_start" value={form.working_start} onChange={updateText} className={inputClass}>
+                    {TIMES.map((time) => <option key={time} value={time}>{time}</option>)}
+                  </select>
                 </div>
 
                 <div>
-                  <label className="text-xs font-extrabold text-gray-600 uppercase tracking-wider">Booking Restrictions</label>
-                  <input name="booking_restrictions" type="text" value={form.booking_restrictions} onChange={updateText} className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none" placeholder="No bookings after 4:30pm" />
+                  <label className={labelClass}>Until</label>
+                  <select name="working_end" value={form.working_end} onChange={updateText} className={inputClass}>
+                    {TIMES.map((time) => <option key={time} value={time}>{time}</option>)}
+                  </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Logo link (public image)</label>
+                  <input name="logo_link" type="url" value={form.logo_link} onChange={updateText} className={inputClass} placeholder="https://yourwebsite.com.au/logo.png" />
+                  <p className="mt-1 text-xs text-gray-500">A link to a PNG or JPG that opens without signing in. A Google Drive link will not work. No logo? Leave it blank and we will sort it on the call.</p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Days off or times to avoid</label>
+                  <input name="booking_notes" type="text" value={form.booking_notes} onChange={updateText} className={inputClass} placeholder="e.g. away 14 to 18 Nov, no Friday afternoons" />
                 </div>
               </div>
             </details>
@@ -689,6 +656,10 @@ export default function Preinstall() {
               </button>
             </div>
 
+            <p className="mt-3 text-xs text-gray-500">
+              We use these details only to set up your TradeAnchor account and send you job alerts. See our <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline">privacy policy</a>.
+            </p>
+
             {submitError && (
               <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
                 {submitError}
@@ -698,7 +669,7 @@ export default function Preinstall() {
         </form>
 
         <footer className="py-6 text-center text-xs text-gray-500">
-          Flowio installs are limited to 3 per week. We’ll confirm your slot after the phone check.
+          TradeAnchor installs are limited to 3 per week. We’ll confirm your slot after the phone check.
         </footer>
       </main>
 
