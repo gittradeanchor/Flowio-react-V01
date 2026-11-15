@@ -36,6 +36,11 @@ const FAQS = [
         a: "Fill in a 10-minute form. I build your price list from it, then one 15-minute call and you're live. If your price list isn't live within 24 hours of our call, your first paid month is free."
     },
     {
+        id: 'guarantee',
+        q: "What do the guarantees mean in practice?",
+        a: "Two promises. If your price list isn't live within 24 hours of our call, your first paid month is free. If no customer pays a deposit inside your first 30 days, you owe nothing. Your 30 days start when you go live. Free months are capped at 3 in total, after which billing starts unless you cancel."
+    },
+    {
         id: 'council',
         q: "Why only 2 per council area?",
         a: "So the founding sparkies aren't all quoting against each other on the same streets. There are 10 founding spots in total."

@@ -69,7 +69,7 @@ const OfferCard = () => (
         </ul>
 
         <p className="text-xs text-text-muted leading-snug border-l-2 border-orange/30 pl-3">
-            After the founding 10: $490 setup plus $249 a month. All prices ex GST.
+            After the founding 10: $490 setup plus $249 a month. All prices ex GST. Free months under the guarantees are capped at 3 in total, after which billing starts unless you cancel.
         </p>
     </>
 );
@@ -119,9 +119,8 @@ const ProfitCalculator = () => {
     );
 };
 
-// Optional: set VITE_SMS_NUMBER on Cloudflare Pages (digits, e.g. 0412345678) to show the "text me your quote" box.
-// While it is blank the box is hidden, so there is never a placeholder number or a dead sms: link on the page.
-const SMS_RAW: string = ((import.meta as any).env?.VITE_SMS_NUMBER || '').replace(/\s+/g, '');
+// Business number confirmed by Flo 15/11/26. Set VITE_SMS_NUMBER on Cloudflare Pages (digits) to override it.
+const SMS_RAW: string = ((import.meta as any).env?.VITE_SMS_NUMBER || '0494186989').replace(/\s+/g, '');
 const SMS_HREF = SMS_RAW ? `sms:${SMS_RAW.startsWith('0') ? '+61' + SMS_RAW.slice(1) : SMS_RAW}` : '';
 const SMS_DISPLAY = SMS_RAW.replace(/^(\d{4})(\d{3})(\d{3})$/, '$1 $2 $3');
 
@@ -139,11 +138,11 @@ export const Pricing = () => {
                         <div className="p-6 md:p-8 flex-1">
                             <OfferCard />
                             <div className="mt-6 space-y-3">
-                                <Guarantee title="Live in 24 hours, or your first paid month is free">
+                                <Guarantee title="Live in 24 hours, or your first month's free">
                                     If your price list isn't live within 24 hours of our call, your first paid month is free.
                                 </Guarantee>
-                                <Guarantee title="A deposit in 30 days, or you pay nothing">
-                                    Send 10 real quotes with the deposit switched on. If no customer pays a deposit, you pay nothing until one does.
+                                <Guarantee title="A deposit inside your first 30 days, or you owe nothing">
+                                    Send 10 real quotes with the deposit switched on. If no customer pays a deposit inside your first 30 days, you owe nothing. Your 30 days start when you go live.
                                 </Guarantee>
                                 <Guarantee title="Leaving is easy">
                                     Cancel any time, and your Sheet and data stay yours. The quoting tools switch off when you cancel.
@@ -189,6 +188,7 @@ export const Pricing = () => {
                         <a href={import.meta.env.VITE_CALENDLY_URL} target="_blank" rel="noreferrer" className="inline-flex items-center min-h-[44px] text-white/80 hover:text-white text-[15px] font-semibold underline underline-offset-4">
                             Or book a 15-minute fit call
                         </a>
+                        <p className="text-sm opacity-80">Rather talk? Ring <a href={`tel:${SMS_RAW}`} className="underline font-bold">{SMS_DISPLAY}</a>.</p>
                     </div>
                     <p className="text-sm opacity-70 mt-10 max-w-md mx-auto italic">Founders: once it's making you money, I'd love a short story and an honest review, whenever you're ready.</p>
                 </div>
