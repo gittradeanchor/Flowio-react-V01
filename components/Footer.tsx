@@ -13,7 +13,7 @@ export const Footer = () => {
                     <a href="mailto:hello@tradeanchor.com.au" className="hover:text-white transition-colors min-h-[44px] inline-flex items-center">hello@tradeanchor.com.au</a>
                     {LEGAL_READY && <a href="/terms" className="hover:text-white transition-colors min-h-[44px] inline-flex items-center">Terms</a>}
                     {LEGAL_READY && <a href="/privacy" className="hover:text-white transition-colors min-h-[44px] inline-flex items-center">Privacy</a>}
-                    {LEGAL_READY ? <a href="/refund" className="hover:text-white transition-colors min-h-[44px] inline-flex items-center">Refund policy</a> : <a href="#refund" className="hover:text-white transition-colors min-h-[44px] inline-flex items-center">Refund policy</a>}
+                    {LEGAL_READY ? <a href="/refund" className="hover:text-white transition-colors min-h-[44px] inline-flex items-center">Guarantees and refunds</a> : <a href="#refund" className="hover:text-white transition-colors min-h-[44px] inline-flex items-center">Guarantees and refunds</a>}
                 </div>
             </div>
         </footer>

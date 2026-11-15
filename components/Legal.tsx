@@ -41,7 +41,7 @@ const Shell = ({ title, children }: { title: string; children: React.ReactNode }
                     <span className="text-border" aria-hidden="true">|</span>
                     <a href="/terms" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Terms</a>
                     <a href="/privacy" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Privacy</a>
-                    <a href="/refund" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Refund</a>
+                    <a href="/refund" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Guarantees and refunds</a>
                 </div>
             </div>
         </nav>
