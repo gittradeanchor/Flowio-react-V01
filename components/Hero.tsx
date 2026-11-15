@@ -31,27 +31,27 @@ export const Hero = () => {
                     <div className="flex items-center gap-2 mb-3 md:mb-4 order-1 w-full justify-center md:justify-start">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange/8 border border-orange/20 rounded-full text-[11px] md:text-[12px] uppercase tracking-[0.12em] font-bold text-orange">
                             <span className="w-1.5 h-1.5 bg-orange rounded-full"></span>
-                            For Australian electricians
+                            Founding offer for electricians
                         </span>
                     </div>
 
                     <h1 className="text-[32px] md:text-[54px] leading-[1.08] font-black text-navy text-center md:text-left mb-3 md:mb-5 order-1 w-full mt-0">
-                        Stop doing<br className="block md:hidden"/> paperwork at<br className="block md:hidden"/> <span className="whitespace-nowrap">9:00 PM.</span>
+                        Paid before<br className="block md:hidden"/> you pick up<br className="block md:hidden"/> <span className="whitespace-nowrap">the tools.</span>
                     </h1>
 
                     {/* Subheadline Section */}
                     <div className="text-center md:text-left mb-4 md:mb-6 max-w-[540px] order-2 w-full">
                         <p className="text-[16px] md:text-[20px] font-semibold text-navy/80 mb-1.5 md:mb-2 leading-snug">
-                            Send quote ▸ client accepts ▸ job booked.
+                            Your quote, your logo. Customer accepts, pays the deposit and books, all from one text.
                         </p>
                         <p className="text-[13px] md:text-[15px] text-text-muted font-medium leading-relaxed">
-                            Done for you · Runs inside the Google Sheet you already quote from · No app to install
+                            No app. Nothing to learn. We set it up. You keep your Google Sheet.
                         </p>
                     </div>
 
                     {/* Price anchor — price and refund always appear together (audit A3.2) */}
                     <p className="text-[13px] text-text-muted font-medium text-center md:text-left mb-4 order-2 w-full max-w-[540px]">
-                        <span className="font-bold text-navy">$390</span> inc GST, one-time pilot · 30-day money-back guarantee
+                        <span className="font-bold text-navy">$149 a month</span> ex GST · first 30 days free · 10 founding spots only
                     </p>
 
                     {/* CTA row */}
@@ -83,7 +83,7 @@ export const Hero = () => {
                                 >
                                     <img
                                         src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
-                                        alt="Flowio Demo"
+                                        alt="TradeAnchor demo"
                                         className="w-full h-full object-cover block"
                                         loading="lazy"
                                     />
@@ -95,7 +95,7 @@ export const Hero = () => {
                            <iframe
                                   className="absolute inset-0 w-full h-full border-0"
                                   src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1&controls=1`}
-                                  title="Flowio Demo"
+                                  title="TradeAnchor demo"
                                   allow="autoplay; encrypted-media; picture-in-picture"
                                   allowFullScreen
                                 />

@@ -5,7 +5,7 @@ const Tick = () => (
 );
 
 /**
- * Trust strip. Only claims backed by 02_OFFER "Allowed claims" and the pilot terms.
+ * Trust strip. Only claims backed by the founding offer (Nov 2026).
  * No counters, no testimonials — add real ones when a pilot gives them.
  */
 export const SocialProofBar = () => {
@@ -26,7 +26,7 @@ export const SocialProofBar = () => {
                 </div>
                 <div className="hidden lg:flex items-center gap-2.5 text-sm text-text-muted">
                     <Tick />
-                    <span className="font-medium">30-day money-back guarantee</span>
+                    <span className="font-medium">First 30 days free</span>
                 </div>
             </div>
         </div>

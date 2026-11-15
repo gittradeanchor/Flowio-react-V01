@@ -15,6 +15,7 @@ import { QuotingAudit } from './components/QuotingAudit';
 import { SocialProofBar } from './components/SocialProofBar';
 import { Terms, Privacy, Refund } from './components/Legal';
 import { Pilot } from './components/Pilot';
+import { DeadQuoteRevival, HowItWorks, Included } from './components/FoundingSections';
 import { useAttribution } from './hooks/useAttribution';
 
 const App = () => {
@@ -101,6 +102,9 @@ const LandingPage = () => {
                     <QuotingAudit /> — 2nd ask on the page (audit B5.1), no consent box, and its leads feed the Marketing
                                        Engine whose templates still carry banned claims (checklist 0.9 / 0.10). */}
                 <Benefits />
+                <DeadQuoteRevival />
+                <HowItWorks />
+                <Included />
                 <LogicSection />
                 <FounderBlock />
                 <Pricing />

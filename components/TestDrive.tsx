@@ -431,7 +431,7 @@ export const TestDrive = () => {
                                     <div className="bg-white text-navy rounded-2xl shadow-2xl overflow-hidden w-full">
                                         <div className="bg-[#0F9D58] text-white p-3 flex items-center gap-2">
                                             <svg width="16" height="16" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" stroke="#fff" strokeWidth="8"/></svg>
-                                            <span className="font-semibold text-[13px] truncate">Flowio QuoteBuilder <span className="opacity-70 font-normal ml-1">(Demo Mode)</span></span>
+                                            <span className="font-semibold text-[13px] truncate">TradeAnchor QuoteBuilder <span className="opacity-70 font-normal ml-1">(Demo Mode)</span></span>
                                         </div>
                                         
                                         <div className="p-4 md:p-6">
@@ -626,7 +626,7 @@ export const TestDrive = () => {
                                                 checked={consent}
                                                 onChange={(e) => setConsent(e.target.checked)}
                                             />
-                                            <span>I agree to TradeAnchor sending me this demo by SMS (and email if I add one), and contacting me about Flowio. I can opt out at any time. My details are kept for 12 months after our last contact. <a href="/privacy" target="_blank" rel="noreferrer" className="underline">Privacy notice</a>.</span>
+                                            <span>I agree to TradeAnchor sending me this demo by SMS (and email if I add one), and contacting me about TradeAnchor. I can opt out at any time. My details are kept for 12 months after our last contact. <a href="/privacy" target="_blank" rel="noreferrer" className="underline">Privacy notice</a>.</span>
                                         </label>
 
                                         {submitError && (
