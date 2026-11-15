@@ -13,7 +13,7 @@ const FAQS = [
     {
         id: 'own',
         q: "Whose Sheet is it? What if I cancel?",
-        a: "Yours. Cancel any time and your Sheet and data stay yours, in your own Google account. The quoting tools that run behind it switch off when you cancel."
+        a: "Yours. Cancel any time and your Sheet and data stay yours, in your own Google account. The quoting tools that run behind it switch off when your cancellation takes effect."
     },
     {
         id: 'brand',
@@ -38,8 +38,19 @@ const FAQS = [
     {
         id: 'guarantee',
         q: "What do the guarantees mean in practice?",
-        a: "Two promises. If your price list isn't live within 24 hours of our call, your first paid month is free. If no customer pays a deposit inside your first 30 days, you owe nothing. Your 30 days start when you go live. Free months are capped at 3 in total, after which billing starts unless you cancel."
+        a: "If your price list isn't live within 24 hours of our setup call, your first paid month is free. Send 10 real quotes with the deposit switched on. If no customer pays a deposit by day 30 after you go live, your next month is free. I check this myself on day 29, so you don't need to claim it. It can repeat, up to 3 free months in total across both guarantees. The two guarantees don't stack."
     },
+    {
+        id: 'billing',
+        q: "When am I charged, and will I be warned?",
+        a: "Card at signup. Your 30-day free trial starts when you go live and your card is charged automatically on day 31. I text and email you on day 25 with the date, the amount and how to cancel. Cancel before day 31 and you are not charged. Cancel any time, effective at the end of the period you've already paid for."
+    },
+    {
+        id: 'support',
+        q: "What if something breaks?",
+        a: "Text me if anything breaks. I reply within 4 business hours. Anything stopping quotes or deposits gets fixed the same business day, and everything else within 2 business days. That is included for as long as you're on TradeAnchor. Breaks means sending, the Accept page, deposits and booking. Up to 2 changes a month to your price list or templates are included. More than that is paid work."
+    },
+
     {
         id: 'council',
         q: "Why only 2 per council area?",

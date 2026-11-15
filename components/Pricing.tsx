@@ -68,8 +68,10 @@ const OfferCard = () => (
             <Item><strong>10 spots only</strong>, with a maximum of 2 per council area</Item>
         </ul>
 
+        <p className="text-sm text-navy font-medium leading-snug bg-orange/5 border border-orange/20 rounded-lg p-3 mb-4">Card at signup. Your 30-day free trial starts when you go live and your card is charged automatically on day 31. I text and email you on day 25 with the date, the amount and how to cancel. Cancel before day 31 and you are not charged.</p>
+
         <p className="text-xs text-text-muted leading-snug border-l-2 border-orange/30 pl-3">
-            After the founding 10: $490 setup plus $249 a month. All prices ex GST. Free months under the guarantees are capped at 3 in total, after which billing starts unless you cancel.
+            After the founding 10: $490 setup plus $249 a month. All prices ex GST. Locked for life means your price is fixed while you stay subscribed, and ends if you cancel.
         </p>
     </>
 );
@@ -139,13 +141,13 @@ export const Pricing = () => {
                             <OfferCard />
                             <div className="mt-6 space-y-3">
                                 <Guarantee title="Live in 24 hours, or your first month's free">
-                                    If your price list isn't live within 24 hours of our call, your first paid month is free.
+                                    If your price list isn't live within 24 hours of our setup call, your first paid month is free.
                                 </Guarantee>
-                                <Guarantee title="A deposit inside your first 30 days, or you owe nothing">
-                                    Send 10 real quotes with the deposit switched on. If no customer pays a deposit inside your first 30 days, you owe nothing. Your 30 days start when you go live.
+                                <Guarantee title="10 quotes sent and no deposit in 30 days? Your next month's free">
+                                    Send 10 real quotes with the deposit switched on. If no customer pays a deposit by day 30 after you go live, your next month is free. I check this myself on day 29, so you don't need to claim it. It can repeat, up to 3 free months in total across both guarantees. The two guarantees don't stack.
                                 </Guarantee>
                                 <Guarantee title="Leaving is easy">
-                                    Cancel any time, and your Sheet and data stay yours. The quoting tools switch off when you cancel.
+                                    Cancel any time. It takes effect at the end of the period you've already paid for. Your Sheet and data stay yours, and the quoting tools switch off when it ends.
                                 </Guarantee>
                             </div>
                         </div>

@@ -34,7 +34,8 @@ export const Pilot = () => (
                     <span className="text-sm font-bold">a month, ex GST</span>
                 </div>
                 <p className="mt-2 text-sm text-text-muted">Flat price, unlimited users. Locked for life while you stay on. No setup fee, and your first 30 days are free. 10 founding spots, maximum 2 per council area. After the founding 10: $490 setup plus $249 a month. All prices ex GST.</p>
-                <p className="mt-3 text-sm font-bold bg-green/10 text-green border border-green/20 rounded-md p-3">Live in 24 hours or your first month's free. A deposit inside your first 30 days, or you owe nothing. <a className="underline" href="/refund">Guarantee details</a>.</p>
+                <p className="mt-3 text-sm text-navy font-medium">Card at signup. Your 30-day free trial starts when you go live and your card is charged automatically on day 31. I text and email you on day 25 with the date, the amount and how to cancel. Cancel before day 31 and you are not charged.</p>
+                <p className="mt-3 text-sm font-bold bg-green/10 text-green border border-green/20 rounded-md p-3">Live in 24 hours or your first month's free. 10 quotes sent and no deposit in 30 days? Your next month's free. <a className="underline" href="/refund">Guarantee details</a>.</p>
                 {CALL_URL && (
                     <a href={CALL_URL} target="_blank" rel="noreferrer" className="mt-5 flex items-center justify-center w-full py-4 bg-orange hover:bg-orange-hover text-white rounded-xl font-bold text-lg shadow-btn-primary">
                         Book a fit call <span className="ml-2 text-2xl leading-[0] pb-1">&#9656;</span>

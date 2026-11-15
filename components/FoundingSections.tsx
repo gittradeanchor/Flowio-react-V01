@@ -57,7 +57,7 @@ export const HowItWorks = () => (
                 {[
                     { n: '1', t: 'Fill in a 10-minute form', d: 'Business details, how you quote, your prices and your logo.' },
                     { n: '2', t: 'We build your price list', d: 'Clean, grouped by job type, with a starting-from price on every line.' },
-                    { n: '3', t: 'One 15-minute call and you are live', d: "We walk you through your first quote and send your Dead Quote Revival. If your price list isn't live within 24 hours of our call, your first paid month is free." },
+                    { n: '3', t: 'One 15-minute call and you are live', d: "We walk you through your first quote and send your Dead Quote Revival. If your price list isn't live within 24 hours of our setup call, your first paid month is free." },
                 ].map(s => (
                     <div key={s.n} className="bg-white border border-border rounded-2xl shadow-sm p-6">
                         <div className="w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-sm font-black mb-3">{s.n}</div>
