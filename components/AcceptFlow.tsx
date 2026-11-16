@@ -275,7 +275,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                             </div>
 
                             <div className="mt-6 pt-4 border-t border-dashed border-border text-center text-xs text-text-muted animate-fade-in-up delay-[900ms]">
-                                Deposits and automatic rescheduling are not live yet.
+                                This is a demo. No deposit is taken here.
                             </div>
                          </div>
                     </div>

@@ -54,7 +54,7 @@ export const Benefits = () => {
                     <h2 className="text-[32px] md:text-5xl font-black text-navy mb-6 tracking-tight leading-[1.1]">
                         Built for electricians who already quote in a Sheet.
                     </h2>
-                    <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto font-medium">No new app to learn. Send the quote, your customer accepts on their phone, you confirm the time and the job lands in your calendar, all from the Google Sheet you already use.</p>
+                    <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto font-medium">No new app to learn. Send the quote, your customer accepts and pays the deposit on their phone, you confirm the time and the job lands in your Google Calendar, all from the Google Sheet you already use.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -62,7 +62,7 @@ export const Benefits = () => {
                     {/* Image Size: 2752x1376 (2:1 Ratio). Padded=true requests slightly smaller look. */}
                     <BentoCard 
                         title="Quote to booked job"
-                        desc="One tap sends a branded PDF quote by SMS and email with an accept link. Your customer accepts and asks for a time; you confirm it and the job goes in your Google Calendar."
+                        desc="One tap sends a branded PDF quote by SMS and email with an Accept button. Your customer accepts, pays your deposit and picks a day and a morning or afternoon slot. You confirm it from your phone and the job goes in your Google Calendar."
                         span={2}
                         imgSrc="/images/flow-diagram.jpg"
                         imgAlt="One tap automation workflow"
@@ -83,7 +83,7 @@ export const Benefits = () => {
                     {/* Swapped to span 1. Image Size: 2048x1536 (4:3 Ratio) - padded to prevent crop */}
                     <BentoCard
                         title="Your Sheet stays yours"
-                        desc="Your prices, quote history and customer records live in your own Google account. One-time payment, and your data is yours to keep."
+                        desc="Your prices, quote history and customer records live in your own Google account. Cancel any time and your Sheet and data stay yours."
                         span={1}
                         imgSrc="/images/renting-vs-owning.jpg"
                         imgAlt="Lifetime ownership comparison"
@@ -94,7 +94,7 @@ export const Benefits = () => {
                     {/* Image Size: 1460x600 (Wide Ratio) */}
                     <BentoCard
                         title="Your customer accepts on their phone"
-                        desc="They tap the link and ask for a time. No app and no login for them. You quote from your Google Sheet; a phone version for you is not live yet."
+                        desc="They tap the link, pay your deposit and pick a time. No app and no login for them."
                         span={2}
                         imgSrc="/images/app-preview.png"
                         imgAlt="Customer quote acceptance on a phone"

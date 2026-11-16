@@ -4,7 +4,7 @@ import React from 'react';
 /**
  * Legal pages: Terms, Privacy, Refund. Built 20 Sept 2026 from the Claude Design draft ("Flowio Legal Pages")
  * with the founder's decided rules applied (D01 revocation, D02 support, D05 no dollar figures, D07 refund,
- * D08 sheet breakage, refund window from install finish). DRAFT: have a lawyer read it before it is linked.
+ * D08 sheet breakage, refund window from install finish). Terms and Refund rewritten 15 Nov 2026 for the founding offer. DRAFT: have a lawyer read it before it is linked.
  *
  * Visible routes: /terms /privacy /refund (reviewable now).
  * Footer links stay hidden until LEGAL_READY is true. Set it once every "TO CONFIRM" below is resolved.
@@ -14,7 +14,7 @@ export const LEGAL_READY = true; // founder approved A8. NOTE: not yet read by a
 const CONTACT_EMAIL = 'hello@tradeanchor.com.au';
 const REFUND_EMAIL = 'refunds@tradeanchor.com.au'; // confirmed by founder
 const RETENTION = '12 months after our last contact, or sooner if you ask me to delete it'; // founder answer: 12 months (asked as a question, confirm)
-const UPDATED = '20 September 2026';
+const UPDATED = '15 November 2026';
 
 const H2 = ({ children }: { children: React.ReactNode }) => (
     <h2 className="text-xl font-black text-navy mt-8 mb-2">{children}</h2>
@@ -41,7 +41,7 @@ const Shell = ({ title, children }: { title: string; children: React.ReactNode }
                     <span className="text-border" aria-hidden="true">|</span>
                     <a href="/terms" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Terms</a>
                     <a href="/privacy" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Privacy</a>
-                    <a href="/refund" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Refund</a>
+                    <a href="/refund" className="min-h-[44px] flex items-center underline-offset-4 hover:underline">Guarantees and refunds</a>
                 </div>
             </div>
         </nav>
@@ -52,56 +52,51 @@ const Shell = ({ title, children }: { title: string; children: React.ReactNode }
                 <p className="text-sm text-text-muted mt-2">TradeAnchor, ABN 45 529 331 663. Sole trader, Sydney NSW. GST registered. Contact: <a className="underline" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Last updated {UPDATED}. Australian law, New South Wales.</p>
                 {children}
             </article>
-            <p className="text-xs text-text-muted mt-6 text-center">These pages name no price. The price is stated on the site when you agree to it, so a price change never needs a legal rewrite.</p>
+            <p className="text-xs text-text-muted mt-6 text-center">The current price is stated on the site and in section 3 of the terms.</p>
         </main>
     </div>
 );
 
 export const Terms = () => (
     <Shell title="Terms of Service">
+        <P>Plain-English agreement for TradeAnchor founding customers. Draft: a lawyer review is planned before any public launch.</P>
+
         <H2>1. Who you are contracting with</H2>
-        <P>The supplier is TradeAnchor, ABN 45 529 331 663, a sole trader business. TradeAnchor is not a company. "I" and "me" mean that sole trader. There is no company, office or staff behind these terms.</P>
+        <P>TradeAnchor, ABN 45 529 331 663, a sole trader business. "I" and "me" mean that sole trader. There is no company, office or staff behind these terms.</P>
 
         <H2>2. What I supply</H2>
-        <P>A done-for-you setup of a quoting and booking workflow inside your own Google account, installed by me, and continued access to a hosted quoting engine that the workflow calls. It is a service, not a licence to software you install and keep.</P>
-        <P>The workflow is built and used at a computer. There is no app for building quotes on a phone.</P>
+        <P>A done-for-you setup of a quoting and booking workflow inside your own Google account, and continued access to a hosted quoting engine that the workflow calls, for as long as you stay subscribed. You build and send quotes from your Google Sheet. Your customer accepts, pays the deposit if you have switched it on, and picks a day and a morning or afternoon slot. You confirm it from your phone. Nothing is booked without you. Quote documents carry your business name and logo, and you are responsible for the accuracy of the prices, scope and licence details on anything sent under your name.</P>
 
-        <H2>3. How booking works</H2>
-        <P>Your customer accepts a quote and asks for a booking window. You confirm that window. Only after you confirm is a calendar event created. Nothing is booked without you.</P>
+        <H2>3. Price and billing</H2>
+        <P>Founding offer: $149 a month ex GST, flat, for unlimited users. No setup fee. There are 10 founding spots, with a maximum of 2 per council area. After the founding 10 the price is $490 setup plus $249 a month, ex GST.</P>
+        <P>Locked for life means your price is fixed while you stay subscribed. I will not change your price while you are subscribed. It ends if you cancel.</P>
+        <P>I take your card at signup. Your 30-day free trial starts when you go live, and your card is charged automatically on day 31, then monthly. I text and email you on day 25 with the date, the amount and how to cancel. If you cancel before day 31 you are not charged.</P>
 
-        <H2>4. What is not included</H2>
+        <H2>4. Guarantees</H2>
+        <P>Two guarantees apply, set out on the <a className="underline" href="/refund">guarantees and refunds page</a>, which forms part of these terms. They are conditional, they don't stack, and free months under them are capped at 3 in total.</P>
+
+        <H2>5. Cancelling</H2>
+        <P>Cancel any time by emailing {CONTACT_EMAIL}. It takes effect at the end of the period you have already paid for. When it takes effect, billing stops and the quoting tools switch off. Your Sheet and data stay yours. I do not end your service at will. I may stop it only if you do not pay, or if a copy of the engine is pirated or unlicensed.</P>
+
+        <H2>6. Support</H2>
+        <P>Text me if anything breaks. I reply within 4 business hours. Anything stopping quotes or deposits is fixed the same business day, and everything else within 2 business days. Support is included for as long as you are on TradeAnchor. "Breaks" means sending, the Accept page, deposits and booking. Up to 2 changes a month to your price list or templates are included. More than that is paid work, and I tell you the cost before I start. Founders get my direct mobile number on the setup call. Later customers get a support number or inbox.</P>
+
+        <H2>7. Your data and your Sheet</H2>
+        <P>You own your customer data, your Sheet, your pricebook, your quote history and the documents generated for you. They live in your own Google account and stay there if this agreement ends for any reason, including if I stop trading. I hold quote and customer data on the backend I host only to run the service for you, as the <a className="underline" href="/privacy">privacy notice</a> sets out.</P>
+        <P>I request Google access limited to the files this workflow creates and opens. I do not request access to your whole Drive or your email.</P>
+        <P>The quoting engine is mine. You get no copy of it and no right to rebuild it. If I stop trading, the engine stops and your own files remain intact and readable.</P>
+
+        <H2>8. What is not included</H2>
         <UL items={[
-            'Deposit collection. Not sold and not supplied.',
-            'Rescheduling by your customer. Not live. If the window does not suit, you ring them and confirm a new window by hand.',
+            'Chaser (automatic follow-up of quotes that go quiet). Not live yet. It is the first founder feature to ship and is free for founders when it does.',
             'Any accounting integration. None is supplied and no date is promised.',
-            'Any quoting interface for a phone or tablet.',
+            'Quote building from a phone. You quote from your Google Sheet.',
         ]} />
 
-        <H2>5. Your material, and what survives</H2>
-        <P>Your sheet, your pricebook, your quote history and the documents generated for you are yours. They are created in your own Google account and stay there if this agreement ends for any reason, including if I stop trading.</P>
-        <P>The quoting engine is mine. It runs on infrastructure I host. You receive no copy of it, no source code and no right to rebuild it. If I stop trading, the engine stops working and your own files remain intact and readable.</P>
-        <P>I switch the engine off for you only if you are refunded, or if a copy is pirated or unlicensed. Cancelling by itself does not switch it off.</P>
+        <H2>9. Limits on my liability</H2>
+        <P>The hosted engine depends on services I do not control, including Google. I do not promise uninterrupted availability or a delivery time for any message the workflow sends. My total liability to you under this agreement is capped at 3 months of the fees you have paid. Nothing in these terms excludes, restricts or modifies any guarantee, right or remedy you have under the Australian Consumer Law that cannot lawfully be excluded, and the cap does not limit those rights.</P>
 
-        <H2>6. Access to your Google account</H2>
-        <P>I request access limited to the files this workflow creates and opens. I do not request access to your whole Google Drive and I do not request access to your email. Quote data passes through and is stored on infrastructure I host, as set out in the privacy notice.</P>
-
-        <H2>7. Your customer, and what they see</H2>
-        <P>Quote documents carry your business name and your logo, not mine. The link your customer taps to accept a quote is hosted on a TradeAnchor web address, so that address is visible to them. You are responsible for the accuracy of the prices, scope and licence details on anything sent under your name.</P>
-
-        <H2>8. Payment and refund</H2>
-        <P>The price and what it includes are stated on the site when you agree to it, inclusive of GST. Payment is due before install. The refund window and how to claim it are in the <a className="underline" href="/refund">refund policy</a>, which forms part of these terms.</P>
-
-        <H2>9. Support</H2>
-        <P>Email support, in business hours, for 90 days after your install is finished. After that, support is paid.</P>
-        <P>If you rename a tab or move a column in your sheet and the workflow stops working: during the pilot I fix it free. After the pilot, a fix is a paid callout, and I will tell you the cost before I start.</P>
-
-        <H2>10. Availability, and what I do not warrant</H2>
-        <P>The hosted engine depends on services I do not control, including Google. I do not warrant uninterrupted availability, and I do not promise a delivery time for any message the workflow sends. Nothing in these terms excludes, restricts or modifies any guarantee, right or remedy under the Australian Consumer Law that cannot lawfully be excluded.</P>
-
-        <H2>11. Ending the agreement</H2>
-        <P>Either of us may end it by written notice to {CONTACT_EMAIL}. Your files stay in your Google account. Amounts already paid are dealt with under the refund policy.</P>
-
-        <H2>12. Governing law</H2>
+        <H2>10. Governing law</H2>
         <P>These terms are governed by the law of New South Wales, Australia, and the courts of that state have jurisdiction.</P>
     </Shell>
 );
@@ -112,7 +107,7 @@ export const Privacy = () => (
         <UL items={[
             'From the demo on the site: your name, your trade, your mobile number, and your email address if you add one, when you ask for the demo quote to be sent to you.',
             'From booking a call: the details the booking tool collects (name, email, phone).',
-            'From the intake form after payment: your business name, ABN, licence number, contact details, the Google account to install into, your price list, and your logo if you supply one.',
+            'From the setup form: your business name, ABN, licence number, contact details, the Google account to install into, your price list, and your logo if you supply one.',
         ]} />
 
         <H2>2. What I collect about your customer</H2>
@@ -141,23 +136,23 @@ export const Privacy = () => (
 );
 
 export const Refund = () => (
-    <Shell title="Refund policy">
-        <H2>1. The window</H2>
-        <P>30 days, starting on the day your install is finished. A request made inside that window is honoured in full.</P>
+    <Shell title="Guarantees and refunds">
+        <H2>1. Live in 24 hours, or your first month's free</H2>
+        <P>If your price list isn't live within 24 hours of our setup call, your first paid month is free.</P>
 
-        <H2>2. No conditions</H2>
-        <P>You do not have to give a reason. You do not have to have used it. You do not have to prove anything did not work. There is no condition, test or exception inside the window.</P>
+        <H2>2. 10 quotes sent and no deposit in 30 days? Your next month's free</H2>
+        <P>Send 10 real quotes with the deposit switched on. If no customer pays a deposit by day 30 after you go live, your next month is free. If you have sent fewer than 10 quotes, this guarantee does not apply. I text you on day 20 to tell you how many you have sent. I check this myself on day 29, so you do not need to claim it. It can repeat each month you qualify, within the cap below.</P>
 
-        <H2>3. How to claim it</H2>
-        <P>Send one email to <a className="underline" href={`mailto:${REFUND_EMAIL}`}>{REFUND_EMAIL}</a> saying you want the refund. No form, call or conversation is required.</P>
+        <H2>3. Cap, and the guarantees do not stack</H2>
+        <P>Free months under both guarantees are capped at 3 in total. If both would apply to the same month, that month is free once, not twice. After the cap, billing continues unless you cancel.</P>
 
-        <H2>4. How it is paid back</H2>
-        <P>Back to the method you paid with, reversed through Stripe within 5 working days of your request.</P>
+        <H2>4. How a free month is applied</H2>
+        <P>I extend your Stripe trial or move your next billing date out by a month. I do not take the money and give it back.</P>
 
-        <H2>5. What happens to the setup</H2>
-        <P>After a refund the hosted quoting engine stops being available to you. Your sheet, your pricebook, your quote history and the documents already generated stay in your own Google account and remain readable.</P>
+        <H2>5. Cancelling</H2>
+        <P>Cancel any time by email to <a className="underline" href={`mailto:${REFUND_EMAIL}`}>{REFUND_EMAIL}</a>. It takes effect at the end of the period you have already paid for. Billing stops, the quoting tools switch off, and your sheet, pricebook, quote history and generated documents stay in your own Google account.</P>
 
-        <H2>6. Outside the window</H2>
-        <P>After 30 days there is no automatic right to a refund under this policy. Your rights under the Australian Consumer Law are not affected and cannot be excluded by anything here.</P>
+        <H2>6. Your rights under the law</H2>
+        <P>Your rights under the Australian Consumer Law are not affected and cannot be excluded by anything here.</P>
     </Shell>
 );

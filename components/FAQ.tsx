@@ -1,18 +1,19 @@
 import React from 'react';
 
-// FAQ rewritten 20 Sept 2026. Each item answers a B3 objection (13_LANDING_PAGE_AUDIT) using only
+// FAQ rewritten 15 Nov 2026 for the founding offer (previous version: 20 Sept 2026 pilot).
+// Earlier note: FAQ rewritten 20 Sept 2026. Each item answers a B3 objection (13_LANDING_PAGE_AUDIT) using only
 // decided facts: D01 (revocation), D02 (90-day email support), D07 (refund), D08 (sheet breakage), 02_OFFER (not sold yet).
 // Deliberately NO setup-time claim: "minutes" is unproven until the dry-run install (checklist 1.7) is timed.
 const FAQS = [
     {
         id: 'change',
         q: "What do I have to change about how I work?",
-        a: "Nothing. You keep quoting from your Google Sheet. I add the part that sends the quote, takes your customer's acceptance and hands you the booking request to confirm."
+        a: "Nothing. You keep quoting from your Google Sheet. I add the part that sends the quote, takes your customer's acceptance and deposit, and hands you the booking to confirm from your phone."
     },
     {
         id: 'own',
-        q: "Whose Sheet is it? What if I stop?",
-        a: "Yours. Your Sheet, prices, quote history and customer records live in your Google account and stay with you. The quoting engine that powers it runs on code I host, and you can't rebuild it yourself. The engine is switched off only if you're refunded, or for a pirated or unlicensed copy."
+        q: "Whose Sheet is it? What if I cancel?",
+        a: "Yours. Cancel any time and your Sheet and data stay yours, in your own Google account. The quoting tools that run behind it switch off when your cancellation takes effect."
     },
     {
         id: 'brand',
@@ -21,28 +22,44 @@ const FAQS = [
     },
     {
         id: 'app',
-        q: "Do I need to install an app?",
-        a: "No. It runs inside Google Sheets. Your customer accepts from a link on their phone, with no app and no login."
+        q: "Does my customer need an app?",
+        a: "No. They get a text and an email with a link. It opens on any phone, with no app, no account and no password."
+    },
+    {
+        id: 'users',
+        q: "Can my apprentice or office use it too?",
+        a: "Yes. Unlimited users at the same flat price."
     },
     {
         id: 'setup',
         q: "What do I have to do to get set up?",
-        a: "Fill in a short form (business details, logo, working hours, your price list). I do the rest, then we send your first real quote together on a phone call."
+        a: "Fill in a 10-minute form. I build your price list from it, then one 15-minute call and you're live. If your price list isn't live within 24 hours of our call, your first paid month is free."
     },
     {
-        id: 'refund',
-        q: "What if it doesn't work for me?",
-        a: "Ask for your money back within 30 days of your install being finished. No reason needed. I reverse the payment through Stripe within 5 working days, and your Sheet stays yours."
+        id: 'guarantee',
+        q: "What do the guarantees mean in practice?",
+        a: "If your price list isn't live within 24 hours of our setup call, your first paid month is free. Send 10 real quotes with the deposit switched on. If no customer pays a deposit by day 30 after you go live, your next month is free. I check this myself on day 29, so you don't need to claim it. It can repeat, up to 3 free months in total across both guarantees. The two guarantees don't stack."
     },
     {
-        id: 'notyet',
-        q: "What isn't live yet?",
-        a: "Deposits and automatic rescheduling. If your customer can't make the time, you ring them and the booking is confirmed by hand. I'd rather you know now than find out later."
+        id: 'billing',
+        q: "When am I charged, and will I be warned?",
+        a: "Card at signup. Your 30-day free trial starts when you go live and your card is charged automatically on day 31. I text and email you on day 25 with the date, the amount and how to cancel. Cancel before day 31 and you are not charged. Cancel any time, effective at the end of the period you've already paid for."
     },
     {
         id: 'support',
         q: "What if something breaks?",
-        a: "Email support in business hours for 90 days, included. If something breaks during your pilot, I fix it free. After that, fixes are a paid callout."
+        a: "Text me if anything breaks. I reply within 4 business hours. Anything stopping quotes or deposits gets fixed the same business day, and everything else within 2 business days. That is included for as long as you're on TradeAnchor. Breaks means sending, the Accept page, deposits and booking. Up to 2 changes a month to your price list or templates are included. More than that is paid work."
+    },
+
+    {
+        id: 'council',
+        q: "Why only 2 per council area?",
+        a: "So the founding sparkies aren't all quoting against each other on the same streets. There are 10 founding spots in total."
+    },
+    {
+        id: 'chaser',
+        q: "Is Chaser live yet?",
+        a: "Not yet. It's the first founder feature to ship, and it's free for founders. I'd rather you know now than find out later."
     }
 ];
 
@@ -70,7 +87,7 @@ export const FounderBlock = () => {
                         </div>
                         <div>
                             <h3 className="text-navy font-extrabold text-xl mb-2">I'm not a SaaS company. I'm Sean.</h3>
-                            <p className="text-text-muted leading-relaxed">I'm a systems engineer based in Sydney. I don't hand you a login and wish you luck. I set up your price list, connect your Google Calendar, and walk you through your first real quote on the phone. If it's not for you, you get your money back.</p>
+                            <p className="text-text-muted leading-relaxed">I'm a systems engineer based in Sydney. I don't hand you a login and wish you luck. I set up your price list, connect your Google Calendar, and walk you through your first real quote on the phone.</p>
                         </div>
                     </div>
                 </div>
