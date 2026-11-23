@@ -55,7 +55,7 @@ export const Pilot = () => (
                 <p className="mt-2 text-[15px] leading-relaxed text-text-muted">Chaser follows up quotes that go quiet, by text and then by call. It is not live yet. It is free for founders when it ships.</p>
             </div>
 
-            <p className="text-sm text-text-muted mt-8">Questions? <a className="underline" href="mailto:hello@tradeanchor.com.au">hello@tradeanchor.com.au</a></p>
+            <p className="text-sm text-text-muted mt-8">Questions? <a className="underline" href="mailto:sean@getflowio.com">sean@getflowio.com</a></p>
         </main>
     </div>
 );

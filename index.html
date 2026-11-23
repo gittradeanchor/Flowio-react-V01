@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <script>
-      // Old domain -> new home. Keeps path, query and hash so old accept, booking and demo links still land correctly.
+      // Old hosts -> new home. Keeps path, query and hash so old accept, booking and demo links still land correctly.
       (function () {
         var h = location.hostname;
-        if (h === 'tradeanchor.com.au' || h === 'www.tradeanchor.com.au') {
-          location.replace('https://flowio.tradeanchor.com.au' + location.pathname + location.search + location.hash);
+        if (h === 'tradeanchor.com.au' || h === 'www.tradeanchor.com.au' || h === 'flowio.tradeanchor.com.au') {
+          location.replace('https://getflowio.com' + location.pathname + location.search + location.hash);
         }
       })();
     </script>
@@ -40,7 +40,8 @@
     <!-- End Meta Pixel Code -->
 
     <!-- Meta Business Manager domain verification (Brand Safety > Domains) for flowio.tradeanchor.com.au.
-         Static per-domain proof-of-ownership tag, not a secret — safe to hardcode. -->
+         Static per-domain proof-of-ownership tag, not a secret — safe to hardcode.
+         getflowio.com needs its OWN tag from Business Manager: add a second meta tag here once Flo has it. -->
     <meta name="facebook-domain-verification" content="g97ie2a53a4uu8z2mzp2oik4esch2t" />
   </head>
   <body class="bg-white text-text-main antialiased">
