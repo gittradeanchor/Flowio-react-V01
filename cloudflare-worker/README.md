@@ -7,7 +7,7 @@ The Make webhook URL is a public, unguessable address. Anyone who finds it can p
 1. **Rotate first (B13).** In Make, regenerate the webhook for the Test Drive scenario. You get a new URL.
 2. **Create the Worker.** Cloudflare dashboard, Workers & Pages, Create, Worker. Paste `testdrive-proxy.js`. Deploy.
 3. **Add two encrypted variables** on the Worker: `MAKE_WEBHOOK_URL` (the new Make URL) and `SHARED_SECRET` (a long random string, e.g. 40+ characters from a password manager).
-4. **Route it on your own domain** (no cross-site issues): Worker, Settings, Triggers, add route `flowio.tradeanchor.com.au/api/testdrive*` on the tradeanchor.com.au zone.
+4. **Route it on your own domain** (no cross-site issues): Worker, Settings, Triggers, add route `tradeanchor.com.au/api/testdrive*` on the tradeanchor.com.au zone.
 5. **Make: check the secret.** After the webhook module, add a filter: header `X-TA-Secret` equals your secret. Unverified: Make's custom webhook has an option to expose request headers ("Get request headers"); turn it on, then filter on that value. If your Make plan or module doesn't expose headers, put the secret in the JSON body instead (edit one line in the Worker: add `body.secret = env.SHARED_SECRET`).
 6. **Point the site at it.** Set the site variable `VITE_TESTDRIVE_ENDPOINT` to `/api/testdrive` and redeploy. Leave `VITE_MAKE_WEBHOOK_URL` empty once this works.
 7. **Test.** Run the demo with your own mobile. Then post to the Make URL directly without the secret (curl or a REST tool): Make must ignore it.
@@ -18,6 +18,6 @@ Rate limiting. If someone hammers the endpoint, add a Cloudflare rate-limiting r
 # Short quote link (about 10 minutes, you do this)
 1. Create a Worker, paste `short-link.js`, deploy.
 2. Add one plain variable on the Worker: `FLOWIO_ACCEPT_BASE` = the Flowio quote page address (the API gateway address ending in `/acceptance`). It is not a secret.
-3. Route it: Worker, Settings, Triggers, add route `flowio.tradeanchor.com.au/q/*`.
-4. On the Flowio service set `FLOWIO_SHORT_LINK_BASE` = `https://flowio.tradeanchor.com.au/q` (done by the Flowio build side). Until this is set, texts keep the long link.
-5. Test with a quote sent to your own mobile: the text carries `flowio.tradeanchor.com.au/q/xxxxxxxx` and opening it shows the quote.
+3. Route it: Worker, Settings, Triggers, add route `tradeanchor.com.au/q/*`.
+4. On the Flowio service set `FLOWIO_SHORT_LINK_BASE` = `https://tradeanchor.com.au/q` (done by the Flowio build side). Until this is set, texts keep the long link.
+5. Test with a quote sent to your own mobile: the text carries `tradeanchor.com.au/q/xxxxxxxx` and opening it shows the quote.

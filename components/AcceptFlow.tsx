@@ -104,7 +104,7 @@ export const AcceptFlow = ({ items, totals, customer }: AcceptFlowProps) => {
                                 <div className="w-2.5 h-2.5 rounded-full bg-slate-400"></div>
                                 <div className="w-2.5 h-2.5 rounded-full bg-slate-400"></div>
                             </div>
-                            <div className="flex-1 bg-white py-1.5 px-3 rounded text-xs text-text-muted font-mono truncate">flowio.tradeanchor.com.au/quote/Q0004</div>
+                            <div className="flex-1 bg-white py-1.5 px-3 rounded text-xs text-text-muted font-mono truncate">tradeanchor.com.au/quote/Q0004</div>
                         </div>
 
                         {/* PDF Content */}

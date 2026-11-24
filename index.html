@@ -2,15 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      // Old domain -> new home. Keeps path, query and hash so old accept, booking and demo links still land correctly.
-      (function () {
-        var h = location.hostname;
-        if (h === 'tradeanchor.com.au' || h === 'www.tradeanchor.com.au') {
-          location.replace('https://flowio.tradeanchor.com.au' + location.pathname + location.search + location.hash);
-        }
-      })();
-    </script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -39,7 +30,7 @@
          which throws on this placeholder — not worth working around for the ~0 real no-JS visitors. -->
     <!-- End Meta Pixel Code -->
 
-    <!-- Meta Business Manager domain verification (Brand Safety > Domains) for flowio.tradeanchor.com.au.
+    <!-- Meta Business Manager domain verification (Brand Safety > Domains) for the tradeanchor.com.au domain.
          Static per-domain proof-of-ownership tag, not a secret — safe to hardcode. -->
     <meta name="facebook-domain-verification" content="g97ie2a53a4uu8z2mzp2oik4esch2t" />
   </head>
