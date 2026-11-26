@@ -82,7 +82,7 @@ export const QuotingAudit = () => {
                         </p>
                         <div className="mt-6 bg-orange/5 rounded-xl p-4 border border-orange/10">
                             <p className="text-sm font-bold text-navy">
-                                While you wait — <a href="#test-drive" className="text-orange underline underline-offset-2 hover:no-underline">try the live Test Drive</a> to see Flowio in action.
+                                While you wait — <a href="#test-drive" className="text-orange underline underline-offset-2 hover:no-underline">try the live Test Drive</a> to see TradeAnchor in action.
                             </p>
                         </div>
                     </div>
