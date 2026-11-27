@@ -286,7 +286,9 @@ export default function Preinstall() {
         res = await fetch(backendEndpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: form.token, payload: JSON.stringify(payload) }),
+          body: JSON.stringify({
+            payload: JSON.stringify({ token: form.token, essentialsPct, form: submitted }),
+          }),
         });
       } else {
         // Legacy: x-www-form-urlencoded avoids CORS preflight/OPTIONS headaches with Apps Script
