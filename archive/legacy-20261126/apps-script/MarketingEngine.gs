@@ -26,10 +26,10 @@ const CONFIG = {
   SENDER_NAME: 'Sean | TradeAnchor',
 
   // URLs
-  SITE_URL: 'https://flowio.tradeanchor.com.au',
+  SITE_URL: 'https://tradeanchor.com.au',
   CALENDLY_URL: 'https://calendly.com/billing-tradeanchor/15min',
   WHATSAPP_URL: 'https://wa.me/61494186989',
-  TEST_DRIVE_URL: 'https://flowio.tradeanchor.com.au#test-drive',
+  TEST_DRIVE_URL: 'https://tradeanchor.com.au#test-drive',
 
   // ClickSend SMS (fill in Settings tab or hardcode here)
   CLICKSEND_USERNAME: '', // filled from Settings tab at runtime

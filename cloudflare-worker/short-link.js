@@ -1,4 +1,4 @@
-// Short quote links: https://flowio.tradeanchor.com.au/q/CODE  ->  the Flowio quote page.
+// Short quote links: https://tradeanchor.com.au/q/CODE  ->  the Flowio quote page.
 // The Worker only redirects. The signed quote link stays in Flowio and is looked up from the code, so the SMS stays short
 // and nothing secret is stored here. Setup is in README.md (Short quote link).
 export default {

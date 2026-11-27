@@ -257,8 +257,10 @@ export default function Preinstall() {
       return;
     }
 
-    // POST to GAS
-    const endpoint = (import.meta as any).env?.VITE_GSCRIPT_URL || "";
+    // Destination: the backend proxy when VITE_PREINSTALL_ENDPOINT is set (Cloudflare Worker that signs and forwards
+    // to the production backend), otherwise the legacy Apps Script. Remove the legacy path once the backend is live.
+    const backendEndpoint = (import.meta as any).env?.VITE_PREINSTALL_ENDPOINT || "";
+    const endpoint = backendEndpoint || (import.meta as any).env?.VITE_GSCRIPT_URL || "";
     if (!endpoint) {
       setSubmitError("This form is not connected yet. Please tell us and we will fix it.");
       return;
@@ -279,18 +281,28 @@ export default function Preinstall() {
         form: submitted, // store full payload
       };
 
-      // Use x-www-form-urlencoded to avoid CORS preflight/OPTIONS headaches
-      const body = new URLSearchParams();
-      body.set("event", "preinstall_submitted");
-      body.set("token", form.token);
-      if (form.pid) body.set("pid", form.pid);
-      body.set("payload", JSON.stringify(payload));
-
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-        body: body.toString(),
-      });
+      let res: Response;
+      if (backendEndpoint) {
+        res = await fetch(backendEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            payload: JSON.stringify({ token: form.token, essentialsPct, form: submitted }),
+          }),
+        });
+      } else {
+        // Legacy: x-www-form-urlencoded avoids CORS preflight/OPTIONS headaches with Apps Script
+        const body = new URLSearchParams();
+        body.set("event", "preinstall_submitted");
+        body.set("token", form.token);
+        if (form.pid) body.set("pid", form.pid);
+        body.set("payload", JSON.stringify(payload));
+        res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body: body.toString(),
+        });
+      }
 
       const raw = await res.text();
 

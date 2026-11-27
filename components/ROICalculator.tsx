@@ -92,7 +92,7 @@ export const ROICalculator = () => {
                 <div className="bg-white w-full max-w-[420px] rounded-[32px] shadow-2xl p-6 md:p-8 relative border border-slate-100">
                     <h1 className="text-2xl font-bold text-slate-900 mb-8 leading-tight">
                         Calculate Your<br />
-                        Flowio ROI
+                        TradeAnchor ROI
                     </h1>
 
                     <div className="mb-8">

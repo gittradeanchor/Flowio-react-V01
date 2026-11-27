@@ -1,0 +1,57 @@
+{
+  "name": "S2 - Quoting Audit Generator",
+  "metadata": { "version": 1 },
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": { "hook": 1870485 },
+      "mapper": {},
+      "metadata": { "designer": { "x": 0, "y": 0 }, "restore": {} }
+    },
+    {
+      "id": 2,
+      "module": "google-sheets:addRow",
+      "version": 2,
+      "parameters": { "__IMTCONN__": 6370955 },
+      "mapper": {
+        "mode": "map",
+        "spreadsheetId": "1BJCDY3mOZ7qXHK2yJQXXTHtuti8soNRM",
+        "sheetId": "Pipeline",
+        "tableFirstRow": "A1:Z1",
+        "insertUnformatted": false,
+        "valueInputOption": "USER_ENTERED",
+        "insertDataOption": "INSERT_ROWS",
+        "0": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+        "1": "{{1.name}}",
+        "2": "{{1.phone}}",
+        "3": "{{1.email}}",
+        "4": "{{1.trade}}",
+        "5": "audit_lead",
+        "6": "{{1.utm_source}}",
+        "7": "{{1.utm_medium}}",
+        "8": "{{1.utm_campaign}}",
+        "9": "new",
+        "10": "Audit: ${{1.annualCostWasted}} annual waste, {{1.annualHoursWasted}}h/year",
+        "11": "{{formatDate(now; \"YYYY-MM-DD HH:mm\")}}",
+        "12": "",
+        "13": "0",
+        "14": "{{formatDate(now; \"YYYY-MM-DD\")}}"
+      },
+      "metadata": { "designer": { "x": 300, "y": 0 } }
+    },
+    {
+      "id": 3,
+      "module": "google-email:ActionSendEmail",
+      "version": 2,
+      "parameters": { "account": 6370955 },
+      "mapper": {
+        "to": ["{{1.email}}"],
+        "subject": "{{1.name}}, you're losing ${{1.annualCostWasted}}/year on quoting",
+        "html": "<div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">\n  <div style=\"text-align: center; margin-bottom: 30px;\">\n    <h1 style=\"color: #0F172A; font-size: 24px; margin-bottom: 5px;\">Trade<span style=\"color: #F97316;\">Anchor</span></h1>\n  </div>\n  \n  <h2 style=\"color: #0F172A; font-size: 22px;\">Your Quoting Cost Audit</h2>\n  \n  <p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">G'day {{1.name}},</p>\n  \n  <p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Based on what you told us, here's what your quoting process is actually costing you:</p>\n  \n  <div style=\"background: #FFF7ED; border: 2px solid #FED7AA; border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center;\">\n    <div style=\"font-size: 42px; font-weight: 900; color: #9A3412;\">{{1.annualHoursWasted}} hours</div>\n    <div style=\"color: #9A3412; font-size: 16px; font-weight: 600;\">spent on quoting per year</div>\n    <div style=\"margin-top: 15px; font-size: 42px; font-weight: 900; color: #9A3412;\">${{1.annualCostWasted}}</div>\n    <div style=\"color: #9A3412; font-size: 16px; font-weight: 600;\">in lost productive time annually</div>\n  </div>\n  \n  <div style=\"background: #F0F9FF; border: 2px solid #BAE6FD; border-radius: 12px; padding: 25px; margin: 25px 0;\">\n    <h3 style=\"color: #0F172A; margin-top: 0;\">Here's the breakdown:</h3>\n    <ul style=\"color: #475569; font-size: 15px; line-height: 2;\">\n      <li><strong>{{1.quotesPerWeek}} quotes/week</strong> &times; {{1.minutesPerQuote}} mins each = {{multiply(1.quotesPerWeek; 1.minutesPerQuote)}} mins/week on quoting</li>\n      <li>That's <strong>{{round(divide(multiply(1.quotesPerWeek; 1.minutesPerQuote; 52); 60); 0)}} hours/year</strong> of admin work</li>\n      <li>At ${{1.hourlyRate}}/hour, that's <strong>${{1.annualCostWasted}}/year in lost billable time</strong></li>\n    </ul>\n  </div>\n  \n  <h3 style=\"color: #0F172A;\">What if you could get that time back?</h3>\n  \n  <p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Flowio automates your entire quoting workflow inside Google Sheets. One tap to generate a professional PDF quote, send it via SMS, and track it automatically. No subscriptions. No learning curve.</p>\n  \n  <div style=\"text-align: center; margin: 30px 0;\">\n    <a href=\"https://tradeanchor.com.au#test-drive\" style=\"display: inline-block; background: #0F172A; color: white; padding: 14px 40px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 16px;\">Try the Free Test Drive</a>\n  </div>\n  \n  <p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Or if you'd like to chat about how Flowio could work for your business:</p>\n  \n  <div style=\"text-align: center; margin: 20px 0;\">\n    <a href=\"https://calendly.com/billing-tradeanchor/15min\" style=\"display: inline-block; background: white; color: #0F172A; padding: 14px 40px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 16px; border: 2px solid #0F172A;\">Book a 15-Min Fit Call</a>\n  </div>\n  \n  <div style=\"margin-top: 40px; padding-top: 20px; border-top: 1px solid #E2E8F0; text-align: center; color: #94A3B8; font-size: 13px;\">\n    <p>Sean Kavan | TradeAnchor<br>Sydney, Australia</p>\n  </div>\n</div>"
+      },
+      "metadata": { "designer": { "x": 600, "y": 0 } }
+    }
+  ]
+}

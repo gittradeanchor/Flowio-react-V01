@@ -9,7 +9,7 @@
  *   MAKE_WEBHOOK_URL  the (new, rotated) Make webhook URL
  *   SHARED_SECRET     a long random string (also entered in Make, see README)
  */
-const ALLOWED_ORIGINS = ['https://flowio.tradeanchor.com.au', 'https://tradeanchor.com.au'];
+const ALLOWED_ORIGINS = ['https://tradeanchor.com.au', 'https://www.tradeanchor.com.au'];
 const MAX_BODY_BYTES = 5000;
 
 const json = (obj, status, extra = {}) =>
@@ -28,7 +28,7 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     if (request.method !== 'POST') return json({ ok: false, error: 'method' }, 405, cors);
 
-    // Same-site requests (route on flowio.tradeanchor.com.au) may send no Origin; cross-site ones must match.
+    // Same-site requests (route on tradeanchor.com.au) may send no Origin; cross-site ones must match.
     if (origin && !ALLOWED_ORIGINS.includes(origin)) return json({ ok: false, error: 'origin' }, 403, cors);
 
     const raw = await request.text();

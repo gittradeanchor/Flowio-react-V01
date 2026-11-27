@@ -41,7 +41,7 @@ export const Testimonials = () => {
             name: "Dave K.",
             trade: "HVAC Tech",
             suburb: "Sutherland, NSW",
-            quote: "I tried ServiceM8 and Jobber — both were overpriced and overcomplicated. Flowio runs in Sheets. There's nothing to learn."
+            quote: "I tried ServiceM8 and Jobber — both were overpriced and overcomplicated. TradeAnchor runs in Sheets. There's nothing to learn."
         },
     ];
 
